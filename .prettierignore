@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+build
+prisma
+PLAN.md
+package-lock.json
