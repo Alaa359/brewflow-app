@@ -1,0 +1,15 @@
+{
+  "Metadata": {
+    "title": "BrewFlow — إدارة المقهى والمطعم",
+    "description": "تطبيق إدارة للمقهى والمطعم: المبيعات والمخزون والوصفات والهوامش."
+  },
+  "Common": {
+    "appName": "BrewFlow",
+    "language": "اللغة",
+    "locale": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "Metadata": {
+    "title": "BrewFlow — Gestion café & restaurant",
+    "description": "Application de gestion pour café/restaurant : ventes, stock, recettes et marges."
+  },
+  "Common": {
+    "appName": "BrewFlow",
+    "language": "Langue",
+    "locale": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية"
+    }
+  }
+}
