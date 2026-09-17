@@ -34,5 +34,72 @@
       "yes": "نعم",
       "no": "لا"
     }
+  },
+  "Nav": {
+    "dashboard": "لوحة القيادة",
+    "reports": "التقارير",
+    "pos": "الصندوق",
+    "ingredients": "المكوّنات",
+    "dishes": "الأطباق",
+    "tables": "الطاولات",
+    "kitchen": "المطبخ",
+    "planning": "جدول العمل",
+    "employees": "الموظفون",
+    "establishments": "الفروع",
+    "logout": "تسجيل الخروج"
+  },
+  "Roles": {
+    "ADMIN": "مدير",
+    "SERVER": "نادل",
+    "KITCHEN": "طاهٍ"
+  },
+  "Landing": {
+    "tagline": "إدارة كاملة لمقهاك أو مطعمك: المبيعات، المخزون، الوصفات والهوامش.",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء منشأة"
+  },
+  "Auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "description": "ادخل إلى مساحة عمل BrewFlow.",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "submitting": "جارٍ تسجيل الدخول…",
+      "noAccount": "ليس لديك حساب بعد؟",
+      "registerLink": "إنشاء منشأتي",
+      "demoTitle": "حسابات تجريبية",
+      "demoPassword": "كلمة المرور: password123"
+    },
+    "register": {
+      "title": "إنشاء منشأتي",
+      "description": "سيتم إنشاء حساب المدير والمقهى/المطعم معًا.",
+      "name": "اسمك",
+      "namePlaceholder": "Sami Ben Ali",
+      "establishmentName": "اسم المنشأة",
+      "establishmentNamePlaceholder": "Café El Farès",
+      "address": "العنوان (اختياري)",
+      "addressPlaceholder": "تونس",
+      "phone": "الهاتف (اختياري)",
+      "phonePlaceholder": "+216 …",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.tn",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "8 أحرف على الأقل",
+      "submit": "إنشاء الحساب",
+      "submitting": "جارٍ الإنشاء…",
+      "hasAccount": "لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول"
+    }
+  },
+  "Establishments": {
+    "switcherLabel": "الفروع"
+  },
+  "Menu": {
+    "notFound": {
+      "title": "رمز QR غير صالح",
+      "description": "رابط الطلب هذا لم يعد صالحًا. اطلب من النادل رمز QR المحدّث.",
+      "back": "العودة إلى BrewFlow"
+    }
   }
 }

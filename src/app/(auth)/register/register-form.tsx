@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { register } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,26 +18,24 @@ import Link from 'next/link';
 
 export function RegisterForm() {
   const [state, action, pending] = useActionState(register, undefined);
+  const t = useTranslations('Auth.register');
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Créer mon établissement</CardTitle>
-        <CardDescription>
-          Votre compte administrateur et votre café/restaurant seront créés
-          ensemble.
-        </CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="name">Votre nom</Label>
+              <Label htmlFor="name">{t('name')}</Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Sami Ben Ali"
+                placeholder={t('namePlaceholder')}
                 autoComplete="name"
                 aria-invalid={!!state?.errors?.name}
               />
@@ -48,12 +47,14 @@ export function RegisterForm() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="establishmentName">Nom de l’établissement</Label>
+              <Label htmlFor="establishmentName">
+                {t('establishmentName')}
+              </Label>
               <Input
                 id="establishmentName"
                 name="establishmentName"
                 type="text"
-                placeholder="Café El Farès"
+                placeholder={t('establishmentNamePlaceholder')}
                 aria-invalid={!!state?.errors?.establishmentName}
               />
               {state?.errors?.establishmentName?.map((e) => (
@@ -66,28 +67,33 @@ export function RegisterForm() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="address">Adresse (optionnel)</Label>
+              <Label htmlFor="address">{t('address')}</Label>
               <Input
                 id="address"
                 name="address"
                 type="text"
-                placeholder="Tunis"
+                placeholder={t('addressPlaceholder')}
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="phone">Téléphone (optionnel)</Label>
-              <Input id="phone" name="phone" type="tel" placeholder="+216 …" />
+              <Label htmlFor="phone">{t('phone')}</Label>
+              <Input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder={t('phonePlaceholder')}
+              />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="vous@exemple.tn"
+              placeholder={t('emailPlaceholder')}
               autoComplete="email"
               aria-invalid={!!state?.errors?.email}
             />
@@ -99,12 +105,12 @@ export function RegisterForm() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="8 caractères minimum"
+              placeholder={t('passwordPlaceholder')}
               autoComplete="new-password"
               aria-invalid={!!state?.errors?.password}
             />
@@ -125,15 +131,15 @@ export function RegisterForm() {
           ))}
 
           <Button type="submit" disabled={pending}>
-            {pending ? 'Création…' : 'Créer le compte'}
+            {pending ? t('submitting') : t('submit')}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex-col items-start gap-1 px-(--card-spacing)">
         <p className="text-muted-foreground text-sm">
-          Déjà un compte ?{' '}
+          {t('hasAccount')}{' '}
           <Link href="/login" className="text-primary hover:underline">
-            Se connecter
+            {t('loginLink')}
           </Link>
         </p>
       </CardFooter>

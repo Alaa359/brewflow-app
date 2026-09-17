@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { CheckIcon, StoreIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +21,7 @@ export function EstablishmentSwitcher({
   establishments: { id: string; name: string }[];
 }) {
   const [pending, startTransition] = useTransition();
+  const t = useTranslations('Establishments');
   const current =
     establishments.find((est) => est.id === currentId) ?? establishments[0];
 
@@ -37,7 +39,7 @@ export function EstablishmentSwitcher({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Établissements</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('switcherLabel')}</DropdownMenuLabel>
         {establishments.map((est) => (
           <DropdownMenuItem
             key={est.id}

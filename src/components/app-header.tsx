@@ -1,13 +1,31 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { logout } from '@/actions/auth';
 import { Role } from '@/generated/client';
-import { ROLE_HOME, ROLE_LABEL } from '@/lib/auth/roles';
+import { ROLE_HOME } from '@/lib/auth/roles';
 import { Button } from '@/components/ui/button';
 import { EstablishmentSwitcher } from '@/components/establishment-switcher';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import type { CurrentUser } from '@/lib/auth/dal';
 
-export function AppHeader({ user }: { user: CurrentUser }) {
+const NAV_ITEMS: { href: string; key: string; roles: Role[] }[] = [
+  { href: '/dashboard', key: 'dashboard', roles: [Role.ADMIN] },
+  { href: '/rapports', key: 'reports', roles: [Role.ADMIN] },
+  { href: '/caisse', key: 'pos', roles: [Role.ADMIN, Role.SERVER] },
+  { href: '/ingredients', key: 'ingredients', roles: [Role.ADMIN] },
+  { href: '/plats', key: 'dishes', roles: [Role.ADMIN] },
+  { href: '/tables', key: 'tables', roles: [Role.ADMIN] },
+  { href: '/cuisine', key: 'kitchen', roles: [Role.KITCHEN, Role.ADMIN] },
+  { href: '/planning', key: 'planning', roles: [Role.ADMIN] },
+  { href: '/employes', key: 'employees', roles: [Role.ADMIN] },
+  { href: '/etablissements', key: 'establishments', roles: [Role.ADMIN] },
+];
+
+export async function AppHeader({ user }: { user: CurrentUser }) {
+  const t = await getTranslations('Nav');
+  const tCommon = await getTranslations('Common');
+  const tRoles = await getTranslations('Roles');
+
   return (
     <header className="bg-background/80 border-b backdrop-blur">
       <div className="flex h-14 items-center justify-between gap-4 px-4">
@@ -16,88 +34,19 @@ export function AppHeader({ user }: { user: CurrentUser }) {
             href={ROLE_HOME[user.role] ?? '/'}
             className="font-semibold tracking-tight"
           >
-            BrewFlow
+            {tCommon('appName')}
           </Link>
           <nav className="text-muted-foreground flex items-center gap-1 text-sm">
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/dashboard"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Tableau de bord
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/rapports"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Rapports
-              </Link>
-            )}
-            {(user.role === Role.ADMIN || user.role === Role.SERVER) && (
-              <Link
-                href="/caisse"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Caisse
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/ingredients"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Ingrédients
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/plats"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Plats
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/tables"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Tables
-              </Link>
-            )}
-            {(user.role === Role.KITCHEN || user.role === Role.ADMIN) && (
-              <Link
-                href="/cuisine"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Cuisine
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/planning"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Planning
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/employes"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Employés
-              </Link>
-            )}
-            {user.role === Role.ADMIN && (
-              <Link
-                href="/etablissements"
-                className="hover:text-foreground rounded px-2 py-1"
-              >
-                Établissements
-              </Link>
+            {NAV_ITEMS.filter((item) => item.roles.includes(user.role)).map(
+              (item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="hover:text-foreground rounded px-2 py-1"
+                >
+                  {t(item.key)}
+                </Link>
+              )
             )}
           </nav>
         </div>
@@ -113,11 +62,11 @@ export function AppHeader({ user }: { user: CurrentUser }) {
             {user.establishmentName}
           </span>
           <span className="text-muted-foreground">
-            {user.name} · {ROLE_LABEL[user.role] ?? user.role}
+            {user.name} · {tRoles(user.role)}
           </span>
           <form action={logout}>
             <Button variant="ghost" size="sm" type="submit">
-              Se déconnecter
+              {t('logout')}
             </Button>
           </form>
         </div>

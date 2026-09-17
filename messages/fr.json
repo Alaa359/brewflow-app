@@ -34,5 +34,72 @@
       "yes": "Oui",
       "no": "Non"
     }
+  },
+  "Nav": {
+    "dashboard": "Tableau de bord",
+    "reports": "Rapports",
+    "pos": "Caisse",
+    "ingredients": "Ingrédients",
+    "dishes": "Plats",
+    "tables": "Tables",
+    "kitchen": "Cuisine",
+    "planning": "Planning",
+    "employees": "Employés",
+    "establishments": "Établissements",
+    "logout": "Se déconnecter"
+  },
+  "Roles": {
+    "ADMIN": "Admin",
+    "SERVER": "Serveur",
+    "KITCHEN": "Cuisinier"
+  },
+  "Landing": {
+    "tagline": "Gestion complète de votre café/restaurant : ventes, stock, recettes et marges.",
+    "login": "Se connecter",
+    "register": "Créer un établissement"
+  },
+  "Auth": {
+    "login": {
+      "title": "Connexion",
+      "description": "Accédez à votre espace BrewFlow.",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion…",
+      "noAccount": "Pas encore de compte ?",
+      "registerLink": "Créer mon établissement",
+      "demoTitle": "Comptes de démonstration",
+      "demoPassword": "Mot de passe : password123"
+    },
+    "register": {
+      "title": "Créer mon établissement",
+      "description": "Votre compte administrateur et votre café/restaurant seront créés ensemble.",
+      "name": "Votre nom",
+      "namePlaceholder": "Sami Ben Ali",
+      "establishmentName": "Nom de l’établissement",
+      "establishmentNamePlaceholder": "Café El Farès",
+      "address": "Adresse (optionnel)",
+      "addressPlaceholder": "Tunis",
+      "phone": "Téléphone (optionnel)",
+      "phonePlaceholder": "+216 …",
+      "email": "Email",
+      "emailPlaceholder": "vous@exemple.tn",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "8 caractères minimum",
+      "submit": "Créer le compte",
+      "submitting": "Création…",
+      "hasAccount": "Déjà un compte ?",
+      "loginLink": "Se connecter"
+    }
+  },
+  "Establishments": {
+    "switcherLabel": "Établissements"
+  },
+  "Menu": {
+    "notFound": {
+      "title": "QR code invalide",
+      "description": "Ce lien de commande n’est plus valide. Demandez le QR code à jour à votre serveur.",
+      "back": "Retour à BrewFlow"
+    }
   }
 }

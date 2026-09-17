@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { login } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,17 +18,18 @@ import Link from 'next/link';
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(login, undefined);
+  const t = useTranslations('Auth.login');
 
   return (
     <Card size="sm" className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Connexion</CardTitle>
-        <CardDescription>Accédez à votre espace BrewFlow.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               name="email"
@@ -44,7 +46,7 @@ export function LoginForm() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <Input
               id="password"
               name="password"
@@ -70,15 +72,15 @@ export function LoginForm() {
           ))}
 
           <Button type="submit" disabled={pending}>
-            {pending ? 'Connexion…' : 'Se connecter'}
+            {pending ? t('submitting') : t('submit')}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex-col items-start gap-1 px-(--card-spacing)">
         <p className="text-muted-foreground text-sm">
-          Pas encore de compte ?{' '}
+          {t('noAccount')}{' '}
           <Link href="/register" className="text-primary hover:underline">
-            Créer mon établissement
+            {t('registerLink')}
           </Link>
         </p>
       </CardFooter>

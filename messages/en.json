@@ -34,5 +34,72 @@
       "yes": "Yes",
       "no": "No"
     }
+  },
+  "Nav": {
+    "dashboard": "Dashboard",
+    "reports": "Reports",
+    "pos": "Checkout",
+    "ingredients": "Ingredients",
+    "dishes": "Dishes",
+    "tables": "Tables",
+    "kitchen": "Kitchen",
+    "planning": "Schedule",
+    "employees": "Employees",
+    "establishments": "Locations",
+    "logout": "Sign out"
+  },
+  "Roles": {
+    "ADMIN": "Admin",
+    "SERVER": "Server",
+    "KITCHEN": "Kitchen staff"
+  },
+  "Landing": {
+    "tagline": "Complete management for your café or restaurant: sales, stock, recipes and margins.",
+    "login": "Sign in",
+    "register": "Create an establishment"
+  },
+  "Auth": {
+    "login": {
+      "title": "Sign in",
+      "description": "Access your BrewFlow workspace.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "registerLink": "Create my establishment",
+      "demoTitle": "Demo accounts",
+      "demoPassword": "Password: password123"
+    },
+    "register": {
+      "title": "Create my establishment",
+      "description": "Your administrator account and your café/restaurant will be created together.",
+      "name": "Your name",
+      "namePlaceholder": "Sami Ben Ali",
+      "establishmentName": "Establishment name",
+      "establishmentNamePlaceholder": "Café El Farès",
+      "address": "Address (optional)",
+      "addressPlaceholder": "Tunis",
+      "phone": "Phone (optional)",
+      "phonePlaceholder": "+216 …",
+      "email": "Email",
+      "emailPlaceholder": "you@example.tn",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "submit": "Create account",
+      "submitting": "Creating…",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    }
+  },
+  "Establishments": {
+    "switcherLabel": "Locations"
+  },
+  "Menu": {
+    "notFound": {
+      "title": "Invalid QR code",
+      "description": "This ordering link is no longer valid. Ask your server for the up-to-date QR code.",
+      "back": "Back to BrewFlow"
+    }
   }
 }
