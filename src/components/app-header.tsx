@@ -26,6 +26,14 @@ export function AppHeader({ user }: { user: CurrentUser }) {
                 Tableau de bord
               </Link>
             )}
+            {user.role === Role.ADMIN && (
+              <Link
+                href="/rapports"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Rapports
+              </Link>
+            )}
             {(user.role === Role.ADMIN || user.role === Role.SERVER) && (
               <Link
                 href="/caisse"

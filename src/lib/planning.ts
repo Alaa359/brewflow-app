@@ -52,6 +52,14 @@ export function weekDays(monday: string): WeekDay[] {
   });
 }
 
+export function formatDateLabel(iso: string): string {
+  const date = parseISODate(iso);
+  if (!date) return iso;
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  return `${day}/${month}/${date.getUTCFullYear()}`;
+}
+
 const MONTH_NAMES = [
   'janvier',
   'février',
