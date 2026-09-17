@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ export function TableForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Tables.form');
 
   useEffect(() => {
     if (state?.success) onSuccess?.();
@@ -29,7 +31,7 @@ export function TableForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="number">Numéro</Label>
+        <Label htmlFor="number">{t('number')}</Label>
         <Input
           id="number"
           name="number"
@@ -37,7 +39,7 @@ export function TableForm({
           min={1}
           max={999}
           step={1}
-          placeholder="Ex. : 1"
+          placeholder={t('numberPlaceholder')}
           defaultValue={table?.number}
           aria-invalid={!!state?.errors?.number}
         />
@@ -49,12 +51,12 @@ export function TableForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="zone">Zone</Label>
+        <Label htmlFor="zone">{t('zone')}</Label>
         <Input
           id="zone"
           name="zone"
           type="text"
-          placeholder="Ex. : Salle, Terrasse…"
+          placeholder={t('zonePlaceholder')}
           defaultValue={table?.zone ?? ''}
           aria-invalid={!!state?.errors?.zone}
         />
@@ -75,11 +77,7 @@ export function TableForm({
       ))}
 
       <Button type="submit" disabled={pending}>
-        {pending
-          ? 'Enregistrement…'
-          : table
-            ? 'Enregistrer les modifications'
-            : 'Créer la table'}
+        {pending ? t('saving') : table ? t('save') : t('create')}
       </Button>
     </form>
   );

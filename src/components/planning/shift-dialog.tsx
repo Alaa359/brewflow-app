@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,6 +33,8 @@ export function ShiftDialog({
   onClose: () => void;
 }) {
   const [state, formAction, pending] = useActionState(createShift, undefined);
+  const t = useTranslations('Planning');
+  const tCommon = useTranslations('Common');
   const [employeeId, setEmployeeId] = useState(employees[0]?.id ?? '');
   const [day, setDay] = useState(dayOfWeek);
   const [startTime, setStartTime] = useState('08:00');
@@ -45,19 +48,19 @@ export function ShiftDialog({
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Ajouter un créneau</DialogTitle>
-          <DialogDescription>
-            Assignez un employé à une plage horaire.
-          </DialogDescription>
+          <DialogTitle>{t('shiftDialog.title')}</DialogTitle>
+          <DialogDescription>{t('shiftDialog.description')}</DialogDescription>
         </DialogHeader>
 
         <form action={formAction} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="employeeId">Employé</Label>
+            <Label htmlFor="employeeId">{t('shiftDialog.employee')}</Label>
             <input type="hidden" name="employeeId" value={employeeId} />
             <Select value={employeeId} onValueChange={setEmployeeId}>
               <SelectTrigger id="employeeId" className="w-full">
-                <SelectValue placeholder="Sélectionnez un employé" />
+                <SelectValue
+                  placeholder={t('shiftDialog.employeePlaceholder')}
+                />
               </SelectTrigger>
               <SelectContent>
                 {employees.map((employee) => (
@@ -75,7 +78,7 @@ export function ShiftDialog({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="dayOfWeek">Jour</Label>
+            <Label htmlFor="dayOfWeek">{t('shiftDialog.day')}</Label>
             <input type="hidden" name="dayOfWeek" value={day} />
             <Select
               value={String(day)}
@@ -87,7 +90,7 @@ export function ShiftDialog({
               <SelectContent>
                 {DAY_NAMES.map((name, index) => (
                   <SelectItem key={name} value={String(index)}>
-                    {name}
+                    {t(`days.${index}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -100,7 +103,7 @@ export function ShiftDialog({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>Créneau type</Label>
+            <Label>{t('shiftDialog.preset')}</Label>
             <div className="flex flex-wrap gap-2">
               {shiftPresets.map((preset) => {
                 const active =
@@ -116,7 +119,7 @@ export function ShiftDialog({
                       setEndTime(preset.endTime);
                     }}
                   >
-                    {preset.label}
+                    {t(`presets.${preset.id}`)}
                   </Button>
                 );
               })}
@@ -125,7 +128,7 @@ export function ShiftDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="startTime">Début</Label>
+              <Label htmlFor="startTime">{t('shiftDialog.start')}</Label>
               <Input
                 id="startTime"
                 name="startTime"
@@ -141,7 +144,7 @@ export function ShiftDialog({
               ))}
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="endTime">Fin</Label>
+              <Label htmlFor="endTime">{t('shiftDialog.end')}</Label>
               <Input
                 id="endTime"
                 name="endTime"
@@ -174,10 +177,10 @@ export function ShiftDialog({
               onClick={onClose}
               disabled={pending}
             >
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             <Button type="submit" disabled={pending || employeeId === ''}>
-              {pending ? 'Enregistrement…' : 'Ajouter le créneau'}
+              {pending ? t('shiftDialog.submitting') : t('shiftDialog.submit')}
             </Button>
           </div>
         </form>

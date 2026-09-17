@@ -15,9 +15,9 @@ export function localeTag(locale: string): string {
 const numberFormatters = new Map<string, Intl.NumberFormat>();
 const dateFormatters = new Map<string, Intl.DateTimeFormat>();
 
-function numberFormatter(
+export function createNumberFormatter(
   locale: string,
-  options: Intl.NumberFormatOptions
+  options: Intl.NumberFormatOptions = {}
 ): Intl.NumberFormat {
   const tag = localeTag(locale);
   const key = `${tag}|${JSON.stringify(options)}`;
@@ -29,9 +29,9 @@ function numberFormatter(
   return formatter;
 }
 
-function dateFormatter(
+export function createDateFormatter(
   locale: string,
-  options: Intl.DateTimeFormatOptions
+  options: Intl.DateTimeFormatOptions = {}
 ): Intl.DateTimeFormat {
   const tag = localeTag(locale);
   const key = `${tag}|${JSON.stringify(options)}`;
@@ -48,7 +48,7 @@ export function formatNumber(
   locale: string,
   options: Intl.NumberFormatOptions = {}
 ): string {
-  return numberFormatter(locale, options).format(value);
+  return createNumberFormatter(locale, options).format(value);
 }
 
 export function formatDecimal(value: number, locale: string): string {
@@ -87,11 +87,13 @@ export function formatDate(
     year: 'numeric',
   }
 ): string {
-  return dateFormatter(locale, options).format(date);
+  return createDateFormatter(locale, options).format(date);
 }
 
 export function formatDayMonth(date: Date, locale: string): string {
-  return dateFormatter(locale, { day: '2-digit', month: 'short' }).format(date);
+  return createDateFormatter(locale, { day: '2-digit', month: 'short' }).format(
+    date
+  );
 }
 
 export function formatWeekday(
@@ -99,11 +101,11 @@ export function formatWeekday(
   locale: string,
   options: Intl.DateTimeFormatOptions = { weekday: 'short', day: '2-digit' }
 ): string {
-  return dateFormatter(locale, options).format(date);
+  return createDateFormatter(locale, options).format(date);
 }
 
 export function formatTime(date: Date, locale: string): string {
-  return dateFormatter(locale, {
+  return createDateFormatter(locale, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -111,7 +113,7 @@ export function formatTime(date: Date, locale: string): string {
 }
 
 export function formatDateTime(date: Date, locale: string): string {
-  return dateFormatter(locale, {
+  return createDateFormatter(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

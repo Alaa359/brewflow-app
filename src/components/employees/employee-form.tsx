@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ROLE_LABEL } from '@/lib/auth/roles';
 import { employeeRoles, type EmployeeRole } from '@/lib/validations/employee';
 import type { EmployeeState } from '@/actions/employees';
 
@@ -42,6 +42,8 @@ export function EmployeeForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Employees');
+  const tRoles = useTranslations('Roles');
   const [role, setRole] = useState<EmployeeRole>(employee?.role ?? 'SERVER');
   const [checked, setChecked] = useState<string[]>(
     employee?.establishmentIds ?? [currentEstablishmentId]
@@ -62,12 +64,12 @@ export function EmployeeForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Nom</Label>
+        <Label htmlFor="name">{t('form.name')}</Label>
         <Input
           id="name"
           name="name"
           type="text"
-          placeholder="Ex. : Amine Ben Salah"
+          placeholder={t('form.namePlaceholder')}
           defaultValue={employee?.name}
           aria-invalid={!!state?.errors?.name}
         />
@@ -79,12 +81,12 @@ export function EmployeeForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('form.email')}</Label>
         <Input
           id="email"
           name="email"
           type="email"
-          placeholder="Ex. : amine@brewflow.tn"
+          placeholder={t('form.emailPlaceholder')}
           defaultValue={employee?.email}
           aria-invalid={!!state?.errors?.email}
         />
@@ -96,7 +98,7 @@ export function EmployeeForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="role">Rôle</Label>
+        <Label htmlFor="role">{t('form.role')}</Label>
         <input type="hidden" name="role" value={role} />
         <Select
           value={role}
@@ -108,7 +110,7 @@ export function EmployeeForm({
           <SelectContent>
             {employeeRoles.map((value) => (
               <SelectItem key={value} value={value}>
-                {ROLE_LABEL[value] ?? value}
+                {tRoles(value)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -122,14 +124,16 @@ export function EmployeeForm({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">
-          {employee ? 'Nouveau mot de passe' : 'Mot de passe initial'}
+          {employee ? t('form.passwordEdit') : t('form.passwordCreate')}
         </Label>
         <Input
           id="password"
           name="password"
           type="password"
           placeholder={
-            employee ? 'Laisser vide pour conserver' : '8 caractères minimum'
+            employee
+              ? t('form.passwordPlaceholderEdit')
+              : t('form.passwordPlaceholderCreate')
           }
           aria-invalid={!!state?.errors?.password}
         />
@@ -141,7 +145,7 @@ export function EmployeeForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Établissements rattachés</Label>
+        <Label>{t('form.establishments')}</Label>
         <div className="flex max-h-40 flex-col gap-1.5 overflow-y-auto">
           {establishments.map((establishment) => {
             const disabled =
@@ -166,7 +170,7 @@ export function EmployeeForm({
                   className="accent-foreground size-4"
                 />
                 {establishment.name}
-                {disabled && ' (actif)'}
+                {disabled && ` (${t('form.active')})`}
               </label>
             );
           })}
@@ -185,10 +189,10 @@ export function EmployeeForm({
       <div className="flex justify-end gap-2">
         <Button type="submit" disabled={pending}>
           {pending
-            ? 'Enregistrement…'
+            ? t('form.submitting')
             : employee
-              ? 'Enregistrer les modifications'
-              : 'Créer l’employé'}
+              ? t('form.submitEdit')
+              : t('form.submitCreate')}
         </Button>
       </div>
     </form>

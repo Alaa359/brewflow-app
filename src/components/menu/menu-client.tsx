@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useActionState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   CircleCheckIcon,
   MinusIcon,
@@ -74,6 +75,9 @@ export function MenuClient({
     categories[0]?.id ?? ''
   );
   const [confirmed, setConfirmed] = useState(false);
+  const t = useTranslations('Menu');
+  const tCommon = useTranslations('Common');
+  const locale = useLocale();
   const [state, formAction, pending] = useActionState(
     submitTableOrder,
     undefined
@@ -133,7 +137,7 @@ export function MenuClient({
             {establishmentName}
           </span>
           <span className="bg-muted rounded-full px-3 py-1 text-xs font-medium">
-            Table n° {tableNumber}
+            {t('table', { number: tableNumber })}
             {tableZone ? ` · ${tableZone}` : ''}
           </span>
         </div>
@@ -141,22 +145,18 @@ export function MenuClient({
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 sm:p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Notre menu</h1>
-          <p className="text-muted-foreground text-sm">
-            Choisissez vos plats, puis envoyez votre commande : elle part
-            directement en cuisine.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
+          <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
         </div>
 
         {confirmed && (
           <div className="flex items-start gap-3 rounded-lg border border-emerald-600/30 bg-emerald-600/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
             <CircleCheckIcon className="mt-0.5 size-4 shrink-0" />
             <div className="flex flex-col gap-0.5">
-              <span className="font-medium">Commande envoyée !</span>
-              <span>
-                Votre commande a bien été transmise. Un serveur vous apportera
-                le total à régler.
-              </span>
+              <span className="font-medium">{t('confirmed.title')}</span>
+              <span>{t('confirmed.description')}</span>
             </div>
           </div>
         )}
@@ -165,7 +165,7 @@ export function MenuClient({
           <div className="flex flex-col gap-3">
             {categories.length === 0 ? (
               <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-                Le menu n’est pas encore disponible.
+                {t('unavailable')}
               </p>
             ) : (
               <>
@@ -187,7 +187,7 @@ export function MenuClient({
 
                 {activeDishes.length === 0 ? (
                   <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-                    Aucun plat dans cette catégorie.
+                    {t('noDishes')}
                   </p>
                 ) : (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -209,7 +209,11 @@ export function MenuClient({
                             </span>
                           ) : null}
                           <span className="text-muted-foreground mt-auto pt-1 text-xs font-medium">
-                            {formatCost(dish.price)}
+                            {formatCost(
+                              dish.price,
+                              locale,
+                              tCommon('currency')
+                            )}
                           </span>
                         </div>
                       </button>
@@ -224,7 +228,7 @@ export function MenuClient({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <ShoppingCartIcon className="size-4" />
-                Votre commande
+                {t('cart.title')}
                 {cartCount > 0 && (
                   <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
                     {cartCount}
@@ -247,7 +251,7 @@ export function MenuClient({
               <CardContent className="flex flex-col gap-4">
                 {cart.length === 0 ? (
                   <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-                    Votre panier est vide.
+                    {t('cart.empty')}
                   </p>
                 ) : (
                   <ul className="flex flex-col gap-3">
@@ -261,7 +265,12 @@ export function MenuClient({
                             {line.dish.name}
                           </p>
                           <p className="text-muted-foreground text-xs">
-                            {formatCost(line.dish.price)} / unité
+                            {formatCost(
+                              line.dish.price,
+                              locale,
+                              tCommon('currency')
+                            )}{' '}
+                            {t('cart.perUnit')}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
@@ -273,7 +282,9 @@ export function MenuClient({
                             onClick={() => bump(index, -1)}
                           >
                             <MinusIcon />
-                            <span className="sr-only">Retirer un</span>
+                            <span className="sr-only">
+                              {t('cart.decrement')}
+                            </span>
                           </Button>
                           <span className="w-7 text-center text-sm tabular-nums">
                             {line.quantity}
@@ -286,7 +297,9 @@ export function MenuClient({
                             onClick={() => bump(index, 1)}
                           >
                             <PlusIcon />
-                            <span className="sr-only">Ajouter un</span>
+                            <span className="sr-only">
+                              {t('cart.increment')}
+                            </span>
                           </Button>
                           <Button
                             type="button"
@@ -296,7 +309,9 @@ export function MenuClient({
                             onClick={() => removeLine(index)}
                           >
                             <Trash2Icon />
-                            <span className="sr-only">Supprimer la ligne</span>
+                            <span className="sr-only">
+                              {t('cart.removeLine')}
+                            </span>
                           </Button>
                         </div>
                       </li>
@@ -305,9 +320,9 @@ export function MenuClient({
                 )}
 
                 <div className="flex items-center justify-between border-t pt-3">
-                  <span className="text-sm font-medium">Total</span>
+                  <span className="text-sm font-medium">{t('cart.total')}</span>
                   <span className="text-lg font-semibold tabular-nums">
-                    {formatCost(cartTotal)}
+                    {formatCost(cartTotal, locale, tCommon('currency'))}
                   </span>
                 </div>
 
@@ -334,7 +349,7 @@ export function MenuClient({
                   className="w-full"
                   disabled={cart.length === 0 || pending}
                 >
-                  {pending ? 'Envoi…' : 'Envoyer la commande'}
+                  {pending ? t('cart.submitting') : t('cart.submit')}
                 </Button>
               </CardFooter>
             </form>

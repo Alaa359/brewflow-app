@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,6 +37,8 @@ export function DishForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Dishes');
+  const tCommon = useTranslations('Common');
   const [active, setActive] = useState<string>(
     dish ? String(dish.isActive) : 'true'
   );
@@ -51,12 +54,12 @@ export function DishForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Nom</Label>
+        <Label htmlFor="name">{t('form.name')}</Label>
         <Input
           id="name"
           name="name"
           type="text"
-          placeholder="Ex. : café, thé à la menthe…"
+          placeholder={t('form.namePlaceholder')}
           defaultValue={dish?.name}
           aria-invalid={!!state?.errors?.name}
         />
@@ -68,11 +71,11 @@ export function DishForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="description">Description (optionnel)</Label>
+        <Label htmlFor="description">{t('form.descriptionOptional')}</Label>
         <Textarea
           id="description"
           name="description"
-          placeholder="Ex. : servi brûlant avec du sucre…"
+          placeholder={t('form.descriptionPlaceholder')}
           defaultValue={dish?.description ?? ''}
           aria-invalid={!!state?.errors?.description}
         />
@@ -84,7 +87,9 @@ export function DishForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="price">Prix (DT)</Label>
+        <Label htmlFor="price">
+          {t('form.priceLabel', { currency: tCommon('currency') })}
+        </Label>
         <Input
           id="price"
           name="price"
@@ -103,11 +108,11 @@ export function DishForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Catégorie</Label>
+        <Label>{t('form.category')}</Label>
         <input type="hidden" name="categoryId" value={categoryId} />
         <Select value={categoryId} onValueChange={(v) => setCategoryId(v)}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Choisir une catégorie" />
+            <SelectValue placeholder={t('form.chooseCategory')} />
           </SelectTrigger>
           <SelectContent>
             {categories.map((cat) => (
@@ -125,15 +130,15 @@ export function DishForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Statut</Label>
+        <Label>{t('form.status')}</Label>
         <input type="hidden" name="isActive" value={active} />
         <Select value={active} onValueChange={(v) => setActive(v)}>
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="true">Actif</SelectItem>
-            <SelectItem value="false">Inactif</SelectItem>
+            <SelectItem value="true">{t('status.active')}</SelectItem>
+            <SelectItem value="false">{t('status.inactive')}</SelectItem>
           </SelectContent>
         </Select>
         {state?.errors?.isActive?.map((e) => (
@@ -144,13 +149,13 @@ export function DishForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="image">Photo (optionnel)</Label>
+        <Label htmlFor="image">{t('form.photoOptional')}</Label>
         <div className="flex items-center gap-3">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
-              alt="Aperçu"
+              alt={t('form.preview')}
               className="bg-muted size-14 rounded-lg object-cover"
             />
           ) : (
@@ -182,10 +187,10 @@ export function DishForm({
 
       <Button type="submit" disabled={pending}>
         {pending
-          ? 'Enregistrement…'
+          ? t('form.saving')
           : dish
-            ? 'Enregistrer les modifications'
-            : 'Créer le plat'}
+            ? t('form.saveChanges')
+            : t('createDish')}
       </Button>
     </form>
   );

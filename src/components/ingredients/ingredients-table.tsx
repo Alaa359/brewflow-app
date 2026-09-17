@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   PackagePlusIcon,
   PencilIcon,
@@ -34,7 +35,7 @@ import {
   updateIngredient,
 } from '@/actions/ingredients';
 import { createStockEntry } from '@/actions/stock-entries';
-import { formatCost, formatQuantity, UNIT_LABEL } from '@/lib/ingredients';
+import { formatCost, formatQuantity } from '@/lib/ingredients';
 import {
   IngredientForm,
   type IngredientFormDefaults,
@@ -74,6 +75,10 @@ export function IngredientsTable({
   today: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('Ingredients');
+  const tCommon = useTranslations('Common');
+  const tUnits = useTranslations('Units');
+  const locale = useLocale();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<IngredientRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<IngredientRow | null>(null);
@@ -84,23 +89,24 @@ export function IngredientsTable({
 
   const errorMessage =
     error === 'recette' || error === 'recettes'
-      ? 'Suppression impossible : cet ingrédient est utilisé dans une recette.'
+      ? t('deleteInRecipeError')
       : undefined;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Ingrédients</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {ingredients.length} ingrédient
-            {ingredients.length > 1 ? 's' : ''} ·{' '}
+            {t('count', { count: ingredients.length })} ·{' '}
             {lowCount > 0 ? (
               <span className="text-destructive font-medium">
-                {lowCount} sous le seuil minimum
+                {t('lowCount', { count: lowCount })}
               </span>
             ) : (
-              'aucun stock en dessous du seuil'
+              t('noLowStock')
             )}
           </p>
         </div>
@@ -109,16 +115,13 @@ export function IngredientsTable({
           <DialogTrigger asChild>
             <Button onClick={() => setCreateOpen(true)}>
               <PlusIcon />
-              Ajouter un ingrédient
+              {t('add')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Nouvel ingrédient</DialogTitle>
-              <DialogDescription>
-                Renseignez le nom, l’unité, le stock, le seuil minimum et le
-                coût par unité.
-              </DialogDescription>
+              <DialogTitle>{t('newTitle')}</DialogTitle>
+              <DialogDescription>{t('newDescription')}</DialogDescription>
             </DialogHeader>
             <IngredientForm
               action={createIngredient}
@@ -138,7 +141,7 @@ export function IngredientsTable({
             onClick={() => router.replace('/ingredients')}
           >
             <XIcon />
-            <span className="sr-only">Fermer</span>
+            <span className="sr-only">{tCommon('actions.close')}</span>
           </Button>
         </div>
       )}
@@ -147,14 +150,16 @@ export function IngredientsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Photo</TableHead>
-              <TableHead>Nom</TableHead>
-              <TableHead>Unité</TableHead>
-              <TableHead className="text-right">Stock</TableHead>
-              <TableHead className="text-right">Seuil min.</TableHead>
-              <TableHead className="text-right">Coût</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('table.photo')}</TableHead>
+              <TableHead>{t('table.name')}</TableHead>
+              <TableHead>{t('table.unit')}</TableHead>
+              <TableHead className="text-right">{t('table.stock')}</TableHead>
+              <TableHead className="text-right">
+                {t('table.minThreshold')}
+              </TableHead>
+              <TableHead className="text-right">{t('table.cost')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead className="text-right">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -164,7 +169,7 @@ export function IngredientsTable({
                   colSpan={8}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  Aucun ingrédient. Commencez par en créer un.
+                  {t('emptyTable')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -182,7 +187,7 @@ export function IngredientsTable({
                       {ingredient.name}
                     </TableCell>
                     <TableCell>
-                      {UNIT_LABEL[ingredient.unit] ?? ingredient.unit}
+                      {tUnits(ingredient.unit) ?? ingredient.unit}
                     </TableCell>
                     <TableCell
                       className={
@@ -191,20 +196,34 @@ export function IngredientsTable({
                           : 'text-right'
                       }
                     >
-                      {formatQuantity(ingredient.currentStock, ingredient.unit)}
+                      {formatQuantity(
+                        ingredient.currentStock,
+                        ingredient.unit,
+                        locale,
+                        tUnits(ingredient.unit)
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
-                      {formatQuantity(ingredient.minThreshold, ingredient.unit)}
+                      {formatQuantity(
+                        ingredient.minThreshold,
+                        ingredient.unit,
+                        locale,
+                        tUnits(ingredient.unit)
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
-                      {formatCost(ingredient.costPerUnit)}
+                      {formatCost(
+                        ingredient.costPerUnit,
+                        locale,
+                        tCommon('currency')
+                      )}
                     </TableCell>
                     <TableCell>
                       {low ? (
-                        <Badge variant="destructive">Stock bas</Badge>
+                        <Badge variant="destructive">{t('statusLow')}</Badge>
                       ) : (
                         <span className="text-muted-foreground text-xs">
-                          OK
+                          {t('statusOk')}
                         </span>
                       )}
                     </TableCell>
@@ -217,7 +236,7 @@ export function IngredientsTable({
                         >
                           <PackagePlusIcon />
                           <span className="sr-only">
-                            Réapprovisionner {ingredient.name}
+                            {t('restockSr', { name: ingredient.name })}
                           </span>
                         </Button>
                         <Button
@@ -227,7 +246,7 @@ export function IngredientsTable({
                         >
                           <PencilIcon />
                           <span className="sr-only">
-                            Modifier {ingredient.name}
+                            {t('editSr', { name: ingredient.name })}
                           </span>
                         </Button>
                         <Button
@@ -238,14 +257,15 @@ export function IngredientsTable({
                         >
                           <Trash2Icon />
                           <span className="sr-only">
-                            Supprimer {ingredient.name}
+                            {t('deleteSr', { name: ingredient.name })}
                           </span>
                         </Button>
                       </div>
                       {ingredient.recipeCount > 0 && (
                         <p className="text-muted-foreground mt-1 text-xs">
-                          Utilisé dans {ingredient.recipeCount} recette
-                          {ingredient.recipeCount > 1 ? 's' : ''}
+                          {t('usedInRecipes', {
+                            count: ingredient.recipeCount,
+                          })}
                         </p>
                       )}
                     </TableCell>
@@ -263,10 +283,10 @@ export function IngredientsTable({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier {editTarget?.name}</DialogTitle>
-            <DialogDescription>
-              Ajustez l’unité, le stock, le seuil ou le coût.
-            </DialogDescription>
+            <DialogTitle>
+              {t('editTitle', { name: editTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('editDescription')}</DialogDescription>
           </DialogHeader>
           {editTarget && (
             <IngredientForm
@@ -285,11 +305,10 @@ export function IngredientsTable({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Réapprovisionner {stockTarget?.name}</DialogTitle>
-            <DialogDescription>
-              La quantité sera ajoutée au stock actuel et l’entrée apparaîtra
-              dans l’historique.
-            </DialogDescription>
+            <DialogTitle>
+              {t('restockTitle', { name: stockTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('restockDescription')}</DialogDescription>
           </DialogHeader>
           {stockTarget && (
             <StockEntryForm
@@ -310,21 +329,20 @@ export function IngredientsTable({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Supprimer {deleteTarget?.name} ?</DialogTitle>
-            <DialogDescription>
-              Cette action est irréversible. Le stock et la photo de
-              l’ingrédient seront définitivement supprimés.
-            </DialogDescription>
+            <DialogTitle>
+              {t('deleteTitle', { name: deleteTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('deleteDescription')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && (
               <form action={deleteIngredient.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Supprimer définitivement
+                  {t('deletePermanently')}
                 </Button>
               </form>
             )}

@@ -1,3 +1,5 @@
+import { createDateFormatter } from '@/lib/i18n/format';
+
 export function todayInTZ(timezone: string): string {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
@@ -52,39 +54,32 @@ export function weekDays(monday: string): WeekDay[] {
   });
 }
 
-export function formatDateLabel(iso: string): string {
+export function formatDateLabel(iso: string, locale = 'fr'): string {
   const date = parseISODate(iso);
   if (!date) return iso;
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  return `${day}/${month}/${date.getUTCFullYear()}`;
+  return createDateFormatter(locale, {
+    timeZone: 'UTC',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(date);
 }
 
-const MONTH_NAMES = [
-  'janvier',
-  'février',
-  'mars',
-  'avril',
-  'mai',
-  'juin',
-  'juillet',
-  'août',
-  'septembre',
-  'octobre',
-  'novembre',
-  'décembre',
-];
-
-export function formatWeekRange(monday: string): string {
+export function formatWeekRange(monday: string, locale = 'fr'): string {
   const mondayDate = parseISODate(monday);
   const sundayDate = parseISODate(addDays(monday, 6));
   if (!mondayDate || !sundayDate) return '';
+
+  const monthFormatter = createDateFormatter(locale, {
+    timeZone: 'UTC',
+    month: 'long',
+  });
   const mondayDay = mondayDate.getUTCDate();
   const sundayDay = sundayDate.getUTCDate();
   const sameMonth = mondayDate.getUTCMonth() === sundayDate.getUTCMonth();
   const year = sundayDate.getUTCFullYear();
   if (sameMonth) {
-    return `${mondayDay} – ${sundayDay} ${MONTH_NAMES[sundayDate.getUTCMonth()]} ${year}`;
+    return `${mondayDay} – ${sundayDay} ${monthFormatter.format(sundayDate)} ${year}`;
   }
-  return `${mondayDay} ${MONTH_NAMES[mondayDate.getUTCMonth()]} – ${sundayDay} ${MONTH_NAMES[sundayDate.getUTCMonth()]} ${year}`;
+  return `${mondayDay} ${monthFormatter.format(mondayDate)} – ${sundayDay} ${monthFormatter.format(sundayDate)} ${year}`;
 }

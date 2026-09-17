@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { QRCodeSVG } from 'qrcode.react';
 import { CopyIcon, ExternalLinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ export function TableQr({
 }) {
   const [origin, setOrigin] = useState('');
   const [copied, setCopied] = useState(false);
+  const t = useTranslations('Tables');
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -43,13 +45,13 @@ export function TableQr({
         )}
       </div>
       <p className="text-muted-foreground max-w-72 truncate text-center text-xs">
-        {url || 'Génération du lien…'}
+        {url || t('generatingLink')}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-2">
         <Button type="button" variant="outline" size="sm" asChild>
           <a href={url || '#'} target="_blank" rel="noopener noreferrer">
             <ExternalLinkIcon />
-            Ouvrir le menu
+            {t('openMenu')}
           </a>
         </Button>
         <Button
@@ -60,7 +62,7 @@ export function TableQr({
           disabled={!url}
         >
           <CopyIcon />
-          {copied ? 'Lien copié' : 'Copier le lien'}
+          {copied ? t('linkCopied') : t('copyLink')}
         </Button>
       </div>
     </div>

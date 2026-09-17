@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { cn } from 'cn';
-import { PERIOD_LABEL, type Period } from '@/lib/sales';
+import { useTranslations } from 'next-intl';
+import type { Period } from '@/lib/sales';
 
 const PERIODS: Period[] = ['jour', 'semaine', 'mois'];
 
 export function PeriodSwitcher({ current }: { current: Period }) {
+  const t = useTranslations('Period');
+
   return (
     <div className="bg-muted inline-flex h-8 w-fit items-center rounded-lg p-[3px]">
       {PERIODS.map((period) => (
@@ -18,7 +21,7 @@ export function PeriodSwitcher({ current }: { current: Period }) {
             current === period && 'bg-background text-foreground shadow-sm'
           )}
         >
-          {PERIOD_LABEL[period]}
+          {t(period)}
         </Link>
       ))}
     </div>

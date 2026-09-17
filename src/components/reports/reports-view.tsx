@@ -1,5 +1,7 @@
 import { DownloadIcon } from 'lucide-react';
-import { formatCost, formatQuantity } from '@/lib/ingredients';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { formatCurrency, formatNumber } from '@/lib/i18n/format';
+import { formatQuantity } from '@/lib/ingredients';
 import { formatPercent, marginColorClass } from '@/lib/margins';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,13 +22,18 @@ import {
 import { KpiCards } from '@/components/dashboard/kpi-cards';
 import type { ReportData } from '@/lib/reports';
 
-export function ReportsView({
+export async function ReportsView({
   report,
   downloadHref,
 }: {
   report: ReportData;
   downloadHref: string;
 }) {
+  const t = await getTranslations('Reports');
+  const tCommon = await getTranslations('Common');
+  const tPay = await getTranslations('PaymentMethod');
+  const tUnits = await getTranslations('Units');
+  const locale = await getLocale();
   const { totals } = report;
 
   return (
@@ -34,28 +41,28 @@ export function ReportsView({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="grid gap-1 sm:grid-cols-3">
           <p className="text-muted-foreground text-sm">
-            Articles vendus ·{' '}
+            {t('summary.items')} ·{' '}
             <span className="text-foreground font-medium tabular-nums">
-              {totals.itemCount}
+              {formatNumber(totals.itemCount, locale)}
             </span>
           </p>
           <p className="text-muted-foreground text-sm">
-            Espèces ·{' '}
+            {tPay('CASH')} ·{' '}
             <span className="text-foreground font-medium tabular-nums">
-              {formatCost(totals.cashRevenue)}
+              {formatCurrency(totals.cashRevenue, locale, tCommon('currency'))}
             </span>
           </p>
           <p className="text-muted-foreground text-sm">
-            Carte ·{' '}
+            {tPay('STRIPE')} ·{' '}
             <span className="text-foreground font-medium tabular-nums">
-              {formatCost(totals.cardRevenue)}
+              {formatCurrency(totals.cardRevenue, locale, tCommon('currency'))}
             </span>
           </p>
         </div>
         <Button asChild size="sm" variant="outline">
           <a href={downloadHref}>
             <DownloadIcon />
-            Télécharger le PDF
+            {t('downloadPdf')}
           </a>
         </Button>
       </div>
@@ -69,17 +76,23 @@ export function ReportsView({
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Chiffre d’affaires par catégorie</CardTitle>
-            <CardDescription>Répartition des ventes encaissées</CardDescription>
+            <CardTitle>{t('categories.title')}</CardTitle>
+            <CardDescription>{t('categories.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead className="text-right">Qté</TableHead>
-                  <TableHead className="text-right">CA</TableHead>
-                  <TableHead className="text-right">Part</TableHead>
+                  <TableHead>{t('columns.category')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('columns.quantity')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('columns.revenue')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('columns.share')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -89,7 +102,7 @@ export function ReportsView({
                       colSpan={4}
                       className="text-muted-foreground text-center"
                     >
-                      Aucune vente sur la période.
+                      {t('categories.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -99,13 +112,17 @@ export function ReportsView({
                         {category.categoryName}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {category.quantity}
+                        {formatNumber(category.quantity, locale)}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {formatCost(category.revenue)}
+                        {formatCurrency(
+                          category.revenue,
+                          locale,
+                          tCommon('currency')
+                        )}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-right tabular-nums">
-                        {category.sharePercent} %
+                        {formatPercent(category.sharePercent, locale)}
                       </TableCell>
                     </TableRow>
                   ))
@@ -117,20 +134,23 @@ export function ReportsView({
 
         <Card>
           <CardHeader>
-            <CardTitle>Réapprovisionnements</CardTitle>
+            <CardTitle>{t('restock.title')}</CardTitle>
             <CardDescription>
-              {report.restockEntryCount} entrée
-              {report.restockEntryCount > 1 ? 's' : ''} sur la période
+              {t('restock.description', { count: report.restockEntryCount })}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ingrédient</TableHead>
-                  <TableHead className="text-right">Quantité</TableHead>
-                  <TableHead className="text-right">Entrées</TableHead>
-                  <TableHead>Fournisseurs</TableHead>
+                  <TableHead>{t('columns.ingredient')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('columns.fullQuantity')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('columns.entries')}
+                  </TableHead>
+                  <TableHead>{t('columns.suppliers')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -140,7 +160,7 @@ export function ReportsView({
                       colSpan={4}
                       className="text-muted-foreground text-center"
                     >
-                      Aucun réapprovisionnement sur la période.
+                      {t('restock.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -150,10 +170,15 @@ export function ReportsView({
                         {line.ingredientName}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {formatQuantity(line.quantityAdded, line.unit)}
+                        {formatQuantity(
+                          line.quantityAdded,
+                          line.unit,
+                          locale,
+                          tUnits(line.unit)
+                        )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {line.entryCount}
+                        {formatNumber(line.entryCount, locale)}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {line.suppliers.length > 0
@@ -171,22 +196,30 @@ export function ReportsView({
 
       <Card>
         <CardHeader>
-          <CardTitle>Chiffre d’affaires & marge par plat</CardTitle>
-          <CardDescription>
-            Marge calculée sur les coûts actuels des ingrédients
-          </CardDescription>
+          <CardTitle>{t('dishes.title')}</CardTitle>
+          <CardDescription>{t('dishes.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Plat</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead className="text-right">Qté</TableHead>
-                <TableHead className="text-right">CA</TableHead>
-                <TableHead className="text-right">Coût</TableHead>
-                <TableHead className="text-right">Marge</TableHead>
-                <TableHead className="text-right">Marge %</TableHead>
+                <TableHead>{t('columns.dish')}</TableHead>
+                <TableHead>{t('columns.category')}</TableHead>
+                <TableHead className="text-right">
+                  {t('columns.quantity')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('columns.revenue')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('columns.cost')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('columns.margin')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('columns.marginPercent')}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,7 +229,7 @@ export function ReportsView({
                     colSpan={7}
                     className="text-muted-foreground text-center"
                   >
-                    Aucune vente sur la période.
+                    {t('dishes.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -209,16 +242,20 @@ export function ReportsView({
                       {dish.categoryName}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {dish.quantity}
+                      {formatNumber(dish.quantity, locale)}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatCost(dish.revenue)}
+                      {formatCurrency(
+                        dish.revenue,
+                        locale,
+                        tCommon('currency')
+                      )}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatCost(dish.cost)}
+                      {formatCurrency(dish.cost, locale, tCommon('currency'))}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatCost(dish.margin)}
+                      {formatCurrency(dish.margin, locale, tCommon('currency'))}
                     </TableCell>
                     <TableCell
                       className={`text-right tabular-nums ${marginColorClass(
@@ -227,7 +264,7 @@ export function ReportsView({
                     >
                       {dish.marginPercent === null
                         ? '—'
-                        : formatPercent(dish.marginPercent)}
+                        : formatPercent(dish.marginPercent, locale)}
                     </TableCell>
                   </TableRow>
                 ))
@@ -239,24 +276,29 @@ export function ReportsView({
 
       <Card>
         <CardHeader>
-          <CardTitle>Détail des réapprovisionnements</CardTitle>
+          <CardTitle>{t('restockDetail.title')}</CardTitle>
           <CardDescription>
             {report.restockEntryCount > report.restockEntries.length
-              ? `${report.restockEntries.length} plus récents sur ${report.restockEntryCount}`
-              : `${report.restockEntryCount} entrée${
-                  report.restockEntryCount > 1 ? 's' : ''
-                }`}
+              ? t('restockDetail.recentCount', {
+                  shown: report.restockEntries.length,
+                  total: report.restockEntryCount,
+                })
+              : t('restockDetail.count', {
+                  count: report.restockEntryCount,
+                })}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Ingrédient</TableHead>
-                <TableHead className="text-right">Quantité</TableHead>
-                <TableHead>Fournisseur</TableHead>
-                <TableHead>Saisi par</TableHead>
+                <TableHead>{t('columns.date')}</TableHead>
+                <TableHead>{t('columns.ingredient')}</TableHead>
+                <TableHead className="text-right">
+                  {t('columns.fullQuantity')}
+                </TableHead>
+                <TableHead>{t('columns.supplier')}</TableHead>
+                <TableHead>{t('columns.enteredBy')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -266,7 +308,7 @@ export function ReportsView({
                     colSpan={5}
                     className="text-muted-foreground text-center"
                   >
-                    Aucun réapprovisionnement sur la période.
+                    {t('restock.empty')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -279,7 +321,12 @@ export function ReportsView({
                       {entry.ingredientName}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatQuantity(entry.quantityAdded, entry.unit)}
+                      {formatQuantity(
+                        entry.quantityAdded,
+                        entry.unit,
+                        locale,
+                        tUnits(entry.unit)
+                      )}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {entry.supplierName ?? '—'}

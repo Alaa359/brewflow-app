@@ -1,12 +1,13 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Unit } from '@/generated/client';
 import type { StockEntryState } from '@/actions/stock-entries';
-import { formatQuantity, UNIT_LABEL } from '@/lib/ingredients';
+import { formatQuantity } from '@/lib/ingredients';
 
 export function StockEntryForm({
   action,
@@ -25,6 +26,9 @@ export function StockEntryForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Stock');
+  const tUnits = useTranslations('Units');
+  const locale = useLocale();
 
   useEffect(() => {
     if (state?.success) onSuccess?.();
@@ -33,15 +37,15 @@ export function StockEntryForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
-        Stock actuel :{' '}
+        {t('form.currentStock')}{' '}
         <span className="text-foreground font-medium">
-          {formatQuantity(currentStock, unit)}
+          {formatQuantity(currentStock, unit, locale, tUnits(unit))}
         </span>
       </p>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="quantityAdded">
-          Quantité ajoutée ({UNIT_LABEL[unit]})
+          {t('form.quantityAdded', { unit: tUnits(unit) })}
         </Label>
         <Input
           id="quantityAdded"
@@ -50,7 +54,9 @@ export function StockEntryForm({
           step="0.001"
           min="0"
           inputMode="decimal"
-          placeholder={`Ex. : ${formatQuantity(1, unit)}`}
+          placeholder={t('form.quantityPlaceholder', {
+            quantity: formatQuantity(1, unit, locale, tUnits(unit)),
+          })}
           aria-invalid={!!state?.errors?.quantityAdded}
         />
         {state?.errors?.quantityAdded?.map((e) => (
@@ -61,12 +67,12 @@ export function StockEntryForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="supplierName">Fournisseur (optionnel)</Label>
+        <Label htmlFor="supplierName">{t('form.supplierName')}</Label>
         <Input
           id="supplierName"
           name="supplierName"
           type="text"
-          placeholder="Ex. : Marché Central"
+          placeholder={t('form.supplierPlaceholder')}
           aria-invalid={!!state?.errors?.supplierName}
         />
         {state?.errors?.supplierName?.map((e) => (
@@ -77,7 +83,7 @@ export function StockEntryForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="date">Date</Label>
+        <Label htmlFor="date">{t('form.date')}</Label>
         <Input
           id="date"
           name="date"
@@ -102,7 +108,7 @@ export function StockEntryForm({
       ))}
 
       <Button type="submit" disabled={pending}>
-        {pending ? 'Enregistrement…' : 'Ajouter le stock'}
+        {pending ? t('form.saving') : t('form.addStock')}
       </Button>
     </form>
   );

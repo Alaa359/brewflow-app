@@ -1,6 +1,8 @@
 ﻿import { Role } from '@/generated/client';
+import { getLocale } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
+import { formatDate } from '@/lib/i18n/format';
 import {
   IngredientsTable,
   type IngredientRow,
@@ -11,18 +13,13 @@ import {
 } from '@/components/stock/stock-entries-history';
 import { toDateInputTunisia } from '@/lib/sales';
 
-function toDateLabel(date: Date): string {
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${d}/${m}/${date.getFullYear()}`;
-}
-
 export default async function IngredientsPage({
   searchParams,
 }: {
   searchParams: Promise<{ erreur?: string }>;
 }) {
   const user = await requireRole(Role.ADMIN);
+  const locale = await getLocale();
 
   const ingredients = await prisma.ingredient.findMany({
     where: { establishmentId: user.establishmentId },
@@ -74,7 +71,7 @@ export default async function IngredientsPage({
 
   const entryRows: StockEntryRow[] = stockEntries.map((entry) => ({
     id: entry.id,
-    dateLabel: toDateLabel(entry.date),
+    dateLabel: formatDate(entry.date, locale),
     quantityAdded: entry.quantityAdded.toNumber(),
     supplierName: entry.supplierName,
     ingredientName: entry.ingredient.name,

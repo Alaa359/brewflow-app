@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Table,
   TableBody,
@@ -8,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatQuantity, UNIT_LABEL } from '@/lib/ingredients';
+import { formatQuantity } from '@/lib/ingredients';
 import type { Unit } from '@/generated/client';
 
 export type StockEntryRow = {
@@ -28,35 +29,40 @@ export function StockEntriesHistory({
   entries: StockEntryRow[];
   total: number;
 }) {
+  const t = useTranslations('Stock');
+  const tUnits = useTranslations('Units');
+  const locale = useLocale();
+
   return (
     <div className="rounded-xl border">
       <div className="flex flex-col gap-1 border-b px-4 py-3">
         <h2 className="text-sm font-semibold tracking-tight">
-          Historique des entrées de stock
+          {t('entries.title')}
         </h2>
         <p className="text-muted-foreground text-xs">
-          {total} entrée{total > 1 ? 's' : ''}
-          {total > 0 ? ' — réapprovisionnement des ingrédients ' : ''}
+          {t('entries.count', { count: total })}
+          {total > 0 ? t('entries.restockNote') : ''}
           {total > entries.length
-            ? `(affichage des ${entries.length} plus récentes)`
+            ? t('entries.showingRecent', { count: entries.length })
             : ''}
         </p>
       </div>
 
       {entries.length === 0 ? (
         <p className="text-muted-foreground h-20 px-4 py-6 text-sm">
-          Aucune entrée de stock pour le moment. Utilisez le bouton «&nbsp;
-          Réapprovisionner&nbsp;» sur un ingrédient.
+          {t('entries.empty')}
         </p>
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Ingrédient</TableHead>
-              <TableHead className="text-right">Quantité ajoutée</TableHead>
-              <TableHead>Fournisseur</TableHead>
-              <TableHead>Par</TableHead>
+              <TableHead>{t('entries.table.date')}</TableHead>
+              <TableHead>{t('entries.table.ingredient')}</TableHead>
+              <TableHead className="text-right">
+                {t('entries.table.quantityAdded')}
+              </TableHead>
+              <TableHead>{t('entries.table.supplier')}</TableHead>
+              <TableHead>{t('entries.table.by')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,11 +74,17 @@ export function StockEntriesHistory({
                 <TableCell className="font-medium">
                   {entry.ingredientName}{' '}
                   <span className="text-muted-foreground">
-                    ({UNIT_LABEL[entry.unit] ?? entry.unit})
+                    ({tUnits(entry.unit) ?? entry.unit})
                   </span>
                 </TableCell>
                 <TableCell className="text-right font-medium">
-                  +{formatQuantity(entry.quantityAdded, entry.unit)}
+                  +
+                  {formatQuantity(
+                    entry.quantityAdded,
+                    entry.unit,
+                    locale,
+                    tUnits(entry.unit)
+                  )}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {entry.supplierName ?? '—'}

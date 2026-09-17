@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import type { OrderStatus } from '@/generated/client';
 import { ChefHatIcon, ClockIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { advanceOrderStatus } from '@/actions/order-status';
-import { ORDER_STATUS_LABEL, formatTime } from '@/lib/sales';
+import { formatTime } from '@/lib/sales';
 
 export type KitchenOrder = {
   id: string;
@@ -22,31 +23,40 @@ export type KitchenOrder = {
   items: { dishName: string; quantity: number }[];
 };
 
-const COLUMNS: { key: string; title: string; statuses: OrderStatus[] }[] = [
+const COLUMNS: {
+  key: string;
+  titleKey: string;
+  statuses: OrderStatus[];
+}[] = [
   {
     key: 'a-preparer',
-    title: 'À préparer',
+    titleKey: 'columns.toPrepare',
     statuses: ['EN_ATTENTE', 'CONFIRMEE'],
   },
   {
     key: 'en-preparation',
-    title: 'En préparation',
+    titleKey: 'columns.preparing',
     statuses: ['EN_PREPARATION'],
   },
-  { key: 'prete', title: 'Prête', statuses: ['PRETE'] },
+  { key: 'prete', titleKey: 'columns.ready', statuses: ['PRETE'] },
 ];
-
-const ACTION_LABEL: Partial<Record<OrderStatus, string>> = {
-  CONFIRMEE: 'Confirmer',
-  EN_PREPARATION: 'Commencer',
-  PRETE: 'Prête',
-};
 
 export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const seenRef = useRef<Set<string> | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
+  const t = useTranslations('Kitchen');
+  const tCommon = useTranslations('Common');
+  const tStatus = useTranslations('OrderStatus');
+  const locale = useLocale();
+
+  function actionLabel(next: OrderStatus): string {
+    if (next === 'CONFIRMEE') return tCommon('actions.confirm');
+    if (next === 'EN_PREPARATION') return t('action.start');
+    if (next === 'PRETE') return tStatus('PRETE');
+    return tStatus(next);
+  }
 
   useEffect(() => {
     const timer = setInterval(() => router.refresh(), 8000);
@@ -73,10 +83,10 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
       formData.set('status', status);
       const result = await advanceOrderStatus(undefined, formData);
       if (result?.success) {
-        toast.success(result.message ?? 'Commande mise à jour.');
+        toast.success(result.message ?? t('updatedToast'));
         router.refresh();
       } else {
-        toast.error(result?.message ?? 'Action impossible.');
+        toast.error(result?.message ?? t('actionImpossibleToast'));
       }
     });
   }
@@ -88,10 +98,10 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
           <ChefHatIcon className="size-5" />
-          Cuisine
+          {t('title')}
         </h1>
         <p className="text-muted-foreground text-sm">
-          {total} commande{total > 1 ? 's' : ''} en cours
+          {t('count', { count: total })}
         </p>
       </div>
 
@@ -104,7 +114,7 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
             <div key={column.key} className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold tracking-tight">
-                  {column.title}
+                  {t(column.titleKey)}
                 </h2>
                 <Badge
                   variant={columnOrders.length > 0 ? 'default' : 'outline'}
@@ -115,7 +125,7 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
 
               {columnOrders.length === 0 ? (
                 <p className="text-muted-foreground rounded-xl border border-dashed px-3 py-8 text-center text-sm">
-                  Aucune commande.
+                  {t('empty')}
                 </p>
               ) : (
                 <ul className="flex flex-col gap-3">
@@ -133,24 +143,26 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-medium">
-                            Table n° {order.tableNumber}
+                            {t('tableNumber', { number: order.tableNumber })}
                             {order.tableZone ? ` · ${order.tableZone}` : ''}
                           </span>
                           <span className="text-muted-foreground flex items-center gap-1 text-xs tabular-nums">
                             <ClockIcon className="size-3.5" />
-                            {formatTime(order.createdAt)}
+                            {formatTime(order.createdAt, locale)}
                           </span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge variant="secondary">
-                            {ORDER_STATUS_LABEL[order.status]}
+                            {tStatus(order.status)}
                           </Badge>
                           {order.fromClient && (
-                            <Badge variant="outline">Client</Badge>
+                            <Badge variant="outline">{t('clientBadge')}</Badge>
                           )}
                           {order.paidByCard && (
-                            <Badge variant="outline">Payée en ligne</Badge>
+                            <Badge variant="outline">
+                              {t('paidOnlineBadge')}
+                            </Badge>
                           )}
                         </div>
 
@@ -172,13 +184,13 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
                             disabled={isPending}
                             onClick={() => advance(order, next)}
                           >
-                            {ACTION_LABEL[next] ?? ORDER_STATUS_LABEL[next]}
+                            {actionLabel(next)}
                           </Button>
                         ) : (
                           <p className="text-muted-foreground text-xs">
                             {order.status === 'PRETE'
-                              ? "Prête — en attente d'encaissement."
-                              : 'En attente de confirmation du serveur.'}
+                              ? t('readyWaiting')
+                              : t('awaitingConfirmation')}
                           </p>
                         )}
                       </li>

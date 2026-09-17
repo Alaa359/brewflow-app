@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   CalendarDaysIcon,
   ChevronLeftIcon,
@@ -21,7 +22,6 @@ import {
 } from '@/components/ui/dialog';
 import { deleteShift } from '@/actions/shifts';
 import { addDays, formatWeekRange, mondayOfWeek } from '@/lib/planning';
-import { DAY_NAMES, DAY_SHORT } from '@/lib/validations/shift';
 import type { EmployeeRole } from '@/lib/validations/employee';
 import { ShiftDialog } from '@/components/planning/shift-dialog';
 import type { WeekDay } from '@/lib/planning';
@@ -57,6 +57,9 @@ export function PlanningWeek({
   days: WeekDay[];
 }) {
   const router = useRouter();
+  const t = useTranslations('Planning');
+  const tCommon = useTranslations('Common');
+  const locale = useLocale();
   const [dialogDay, setDialogDay] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<PlanningShiftRow | null>(
     null
@@ -79,9 +82,11 @@ export function PlanningWeek({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Planning</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {establishmentName} · {formatWeekRange(monday)}
+            {establishmentName} · {formatWeekRange(monday, locale)}
           </p>
         </div>
 
@@ -89,19 +94,19 @@ export function PlanningWeek({
           <Button variant="outline" size="sm" asChild>
             <Link href={`/planning?semaine=${mondayOfWeek(todayIso)}`}>
               <CalendarDaysIcon />
-              Semaine actuelle
+              {t('currentWeek')}
             </Link>
           </Button>
           <Button variant="outline" size="icon" asChild>
             <Link href={`/planning?semaine=${prevMonday}`}>
               <ChevronLeftIcon />
-              <span className="sr-only">Semaine précédente</span>
+              <span className="sr-only">{t('prevWeek')}</span>
             </Link>
           </Button>
           <Button variant="outline" size="icon" asChild>
             <Link href={`/planning?semaine=${nextMonday}`}>
               <ChevronRightIcon />
-              <span className="sr-only">Semaine suivante</span>
+              <span className="sr-only">{t('nextWeek')}</span>
             </Link>
           </Button>
         </div>
@@ -122,7 +127,7 @@ export function PlanningWeek({
                 <div className="flex items-center justify-between gap-1">
                   <div className="flex flex-col">
                     <span className="text-sm font-medium capitalize">
-                      {DAY_SHORT[day.dow]}
+                      {t(`daysShort.${day.dow}`)}
                     </span>
                     <span className="text-muted-foreground text-xs">
                       {day.dayNumber}
@@ -134,7 +139,9 @@ export function PlanningWeek({
                     className="size-7"
                     disabled={employees.length === 0}
                     onClick={() => setDialogDay(day.dow)}
-                    aria-label={`Ajouter un créneau ${DAY_NAMES[day.dow].toLowerCase()}`}
+                    aria-label={t('addSlot', {
+                      day: t(`days.${day.dow}`).toLowerCase(),
+                    })}
                   >
                     <PlusIcon />
                   </Button>
@@ -143,7 +150,7 @@ export function PlanningWeek({
                 <div className="flex flex-1 flex-col gap-1.5">
                   {dayShifts.length === 0 ? (
                     <p className="text-muted-foreground px-1 text-xs">
-                      — libre
+                      — {t('free')}
                     </p>
                   ) : (
                     dayShifts.map((shift) => {
@@ -171,7 +178,10 @@ export function PlanningWeek({
                             size="icon"
                             className="size-6 shrink-0 opacity-0 group-hover:opacity-100"
                             onClick={() => setDeleteTarget(shift)}
-                            aria-label={`Retirer ${shift.employeeName} (${shift.startTime}–${shift.endTime})`}
+                            aria-label={t('removeSlot', {
+                              name: shift.employeeName,
+                              times: `${shift.startTime}–${shift.endTime}`,
+                            })}
                           >
                             <Trash2Icon />
                           </Button>
@@ -188,11 +198,11 @@ export function PlanningWeek({
 
       {employees.length === 0 && (
         <p className="text-muted-foreground text-sm">
-          Aucun employé dans cet établissement :{' '}
+          {t('noEmployees')}{' '}
           <Link href="/employes" className="font-medium underline">
-            créer un employé
+            {t('noEmployeesLink')}
           </Link>{' '}
-          pour pouvoir planifier des créneaux.
+          {t('noEmployeesHint')}
         </p>
       )}
 
@@ -213,22 +223,26 @@ export function PlanningWeek({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Retirer ce créneau ?</DialogTitle>
+            <DialogTitle>{t('removeSlotTitle')}</DialogTitle>
             <DialogDescription>
               {deleteTarget
-                ? `${deleteTarget.employeeName}, ${DAY_NAMES[deleteTarget.dayOfWeek].toLowerCase()} ${deleteTarget.startTime}–${deleteTarget.endTime} ne sera plus planifié.`
+                ? t('removeSlotConfirm', {
+                    name: deleteTarget.employeeName,
+                    day: t(`days.${deleteTarget.dayOfWeek}`).toLowerCase(),
+                    times: `${deleteTarget.startTime}–${deleteTarget.endTime}`,
+                  })
                 : ''}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && (
               <form action={deleteShift.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Retirer
+                  {tCommon('actions.remove')}
                 </Button>
               </form>
             )}

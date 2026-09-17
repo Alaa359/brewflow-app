@@ -1,63 +1,4 @@
 {
-  "Metadata": {
-    "title": "BrewFlow — Café & restaurant management",
-    "description": "Management app for cafés and restaurants: sales, stock, recipes and margins."
-  },
-  "Common": {
-    "appName": "BrewFlow",
-    "language": "Language",
-    "currency": "TND",
-    "loading": "Loading…",
-    "locale": {
-      "fr": "Français",
-      "en": "English",
-      "ar": "العربية"
-    },
-    "actions": {
-      "save": "Save",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "edit": "Edit",
-      "create": "Create",
-      "close": "Close",
-      "add": "Add",
-      "remove": "Remove",
-      "search": "Search",
-      "back": "Back",
-      "confirm": "Confirm",
-      "download": "Download",
-      "print": "Print",
-      "refresh": "Refresh",
-      "view": "View",
-      "apply": "Apply",
-      "reset": "Reset",
-      "yes": "Yes",
-      "no": "No"
-    }
-  },
-  "Nav": {
-    "dashboard": "Dashboard",
-    "reports": "Reports",
-    "pos": "Checkout",
-    "ingredients": "Ingredients",
-    "dishes": "Dishes",
-    "tables": "Tables",
-    "kitchen": "Kitchen",
-    "planning": "Schedule",
-    "employees": "Employees",
-    "establishments": "Locations",
-    "logout": "Sign out"
-  },
-  "Roles": {
-    "ADMIN": "Admin",
-    "SERVER": "Server",
-    "KITCHEN": "Kitchen staff"
-  },
-  "Landing": {
-    "tagline": "Complete management for your café or restaurant: sales, stock, recipes and margins.",
-    "login": "Sign in",
-    "register": "Create an establishment"
-  },
   "Auth": {
     "login": {
       "title": "Sign in",
@@ -92,14 +33,638 @@
       "loginLink": "Sign in"
     }
   },
+  "Categories": {
+    "manageCategories": "Manage categories",
+    "description": "Create, rename or reorder the menu categories.",
+    "empty": "No categories. Add one to get started.",
+    "orderLabel": "Order {order}",
+    "dishCount": "{count, plural, =0 {no dishes} =1 {1 dish} other {# dishes}}",
+    "confirmDelete": "Delete?",
+    "editCategory": "Edit {name}",
+    "deleteCategory": "Delete {name}",
+    "addCategory": "Add a category",
+    "saving": "Saving…",
+    "form": {
+      "namePlaceholder": "Category name",
+      "order": "Order"
+    }
+  },
+  "Common": {
+    "appName": "BrewFlow",
+    "language": "Language",
+    "currency": "TND",
+    "loading": "Loading…",
+    "locale": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية"
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "close": "Close",
+      "add": "Add",
+      "remove": "Remove",
+      "search": "Search",
+      "back": "Back",
+      "confirm": "Confirm",
+      "download": "Download",
+      "print": "Print",
+      "refresh": "Refresh",
+      "view": "View",
+      "apply": "Apply",
+      "reset": "Reset",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Sales — {period} · {establishmentName}",
+    "kpi": {
+      "revenue": {
+        "label": "Revenue",
+        "description": "Recorded sales"
+      },
+      "orders": {
+        "label": "Orders",
+        "description": "{count, plural, =0 {No sales} one {One sale} other {All paid}}"
+      },
+      "averageBasket": {
+        "label": "Average basket",
+        "description": "Per order"
+      }
+    },
+    "topDishes": {
+      "title": "Top dishes sold",
+      "empty": "No sales during this period."
+    },
+    "lowStock": {
+      "title": "Ingredients below threshold",
+      "empty": "No ingredients below threshold.",
+      "columns": {
+        "ingredient": "Ingredient",
+        "stock": "Stock",
+        "threshold": "Threshold",
+        "status": "Status"
+      },
+      "badges": {
+        "outOfStock": "Out of stock",
+        "belowThreshold": "Below threshold"
+      }
+    }
+  },
+  "Dishes": {
+    "title": "Dishes",
+    "dishCount": "{count, plural, =0 {0 dishes} =1 {1 dish} other {# dishes}}",
+    "categoryCount": "{count, plural, =0 {0 categories} =1 {1 category} other {# categories}}",
+    "manageCategories": "Manage categories",
+    "addDish": "Add a dish",
+    "createDish": "Create dish",
+    "newDish": "New dish",
+    "createDescription": "Enter the name, description, price, category and photo.",
+    "errors": {
+      "categoryHasDishes": "Cannot delete: this category contains dishes.",
+      "dishInRecipe": "Cannot delete: this dish is used in a recipe.",
+      "dishInOrders": "Cannot delete: this dish appears in orders."
+    },
+    "noCategoriesHint": "Create a category first to add dishes.",
+    "columns": {
+      "photo": "Photo",
+      "dish": "Dish",
+      "price": "Price",
+      "cost": "Cost",
+      "margin": "Margin",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "emptyCategories": "No categories. Start by creating one.",
+    "categoryExtra": "— {count, plural, =0 {no dishes} =1 {1 dish} other {# dishes}}",
+    "emptyCategory": "No dishes in this category.",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "recipeOf": "Recipe for {name}",
+    "editDish": "Edit {name}",
+    "deleteDish": "Delete {name}",
+    "recipeIngredientCount": "{count, plural, =1 {1 ingredient} other {# ingredients}}",
+    "orderCount": "{count, plural, =1 {1 order} other {# orders}}",
+    "editDescription": "Adjust the name, description, price, category or status.",
+    "recipeDescription": "Ingredients and quantities needed for one serving of the dish.",
+    "deleteConfirm": "Delete {name}?",
+    "deleteDescription": "This action cannot be undone. Dishes used in a recipe or an order cannot be deleted.",
+    "deletePermanently": "Delete permanently",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "E.g. coffee, mint tea…",
+      "descriptionOptional": "Description (optional)",
+      "descriptionPlaceholder": "E.g. served hot with sugar…",
+      "priceLabel": "Price ({currency})",
+      "category": "Category",
+      "chooseCategory": "Choose a category",
+      "status": "Status",
+      "photoOptional": "Photo (optional)",
+      "preview": "Preview",
+      "saving": "Saving…",
+      "saveChanges": "Save changes"
+    },
+    "recipe": {
+      "emptyIngredients": "No ingredients. Add one to calculate cost and margin.",
+      "ingredientN": "Ingredient {n}",
+      "chooseIngredient": "Choose an ingredient",
+      "qty": "Qty",
+      "quantityN": "Quantity {n}",
+      "removeLine": "Remove line {n}",
+      "addIngredient": "Add an ingredient",
+      "costPrice": "Cost price",
+      "grossMargin": "Gross margin",
+      "saving": "Saving…",
+      "saveRecipe": "Save recipe",
+      "saved": "Recipe saved."
+    }
+  },
+  "Employees": {
+    "title": "Employees",
+    "subtitle": "{count, plural, one {# employee in this store} other {# employees in this store}} · shifts are scheduled from the Schedule page",
+    "create": "Create an employee",
+    "createDialogTitle": "New employee",
+    "createDialogDescription": "Create a login account (server, kitchen staff or admin) and attach it to your stores.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "establishments": "Stores",
+      "actions": "Actions"
+    },
+    "empty": "No employees in this store.",
+    "you": "you",
+    "editDialogTitle": "Edit {name}",
+    "editDialogDescription": "Update the role, password or attached stores.",
+    "deleteDialogTitle": "Remove {name}?",
+    "deleteSelf": "You cannot remove your own account from the active store.",
+    "deleteConfirm": "{name} will lose access to this store, and their scheduled shifts will be removed. Other memberships are kept.",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Amine Ben Salah",
+      "email": "Email",
+      "emailPlaceholder": "e.g. amine@brewflow.tn",
+      "role": "Role",
+      "passwordEdit": "New password",
+      "passwordCreate": "Initial password",
+      "passwordPlaceholderEdit": "Leave blank to keep",
+      "passwordPlaceholderCreate": "At least 8 characters",
+      "establishments": "Attached stores",
+      "active": "active",
+      "submitting": "Saving…",
+      "submitEdit": "Save changes",
+      "submitCreate": "Create the employee"
+    }
+  },
   "Establishments": {
-    "switcherLabel": "Locations"
+    "switcherLabel": "Locations",
+    "title": "Locations",
+    "subtitle": "{count, plural, one {# store attached} other {# stores attached}} to your account · the switcher in the header toggles the active store",
+    "create": "Create a store",
+    "createDialogTitle": "New store",
+    "createDialogDescription": "You will be attached to this store automatically and can switch to it from the header.",
+    "errorCurrent": "Cannot delete: the currently selected store cannot be deleted.",
+    "errorLast": "Cannot delete: you must keep at least one store.",
+    "errorOrders": "Cannot delete: this store has orders.",
+    "columns": {
+      "name": "Name",
+      "address": "Address",
+      "phone": "Phone",
+      "timezone": "Timezone",
+      "members": "Members",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "empty": "No stores. Start by creating one.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "currentHint": "Active store — switch elsewhere first",
+    "onlyOne": "Only store on the account",
+    "editDialogTitle": "Edit {name}",
+    "editDialogDescription": "Update the store's details.",
+    "deleteDialogTitle": "Delete {name}?",
+    "deleteDialogDescription": "This action is irreversible: dishes, ingredients, tables, schedules and access for all staff of this store will be deleted.",
+    "deleteConfirm": "Delete permanently",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. El Farès Café",
+      "address": "Address",
+      "addressPlaceholder": "e.g. Avenue Habib Bourguiba, Sousse",
+      "phone": "Phone",
+      "phonePlaceholder": "e.g. +216 73 111 222",
+      "timezone": "Timezone",
+      "submitting": "Saving…",
+      "submitEdit": "Save changes",
+      "submitCreate": "Create the store"
+    }
+  },
+  "Ingredients": {
+    "title": "Ingredients",
+    "add": "Add an ingredient",
+    "count": "{count, plural, one {{count} ingredient} other {{count} ingredients}}",
+    "lowCount": "{count} below the minimum threshold",
+    "noLowStock": "no stock below the threshold",
+    "deleteInRecipeError": "Cannot delete: this ingredient is used in a recipe.",
+    "newTitle": "New ingredient",
+    "newDescription": "Enter the name, unit, stock, minimum threshold and cost per unit.",
+    "editTitle": "Edit {name}",
+    "editDescription": "Adjust the unit, stock, threshold or cost.",
+    "restockTitle": "Restock {name}",
+    "restockDescription": "The quantity will be added to the current stock and the entry will appear in the history.",
+    "deleteTitle": "Delete {name}?",
+    "deleteDescription": "This action is irreversible. The stock and photo of this ingredient will be permanently deleted.",
+    "deletePermanently": "Delete permanently",
+    "emptyTable": "No ingredients yet. Start by creating one.",
+    "statusLow": "Low stock",
+    "statusOk": "OK",
+    "restockSr": "Restock {name}",
+    "editSr": "Edit {name}",
+    "deleteSr": "Delete {name}",
+    "usedInRecipes": "{count, plural, one {Used in {count} recipe} other {Used in {count} recipes}}",
+    "table": {
+      "photo": "Photo",
+      "name": "Name",
+      "unit": "Unit",
+      "stock": "Stock",
+      "minThreshold": "Min. threshold",
+      "cost": "Cost",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. coffee, milk, sugar…",
+      "unit": "Unit",
+      "unitKG": "Kilogram (kg)",
+      "unitL": "Litre (L)",
+      "unitPiece": "Piece",
+      "currentStock": "Current stock",
+      "minThreshold": "Minimum threshold",
+      "costPerUnit": "Cost per unit ({currency})",
+      "photo": "Photo (optional)",
+      "previewAlt": "Preview",
+      "saving": "Saving…",
+      "saveChanges": "Save changes",
+      "createIngredient": "Create ingredient"
+    }
+  },
+  "Kitchen": {
+    "title": "Kitchen",
+    "count": "{count, plural, one {# order in progress} other {# orders in progress}}",
+    "action": {
+      "start": "Start"
+    },
+    "columns": {
+      "toPrepare": "To prepare",
+      "preparing": "Preparing",
+      "ready": "Ready"
+    },
+    "empty": "No orders.",
+    "tableNumber": "Table no. {number}",
+    "clientBadge": "Customer",
+    "paidOnlineBadge": "Paid online",
+    "readyWaiting": "Ready — waiting to be collected.",
+    "awaitingConfirmation": "Waiting for the server to confirm.",
+    "updatedToast": "Order updated.",
+    "actionImpossibleToast": "Action failed."
+  },
+  "Landing": {
+    "tagline": "Complete management for your café or restaurant: sales, stock, recipes and margins.",
+    "login": "Sign in",
+    "register": "Create an establishment"
   },
   "Menu": {
+    "title": "Our menu",
+    "subtitle": "Choose your dishes, then send your order: it goes straight to the kitchen.",
+    "table": "Table No. {number}",
+    "unavailable": "The menu is not available yet.",
+    "noDishes": "No dishes in this category.",
+    "confirmed": {
+      "title": "Order sent!",
+      "description": "Your order has been submitted. A server will bring you the total to settle."
+    },
+    "cart": {
+      "title": "Your order",
+      "empty": "Your cart is empty.",
+      "perUnit": "/ unit",
+      "decrement": "Remove one",
+      "increment": "Add one",
+      "removeLine": "Remove line",
+      "total": "Total",
+      "submit": "Send order",
+      "submitting": "Sending…"
+    },
     "notFound": {
       "title": "Invalid QR code",
       "description": "This ordering link is no longer valid. Ask your server for the up-to-date QR code.",
       "back": "Back to BrewFlow"
     }
+  },
+  "Metadata": {
+    "title": "BrewFlow — Café & restaurant management",
+    "description": "Management app for cafés and restaurants: sales, stock, recipes and margins."
+  },
+  "Nav": {
+    "dashboard": "Dashboard",
+    "reports": "Reports",
+    "pos": "Checkout",
+    "ingredients": "Ingredients",
+    "dishes": "Dishes",
+    "tables": "Tables",
+    "kitchen": "Kitchen",
+    "planning": "Schedule",
+    "employees": "Employees",
+    "establishments": "Locations",
+    "logout": "Sign out"
+  },
+  "Orders": {
+    "columns": {
+      "time": "Time",
+      "table": "Table",
+      "detail": "Details",
+      "total": "Total",
+      "status": "Status",
+      "method": "Method",
+      "ticket": "Receipt",
+      "action": "Action"
+    },
+    "pending": {
+      "title": "Pending orders",
+      "subtitle": "Customer orders to confirm, then collect payment.",
+      "empty": "No pending orders.",
+      "tableNumber": "No. {number}",
+      "clientBadge": "Customer",
+      "settle": {
+        "button": "Charge",
+        "title": "Charge order no. {number}",
+        "description": "Total to pay: {amount}.",
+        "amountReceived": "Amount received (TND)",
+        "change": "Change to return: {amount}",
+        "amountInsufficient": "Insufficient amount.",
+        "recording": "Collecting…"
+      }
+    },
+    "today": {
+      "title": "Today’s sales",
+      "summary": "{count, plural, one {# sale} other {# sales}} · Revenue {revenue}",
+      "empty": "No sales today.",
+      "reprintLabel": "Reprint receipt"
+    },
+    "updatedToast": "Order updated.",
+    "actionImpossibleToast": "Action failed.",
+    "settledToast": "Order collected.",
+    "settleImpossibleToast": "Collection failed."
+  },
+  "OrderStatus": {
+    "EN_ATTENTE": "Pending",
+    "CONFIRMEE": "Confirmed",
+    "EN_PREPARATION": "Preparing",
+    "PRETE": "Ready",
+    "PAYEE": "Paid"
+  },
+  "PaymentMethod": {
+    "CASH": "Cash",
+    "STRIPE": "Card"
+  },
+  "Period": {
+    "jour": "Today",
+    "semaine": "This week",
+    "mois": "This month"
+  },
+  "Planning": {
+    "title": "Schedule",
+    "currentWeek": "Current week",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "free": "free",
+    "addSlot": "Add a slot {day}",
+    "removeSlot": "Remove {name} ({times})",
+    "removeSlotTitle": "Remove this slot?",
+    "removeSlotConfirm": "{name}, {day} {times} will no longer be scheduled.",
+    "noEmployees": "No employees in this store:",
+    "noEmployeesLink": "create an employee",
+    "noEmployeesHint": "to schedule shifts.",
+    "days": {
+      "0": "Monday",
+      "1": "Tuesday",
+      "2": "Wednesday",
+      "3": "Thursday",
+      "4": "Friday",
+      "5": "Saturday",
+      "6": "Sunday"
+    },
+    "daysShort": {
+      "0": "Mon",
+      "1": "Tue",
+      "2": "Wed",
+      "3": "Thu",
+      "4": "Fri",
+      "5": "Sat",
+      "6": "Sun"
+    },
+    "presets": {
+      "MATIN": "Morning",
+      "APRES_MIDI": "Afternoon",
+      "SOIR": "Evening"
+    },
+    "shiftDialog": {
+      "title": "Add a slot",
+      "description": "Assign an employee to a time range.",
+      "employee": "Employee",
+      "employeePlaceholder": "Select an employee",
+      "day": "Day",
+      "preset": "Time preset",
+      "start": "Start",
+      "end": "End",
+      "submitting": "Saving…",
+      "submit": "Add the slot"
+    }
+  },
+  "Pos": {
+    "title": "Checkout (POS)",
+    "subtitle": "Select a dish to add it to the cart, then complete the sale.",
+    "noCategories": "No categories available.",
+    "noDishes": "No dishes in this category.",
+    "cart": {
+      "title": "Cart",
+      "lineTotal": "{cost} / unit",
+      "empty": "Your cart is empty.",
+      "removeOne": "Remove one",
+      "addOne": "Add one",
+      "deleteLine": "Delete line",
+      "downloadTicket": "Download receipt",
+      "total": "Total"
+    },
+    "table": {
+      "label": "Table",
+      "placeholder": "Choose a table"
+    },
+    "payment": {
+      "label": "Payment",
+      "amountReceived": "Amount received (TND)",
+      "amountInvalid": "Invalid amount.",
+      "change": "Change to return: {amount}",
+      "amountInsufficient": "Insufficient amount.",
+      "stripeNotice": "You will be redirected to Stripe to pay in euros."
+    },
+    "submit": {
+      "recording": "Recording…",
+      "cash": "Charge cash",
+      "card": "Pay by card"
+    },
+    "saleRecordedToast": "Sale recorded."
+  },
+  "Reports": {
+    "title": "Reports",
+    "presets": {
+      "today": "Today",
+      "sevenDays": "7 days",
+      "thirtyDays": "30 days",
+      "thisMonth": "This month"
+    },
+    "downloadPdf": "Download PDF",
+    "summary": {
+      "items": "Items sold"
+    },
+    "columns": {
+      "category": "Category",
+      "dish": "Dish",
+      "quantity": "Qty",
+      "fullQuantity": "Quantity",
+      "revenue": "Revenue",
+      "share": "Share",
+      "cost": "Cost",
+      "margin": "Margin",
+      "marginPercent": "Margin %",
+      "ingredient": "Ingredient",
+      "entries": "Entries",
+      "suppliers": "Suppliers",
+      "date": "Date",
+      "supplier": "Supplier",
+      "enteredBy": "Entered by"
+    },
+    "range": {
+      "from": "From",
+      "to": "To",
+      "submit": "Show"
+    },
+    "categories": {
+      "title": "Revenue by category",
+      "description": "Breakdown of recorded sales",
+      "empty": "No sales during this period."
+    },
+    "restock": {
+      "title": "Restocking",
+      "description": "{count, plural, one {# entry during the period} other {# entries during the period}}",
+      "empty": "No restocking during the period."
+    },
+    "dishes": {
+      "title": "Revenue & margin by dish",
+      "description": "Margin based on current ingredient costs",
+      "empty": "No sales during this period."
+    },
+    "restockDetail": {
+      "title": "Restocking details",
+      "count": "{count, plural, one {# entry} other {# entries}}",
+      "recentCount": "{shown} most recent of {total}"
+    }
+  },
+  "Roles": {
+    "ADMIN": "Admin",
+    "SERVER": "Server",
+    "KITCHEN": "Kitchen staff"
+  },
+  "Stock": {
+    "form": {
+      "currentStock": "Current stock:",
+      "saving": "Saving…",
+      "quantityAdded": "Quantity added ({unit})",
+      "quantityPlaceholder": "e.g. {quantity}",
+      "supplierName": "Supplier (optional)",
+      "supplierPlaceholder": "e.g. Central Market",
+      "date": "Date",
+      "addStock": "Add stock"
+    },
+    "entries": {
+      "title": "Stock entry history",
+      "count": "{count, plural, one {{count} entry} other {{count} entries}}",
+      "restockNote": " — ingredient restocking ",
+      "showingRecent": "(showing the {count} most recent)",
+      "empty": "No stock entries yet. Use the “Restock” button on an ingredient.",
+      "table": {
+        "date": "Date",
+        "ingredient": "Ingredient",
+        "quantityAdded": "Quantity added",
+        "supplier": "Supplier",
+        "by": "By"
+      }
+    }
+  },
+  "Tables": {
+    "title": "Tables",
+    "subtitle": "{count} {count, plural, one {table} other {tables}} for {name} · each QR code opens that table's client menu",
+    "addTable": "Add a table",
+    "viewQr": "View QR",
+    "generateQr": "Generate QR",
+    "regenerateQr": "Regenerate QR code",
+    "generatingLink": "Generating link…",
+    "openMenu": "Open menu",
+    "linkCopied": "Link copied",
+    "copyLink": "Copy link",
+    "editAria": "Edit table {number}",
+    "deleteAria": "Delete table {number}",
+    "numberLabel": "No. {number}",
+    "empty": "No tables yet. Add one to get started.",
+    "hasOrders": "Orders are linked to this table",
+    "columns": {
+      "table": "Table",
+      "zone": "Zone",
+      "orders": "Orders",
+      "qrCode": "QR code",
+      "actions": "Actions"
+    },
+    "error": {
+      "hasOrders": "Cannot delete: this table has orders. Deactivate it instead of deleting it.",
+      "notFound": "Table not found in this establishment."
+    },
+    "createDialog": {
+      "title": "New table",
+      "description": "The client menu QR code is generated automatically."
+    },
+    "editDialog": {
+      "title": "Edit table {number}",
+      "description": "Update the table number or zone."
+    },
+    "qrDialog": {
+      "title": "QR code — table {number}",
+      "description": "Print this code and place it on the table: customers scan it to open the menu and place their order."
+    },
+    "deleteDialog": {
+      "title": "Delete table {number}?",
+      "description": "This action cannot be undone. The linked QR code will stop working immediately.",
+      "confirm": "Delete permanently"
+    },
+    "form": {
+      "number": "Number",
+      "numberPlaceholder": "e.g. 1",
+      "zone": "Zone",
+      "zonePlaceholder": "e.g. Room, Terrace…",
+      "saving": "Saving…",
+      "save": "Save changes",
+      "create": "Create table"
+    }
+  },
+  "Units": {
+    "KG": "kg",
+    "L": "L",
+    "PIECE": "piece"
   }
 }

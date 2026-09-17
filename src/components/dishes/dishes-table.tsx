@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   BookOpenIcon,
   ListIcon,
@@ -81,6 +82,9 @@ export function DishesTable({
   error?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('Dishes');
+  const tCommon = useTranslations('Common');
+  const locale = useLocale();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<DishRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DishRow | null>(null);
@@ -92,15 +96,15 @@ export function DishesTable({
 
   const errorMessage =
     error === 'categorie'
-      ? 'Suppression impossible : cette catégorie contient des plats.'
+      ? t('errors.categoryHasDishes')
       : error === 'recette'
-        ? 'Suppression impossible : ce plat est utilisé dans une recette.'
+        ? t('errors.dishInRecipe')
         : error === 'commande'
-          ? 'Suppression impossible : ce plat apparaît dans des commandes.'
+          ? t('errors.dishInOrders')
           : undefined;
 
   const orderedCategories = [...categories].sort(
-    (a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'fr')
+    (a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, locale)
   );
 
   const totalDishes = dishes.length;
@@ -109,18 +113,19 @@ export function DishesTable({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Plats</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {totalDishes} plat{totalDishes > 1 ? 's' : ''} ·{' '}
-            {orderedCategories.length} catégorie
-            {orderedCategories.length > 1 ? 's' : ''}
+            {t('dishCount', { count: totalDishes })} ·{' '}
+            {t('categoryCount', { count: orderedCategories.length })}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setCatOpen(true)}>
             <ListIcon />
-            Gérer les catégories
+            {t('manageCategories')}
           </Button>
 
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -130,16 +135,13 @@ export function DishesTable({
                 onClick={() => setCreateOpen(true)}
               >
                 <PlusIcon />
-                Ajouter un plat
+                {t('addDish')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Nouveau plat</DialogTitle>
-                <DialogDescription>
-                  Renseignez le nom, la description, le prix, la catégorie et la
-                  photo.
-                </DialogDescription>
+                <DialogTitle>{t('newDish')}</DialogTitle>
+                <DialogDescription>{t('createDescription')}</DialogDescription>
               </DialogHeader>
               <DishForm
                 action={createDish}
@@ -161,14 +163,14 @@ export function DishesTable({
             onClick={() => router.replace('/plats')}
           >
             <XIcon />
-            <span className="sr-only">Fermer</span>
+            <span className="sr-only">{tCommon('actions.close')}</span>
           </Button>
         </div>
       )}
 
       {categories.length === 0 && (
         <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-          Créez d’abord une catégorie pour pouvoir ajouter des plats.
+          {t('noCategoriesHint')}
         </p>
       )}
 
@@ -176,13 +178,17 @@ export function DishesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Photo</TableHead>
-              <TableHead>Plat</TableHead>
-              <TableHead className="text-right">Prix</TableHead>
-              <TableHead className="text-right">Coût</TableHead>
-              <TableHead className="text-right">Marge</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('columns.photo')}</TableHead>
+              <TableHead>{t('columns.dish')}</TableHead>
+              <TableHead className="text-right">{t('columns.price')}</TableHead>
+              <TableHead className="text-right">{t('columns.cost')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.margin')}
+              </TableHead>
+              <TableHead>{t('columns.status')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.actions')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -192,7 +198,7 @@ export function DishesTable({
                   colSpan={7}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  Aucune catégorie. Commencez par en créer une.
+                  {t('emptyCategories')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -207,9 +213,7 @@ export function DishesTable({
                       >
                         {cat.name}
                         <span className="ml-2 text-xs font-normal">
-                          {catDishes.length === 0
-                            ? '— aucun plat'
-                            : `— ${catDishes.length} plat${catDishes.length > 1 ? 's' : ''}`}
+                          {t('categoryExtra', { count: catDishes.length })}
                         </span>
                       </TableCell>
                     </TableRow>
@@ -219,7 +223,7 @@ export function DishesTable({
                           colSpan={7}
                           className="text-muted-foreground h-14 text-center text-sm"
                         >
-                          Aucun plat dans cette catégorie.
+                          {t('emptyCategory')}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -240,11 +244,19 @@ export function DishesTable({
                               )}
                             </TableCell>
                             <TableCell className="text-right">
-                              {formatCost(dish.price)}
+                              {formatCost(
+                                dish.price,
+                                locale,
+                                tCommon('currency')
+                              )}
                             </TableCell>
                             <TableCell className="text-right">
                               {dish.recipeCount > 0
-                                ? formatCost(dish.cost)
+                                ? formatCost(
+                                    dish.cost,
+                                    locale,
+                                    tCommon('currency')
+                                  )
                                 : '—'}
                             </TableCell>
                             <TableCell className="text-right">
@@ -254,8 +266,16 @@ export function DishesTable({
                                     dish.marginPercent
                                   )}
                                 >
-                                  {formatCost(dish.margin)} ·{' '}
-                                  {formatPercent(dish.marginPercent ?? 0)}
+                                  {formatCost(
+                                    dish.margin,
+                                    locale,
+                                    tCommon('currency')
+                                  )}{' '}
+                                  ·{' '}
+                                  {formatPercent(
+                                    dish.marginPercent ?? 0,
+                                    locale
+                                  )}
                                 </span>
                               ) : (
                                 '—'
@@ -263,10 +283,10 @@ export function DishesTable({
                             </TableCell>
                             <TableCell>
                               {dish.isActive ? (
-                                <Badge>Actif</Badge>
+                                <Badge>{t('status.active')}</Badge>
                               ) : (
                                 <span className="text-muted-foreground text-xs">
-                                  Inactif
+                                  {t('status.inactive')}
                                 </span>
                               )}
                             </TableCell>
@@ -279,7 +299,7 @@ export function DishesTable({
                                 >
                                   <BookOpenIcon />
                                   <span className="sr-only">
-                                    Recette de {dish.name}
+                                    {t('recipeOf', { name: dish.name })}
                                   </span>
                                 </Button>
                                 <Button
@@ -289,7 +309,7 @@ export function DishesTable({
                                 >
                                   <PencilIcon />
                                   <span className="sr-only">
-                                    Modifier {dish.name}
+                                    {t('editDish', { name: dish.name })}
                                   </span>
                                 </Button>
                                 <Button
@@ -300,19 +320,23 @@ export function DishesTable({
                                 >
                                   <Trash2Icon />
                                   <span className="sr-only">
-                                    Supprimer {dish.name}
+                                    {t('deleteDish', { name: dish.name })}
                                   </span>
                                 </Button>
                               </div>
                               {locked && (
                                 <p className="text-muted-foreground mt-1 text-xs">
                                   {dish.recipeCount > 0 &&
-                                    `${dish.recipeCount} ingrédient${dish.recipeCount > 1 ? 's' : ''}`}
+                                    t('recipeIngredientCount', {
+                                      count: dish.recipeCount,
+                                    })}
                                   {dish.recipeCount > 0 &&
                                     dish.orderItemCount > 0 &&
                                     ' · '}
                                   {dish.orderItemCount > 0 &&
-                                    `${dish.orderItemCount} commande${dish.orderItemCount > 1 ? 's' : ''}`}
+                                    t('orderCount', {
+                                      count: dish.orderItemCount,
+                                    })}
                                 </p>
                               )}
                             </TableCell>
@@ -340,11 +364,10 @@ export function DishesTable({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier {editTarget?.name}</DialogTitle>
-            <DialogDescription>
-              Ajustez le nom, la description, le prix, la catégorie ou le
-              statut.
-            </DialogDescription>
+            <DialogTitle>
+              {t('editDish', { name: editTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('editDescription')}</DialogDescription>
           </DialogHeader>
           {editTarget && (
             <DishForm
@@ -364,10 +387,10 @@ export function DishesTable({
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Recette de {recipeTarget?.name}</DialogTitle>
-            <DialogDescription>
-              Ingrédients et quantités nécessaires pour une portion du plat.
-            </DialogDescription>
+            <DialogTitle>
+              {t('recipeOf', { name: recipeTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('recipeDescription')}</DialogDescription>
           </DialogHeader>
           {recipeTarget && (
             <RecipeEditor
@@ -387,21 +410,20 @@ export function DishesTable({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Supprimer {deleteTarget?.name} ?</DialogTitle>
-            <DialogDescription>
-              Cette action est irréversible. Les plats utilisés dans une recette
-              ou une commande ne peuvent pas être supprimés.
-            </DialogDescription>
+            <DialogTitle>
+              {t('deleteConfirm', { name: deleteTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('deleteDescription')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && (
               <form action={deleteDish.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Supprimer définitivement
+                  {t('deletePermanently')}
                 </Button>
               </form>
             )}

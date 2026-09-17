@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { PencilIcon, PlusIcon, Trash2Icon, UserIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,6 @@ import {
   deleteEmployee,
   updateEmployee,
 } from '@/actions/employees';
-import { ROLE_LABEL } from '@/lib/auth/roles';
 import type { EmployeeRole } from '@/lib/validations/employee';
 import {
   EmployeeForm,
@@ -40,19 +40,19 @@ export type EmployeeRow = EmployeeFormDefaults & {
   memberships: ManagedEstablishment[];
 };
 
-function roleBadge(role: EmployeeRole) {
+function roleBadge(role: EmployeeRole, tRoles: (key: string) => string) {
   switch (role) {
     case 'ADMIN':
-      return <Badge variant="secondary">{ROLE_LABEL[role]}</Badge>;
+      return <Badge variant="secondary">{tRoles(role)}</Badge>;
     case 'SERVER':
-      return <Badge>{ROLE_LABEL[role]}</Badge>;
+      return <Badge>{tRoles(role)}</Badge>;
     case 'KITCHEN':
       return (
         <Badge
           variant="outline"
           className="border-emerald-400 text-emerald-700"
         >
-          {ROLE_LABEL[role]}
+          {tRoles(role)}
         </Badge>
       );
   }
@@ -68,6 +68,9 @@ export function EmployeesTable({
   currentEstablishmentId: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('Employees');
+  const tCommon = useTranslations('Common');
+  const tRoles = useTranslations('Roles');
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<EmployeeRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EmployeeRow | null>(null);
@@ -78,10 +81,11 @@ export function EmployeesTable({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Employés</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {employees.length} employé{employees.length > 1 ? 's' : ''} dans cet
-            établissement · les créneaux se planifient sur la page Planning
+            {t('subtitle', { count: employees.length })}
           </p>
         </div>
 
@@ -89,15 +93,14 @@ export function EmployeesTable({
           <DialogTrigger asChild>
             <Button onClick={() => setCreateOpen(true)}>
               <PlusIcon />
-              Créer un employé
+              {t('create')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Nouvel employé</DialogTitle>
+              <DialogTitle>{t('createDialogTitle')}</DialogTitle>
               <DialogDescription>
-                Créez un compte de connexion (serveur, cuisinier ou admin) et
-                rattachez-le à vos établissements.
+                {t('createDialogDescription')}
               </DialogDescription>
             </DialogHeader>
             <EmployeeForm
@@ -117,11 +120,13 @@ export function EmployeesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Rôle</TableHead>
-              <TableHead>Établissements</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('columns.name')}</TableHead>
+              <TableHead>{t('columns.email')}</TableHead>
+              <TableHead>{t('columns.role')}</TableHead>
+              <TableHead>{t('columns.establishments')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.actions')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,7 +136,7 @@ export function EmployeesTable({
                   colSpan={5}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  Aucun employé dans cet établissement.
+                  {t('empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -143,7 +148,7 @@ export function EmployeesTable({
                       {employee.name}
                       {employee.isSelf && (
                         <span className="text-muted-foreground text-xs">
-                          (vous)
+                          ({t('you')})
                         </span>
                       )}
                     </span>
@@ -151,7 +156,7 @@ export function EmployeesTable({
                   <TableCell className="text-muted-foreground">
                     {employee.email}
                   </TableCell>
-                  <TableCell>{roleBadge(employee.role)}</TableCell>
+                  <TableCell>{roleBadge(employee.role, tRoles)}</TableCell>
                   <TableCell>
                     <span className="flex flex-wrap gap-1">
                       {employee.memberships.map((membership) => (
@@ -170,7 +175,7 @@ export function EmployeesTable({
                       >
                         <PencilIcon />
                         <span className="sr-only">
-                          Modifier {employee.name}
+                          {`${tCommon('actions.edit')} ${employee.name}`}
                         </span>
                       </Button>
                       <Button
@@ -180,7 +185,7 @@ export function EmployeesTable({
                       >
                         <Trash2Icon />
                         <span className="sr-only">
-                          Supprimer {employee.name}
+                          {`${tCommon('actions.delete')} ${employee.name}`}
                         </span>
                       </Button>
                     </div>
@@ -198,11 +203,10 @@ export function EmployeesTable({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier {editTarget?.name}</DialogTitle>
-            <DialogDescription>
-              Mettez à jour le rôle, le mot de passe ou les établissements
-              rattachés.
-            </DialogDescription>
+            <DialogTitle>
+              {t('editDialogTitle', { name: editTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('editDialogDescription')}</DialogDescription>
           </DialogHeader>
           {editTarget && (
             <EmployeeForm
@@ -226,22 +230,24 @@ export function EmployeesTable({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Retirer {deleteTarget?.name} ?</DialogTitle>
+            <DialogTitle>
+              {t('deleteDialogTitle', { name: deleteTarget?.name ?? '' })}
+            </DialogTitle>
             <DialogDescription>
               {deleteTarget?.isSelf
-                ? "Vous ne pouvez pas retirer votre propre compte de l'établissement actif."
-                : `${deleteTarget?.name} perdra l'accès à cet établissement, ses créneaux planifiés seront retirés. Les autres rattachements sont conservés.`}
+                ? t('deleteSelf')
+                : t('deleteConfirm', { name: deleteTarget?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && !deleteTarget.isSelf && (
               <form action={deleteEmployee.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Retirer
+                  {tCommon('actions.remove')}
                 </Button>
               </form>
             )}

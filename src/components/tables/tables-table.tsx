@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   ArmchairIcon,
   PencilIcon,
@@ -55,6 +56,8 @@ export function TablesTable({
   error?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('Tables');
+  const tCommon = useTranslations('Common');
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<TableListRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<TableListRow | null>(null);
@@ -69,20 +72,20 @@ export function TablesTable({
 
   const errorMessage =
     error === 'commandes'
-      ? 'Suppression impossible : cette table possède des commandes. Désactivez-la plutôt que de la supprimer.'
+      ? t('error.hasOrders')
       : error === 'introuvable'
-        ? 'Table introuvable dans cet établissement.'
+        ? t('error.notFound')
         : undefined;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Tables</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {tables.length} table{tables.length > 1 ? 's' : ''} pour{' '}
-            {establishmentName} · chaque QR code ouvre le menu client de la
-            table
+            {t('subtitle', { count: tables.length, name: establishmentName })}
           </p>
         </div>
 
@@ -90,14 +93,14 @@ export function TablesTable({
           <DialogTrigger asChild>
             <Button onClick={() => setCreateOpen(true)}>
               <PlusIcon />
-              Ajouter une table
+              {t('addTable')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Nouvelle table</DialogTitle>
+              <DialogTitle>{t('createDialog.title')}</DialogTitle>
               <DialogDescription>
-                Le QR code du menu client est généré automatiquement.
+                {t('createDialog.description')}
               </DialogDescription>
             </DialogHeader>
             <TableForm
@@ -118,7 +121,7 @@ export function TablesTable({
             onClick={() => router.replace('/tables')}
           >
             <XIcon />
-            <span className="sr-only">Fermer</span>
+            <span className="sr-only">{tCommon('actions.close')}</span>
           </Button>
         </div>
       )}
@@ -127,11 +130,15 @@ export function TablesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Table</TableHead>
-              <TableHead>Zone</TableHead>
-              <TableHead className="text-right">Commandes</TableHead>
-              <TableHead>QR code</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('columns.table')}</TableHead>
+              <TableHead>{t('columns.zone')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.orders')}
+              </TableHead>
+              <TableHead>{t('columns.qrCode')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.actions')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -141,7 +148,7 @@ export function TablesTable({
                   colSpan={5}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  Aucune table. Commencez par en ajouter une.
+                  {t('empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -150,7 +157,7 @@ export function TablesTable({
                   <TableCell className="font-medium">
                     <span className="flex items-center gap-2">
                       <ArmchairIcon className="text-muted-foreground size-4" />
-                      n° {table.number}
+                      {t('numberLabel', { number: table.number })}
                     </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
@@ -167,13 +174,13 @@ export function TablesTable({
                         onClick={() => setQrTarget(table)}
                       >
                         <QrCodeIcon />
-                        Voir le QR
+                        {t('viewQr')}
                       </Button>
                     ) : (
                       <form action={regenerateQr.bind(null, table.id)}>
                         <Button variant="outline" size="sm" type="submit">
                           <QrCodeIcon />
-                          Générer le QR
+                          {t('generateQr')}
                         </Button>
                       </form>
                     )}
@@ -187,7 +194,7 @@ export function TablesTable({
                       >
                         <PencilIcon />
                         <span className="sr-only">
-                          Modifier la table {table.number}
+                          {t('editAria', { number: table.number })}
                         </span>
                       </Button>
                       <Button
@@ -198,13 +205,13 @@ export function TablesTable({
                       >
                         <Trash2Icon />
                         <span className="sr-only">
-                          Supprimer la table {table.number}
+                          {t('deleteAria', { number: table.number })}
                         </span>
                       </Button>
                     </div>
                     {table.orderCount > 0 && (
                       <p className="text-muted-foreground mt-1 text-xs">
-                        Des commandes sont rattachées à cette table
+                        {t('hasOrders')}
                       </p>
                     )}
                   </TableCell>
@@ -221,10 +228,10 @@ export function TablesTable({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier la table {editTarget?.number}</DialogTitle>
-            <DialogDescription>
-              Mettez à jour le numéro ou la zone de la table.
-            </DialogDescription>
+            <DialogTitle>
+              {t('editDialog.title', { number: editTarget?.number ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('editDialog.description')}</DialogDescription>
           </DialogHeader>
           {editTarget && (
             <TableForm
@@ -244,20 +251,17 @@ export function TablesTable({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              QR code — table {qrRow?.number}
+              {t('qrDialog.title', { number: qrRow?.number ?? '' })}
               {qrRow?.zone ? ` · ${qrRow.zone}` : ''}
             </DialogTitle>
-            <DialogDescription>
-              Imprimez ce code et posez-le sur la table : le client le scanne
-              pour ouvrir le menu et envoyer sa commande.
-            </DialogDescription>
+            <DialogDescription>{t('qrDialog.description')}</DialogDescription>
           </DialogHeader>
           {qrRow?.qrCode && <TableQr token={qrRow.qrCode} />}
           <DialogFooter className="sm:justify-start">
             {qrRow && (
               <form action={regenerateQr.bind(null, qrRow.id)}>
                 <Button variant="outline" size="sm" type="submit">
-                  Régénérer le QR code
+                  {t('regenerateQr')}
                 </Button>
               </form>
             )}
@@ -272,22 +276,21 @@ export function TablesTable({
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>
-              Supprimer la table {deleteTarget?.number} ?
+              {t('deleteDialog.title', { number: deleteTarget?.number ?? '' })}
             </DialogTitle>
             <DialogDescription>
-              Cette action est irréversible. Le QR code associé cessera
-              immédiatement de fonctionner.
+              {t('deleteDialog.description')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && (
               <form action={deleteTable.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Supprimer définitivement
+                  {t('deleteDialog.confirm')}
                 </Button>
               </form>
             )}

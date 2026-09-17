@@ -1,4 +1,5 @@
 import { AlertTriangleIcon } from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { formatQuantity } from '@/lib/ingredients';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,32 +19,38 @@ export type LowStockIngredient = {
   minThreshold: number;
 };
 
-export function LowStockList({
+export async function LowStockList({
   ingredients,
 }: {
   ingredients: LowStockIngredient[];
 }) {
+  const t = await getTranslations('Dashboard.lowStock');
+  const tUnits = await getTranslations('Units');
+  const locale = await getLocale();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertTriangleIcon className="text-muted-foreground size-4" />
-          Ingrédients sous le seuil
+          {t('title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {ingredients.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            Aucun ingrédient sous le seuil.
-          </p>
+          <p className="text-muted-foreground text-sm">{t('empty')}</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ingrédient</TableHead>
-                <TableHead className="text-right">Stock</TableHead>
-                <TableHead className="text-right">Seuil</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead>{t('columns.ingredient')}</TableHead>
+                <TableHead className="text-right">
+                  {t('columns.stock')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('columns.threshold')}
+                </TableHead>
+                <TableHead>{t('columns.status')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -53,16 +60,30 @@ export function LowStockList({
                     {ingredient.name}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {formatQuantity(ingredient.currentStock, ingredient.unit)}
+                    {formatQuantity(
+                      ingredient.currentStock,
+                      ingredient.unit,
+                      locale,
+                      tUnits(ingredient.unit)
+                    )}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
-                    {formatQuantity(ingredient.minThreshold, ingredient.unit)}
+                    {formatQuantity(
+                      ingredient.minThreshold,
+                      ingredient.unit,
+                      locale,
+                      tUnits(ingredient.unit)
+                    )}
                   </TableCell>
                   <TableCell>
                     {ingredient.currentStock <= 0 ? (
-                      <Badge variant="destructive">Rupture</Badge>
+                      <Badge variant="destructive">
+                        {t('badges.outOfStock')}
+                      </Badge>
                     ) : (
-                      <Badge variant="outline">Sous le seuil</Badge>
+                      <Badge variant="outline">
+                        {t('badges.belowThreshold')}
+                      </Badge>
                     )}
                   </TableCell>
                 </TableRow>

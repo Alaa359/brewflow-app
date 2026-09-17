@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import type { OrderStatus, PaymentMethod } from '@/generated/client';
 import { HourglassIcon, ReceiptTextIcon } from 'lucide-react';
@@ -26,7 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { advanceOrderStatus, settlePendingOrder } from '@/actions/order-status';
-import { ORDER_STATUS_LABEL, formatTime } from '@/lib/sales';
+import { formatTime } from '@/lib/sales';
 import { formatCost } from '@/lib/ingredients';
 
 export type PendingOrderItem = { dishName: string; quantity: number };
@@ -55,18 +56,23 @@ const STATUS_VARIANT: Record<
   PAYEE: 'outline',
 };
 
-const NEXT_ACTION_LABEL: Partial<Record<OrderStatus, string>> = {
-  CONFIRMEE: 'Confirmer',
-  EN_PREPARATION: 'En préparation',
-  PRETE: 'Prête',
-};
-
 export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [reflect, setReflect] = useState<PendingOrder | null>(null);
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('Orders');
+  const tCommon = useTranslations('Common');
+  const tStatus = useTranslations('OrderStatus');
+  const locale = useLocale();
+
+  function actionLabel(next: OrderStatus): string {
+    if (next === 'CONFIRMEE') return tCommon('actions.confirm');
+    if (next === 'EN_PREPARATION') return tStatus('EN_PREPARATION');
+    if (next === 'PRETE') return tStatus('PRETE');
+    return tStatus(next);
+  }
 
   useEffect(() => {
     const timer = setInterval(() => router.refresh(), 8000);
@@ -81,10 +87,10 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
       formData.set('status', status);
       const result = await advanceOrderStatus(undefined, formData);
       if (result?.success) {
-        toast.success(result.message ?? 'Commande mise à jour.');
+        toast.success(result.message ?? t('updatedToast'));
         router.refresh();
       } else {
-        toast.error(result?.message ?? 'Action impossible.');
+        toast.error(result?.message ?? t('actionImpossibleToast'));
         setError(result?.errors?.form?.[0] ?? null);
       }
     });
@@ -104,16 +110,16 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
     startTransition(async () => {
       const result = await settlePendingOrder(undefined, formData);
       if (result?.success) {
-        toast.success(result.message ?? 'Commande encaissée.');
+        toast.success(result.message ?? t('settledToast'));
         setReflect(null);
         router.refresh();
       } else {
         const message =
           result?.errors?.amountReceived?.[0] ??
           result?.errors?.form?.[0] ??
-          'Encaissement impossible.';
+          t('settleImpossibleToast');
         setError(message);
-        toast.error(result?.message ?? 'Encaissement impossible.');
+        toast.error(result?.message ?? t('settleImpossibleToast'));
       }
     });
   }
@@ -129,28 +135,26 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <HourglassIcon className="size-4" />
-          Commandes en attente
+          {t('pending.title')}
           {orders.length > 0 && (
             <span className="bg-destructive rounded-full px-2 py-0.5 text-xs text-white">
               {orders.length}
             </span>
           )}
         </h2>
-        <p className="text-muted-foreground text-sm">
-          Commandes client à confirmer puis encaisser.
-        </p>
+        <p className="text-muted-foreground text-sm">{t('pending.subtitle')}</p>
       </div>
 
       <div className="rounded-xl border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Heure</TableHead>
-              <TableHead>Table</TableHead>
-              <TableHead>Détail</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="w-40">Action</TableHead>
+              <TableHead>{t('columns.time')}</TableHead>
+              <TableHead>{t('columns.table')}</TableHead>
+              <TableHead>{t('columns.detail')}</TableHead>
+              <TableHead className="text-right">{t('columns.total')}</TableHead>
+              <TableHead>{t('columns.status')}</TableHead>
+              <TableHead className="w-40">{t('columns.action')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -160,7 +164,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                   colSpan={6}
                   className="text-muted-foreground h-20 text-center"
                 >
-                  Aucune commande en attente.
+                  {t('pending.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -170,14 +174,16 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                 return (
                   <TableRow key={order.id}>
                     <TableCell className="tabular-nums">
-                      {formatTime(order.createdAt)}
+                      {formatTime(order.createdAt, locale)}
                     </TableCell>
                     <TableCell>
-                      n° {order.tableNumber}
+                      {t('pending.tableNumber', {
+                        number: order.tableNumber,
+                      })}
                       {order.tableZone ? ` — ${order.tableZone}` : ''}
                       {order.fromClient && (
                         <Badge variant="secondary" className="ml-2">
-                          Client
+                          {t('pending.clientBadge')}
                         </Badge>
                       )}
                     </TableCell>
@@ -187,11 +193,15 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                         .join(', ')}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {formatCost(order.totalAmount)}
+                      {formatCost(
+                        order.totalAmount,
+                        locale,
+                        tCommon('currency')
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant={STATUS_VARIANT[order.status]}>
-                        {ORDER_STATUS_LABEL[order.status]}
+                        {tStatus(order.status)}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -203,7 +213,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                           onClick={() => openSettle(order)}
                         >
                           <ReceiptTextIcon className="size-3.5" />
-                          Encaisser
+                          {t('pending.settle.button')}
                         </Button>
                       ) : next ? (
                         <Button
@@ -213,7 +223,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                           disabled={isPending}
                           onClick={() => advance(order, next)}
                         >
-                          {NEXT_ACTION_LABEL[next] ?? ORDER_STATUS_LABEL[next]}
+                          {actionLabel(next)}
                         </Button>
                       ) : (
                         '—'
@@ -242,14 +252,26 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Encaisser la commande n° {reflect?.tableNumber}
+              {t('pending.settle.title', {
+                number: reflect?.tableNumber ?? '',
+              })}
             </DialogTitle>
             <DialogDescription>
-              Total à régler : {reflect ? formatCost(reflect.totalAmount) : ''}.
+              {reflect
+                ? t('pending.settle.description', {
+                    amount: formatCost(
+                      reflect.totalAmount,
+                      locale,
+                      tCommon('currency')
+                    ),
+                  })
+                : ''}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="amountReceived">Montant reçu (TND)</Label>
+            <Label htmlFor="amountReceived">
+              {t('pending.settle.amountReceived')}
+            </Label>
             <Input
               id="amountReceived"
               value={amount}
@@ -266,8 +288,10 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                 }
               >
                 {change >= 0
-                  ? `Monnaie à rendre : ${formatCost(change)}`
-                  : 'Montant insuffisant.'}
+                  ? t('pending.settle.change', {
+                      amount: formatCost(change, locale, tCommon('currency')),
+                    })
+                  : t('pending.settle.amountInsufficient')}
               </p>
             )}
           </div>
@@ -277,14 +301,16 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
               variant="outline"
               onClick={() => setReflect(null)}
             >
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             <Button
               type="button"
               disabled={isPending || change === null || change < 0}
               onClick={settle}
             >
-              {isPending ? 'Encaissement…' : 'Encaisser'}
+              {isPending
+                ? t('pending.settle.recording')
+                : t('pending.settle.button')}
             </Button>
           </DialogFooter>
         </DialogContent>

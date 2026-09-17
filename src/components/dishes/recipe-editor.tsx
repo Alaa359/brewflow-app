@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useMemo, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import type { Unit } from '@/generated/client';
 import { saveRecipe } from '@/actions/recipes';
-import { formatCost, UNIT_LABEL } from '@/lib/ingredients';
+import { formatCost } from '@/lib/ingredients';
 import { computeMargins, formatPercent, marginColorClass } from '@/lib/margins';
 
 export type RecipeIngredientOption = {
@@ -59,6 +60,10 @@ export function RecipeEditor({
     saveRecipe.bind(null, dishId),
     undefined
   );
+  const t = useTranslations('Dishes.recipe');
+  const tCommon = useTranslations('Common');
+  const tUnits = useTranslations('Units');
+  const locale = useLocale();
   const [rows, setRows] = useState<EditableRow[]>(() =>
     recipe.map((line) => ({
       ingredientId: line.ingredientId,
@@ -141,7 +146,7 @@ export function RecipeEditor({
       <div className="flex max-h-72 flex-col gap-2 overflow-y-auto pr-1">
         {rows.length === 0 && (
           <p className="text-muted-foreground py-4 text-center text-sm">
-            Aucun ingrédient. Ajoutez-en un pour calculer le coût et la marge.
+            {t('emptyIngredients')}
           </p>
         )}
 
@@ -161,13 +166,13 @@ export function RecipeEditor({
                 value={row.ingredientId}
                 onValueChange={(v) => setIngredient(index, v)}
               >
-                <SelectTrigger aria-label={`Ingrédient ${index + 1}`}>
-                  <SelectValue placeholder="Choisir un ingrédient" />
+                <SelectTrigger aria-label={t('ingredientN', { n: index + 1 })}>
+                  <SelectValue placeholder={t('chooseIngredient')} />
                 </SelectTrigger>
                 <SelectContent>
                   {options.map((option) => (
                     <SelectItem key={option.id} value={option.id}>
-                      {option.name} ({UNIT_LABEL[option.unit] ?? option.unit})
+                      {option.name} ({tUnits(option.unit)})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -177,19 +182,21 @@ export function RecipeEditor({
                 step="0.001"
                 min="0.001"
                 inputMode="decimal"
-                placeholder="Qté"
-                aria-label={`Quantité ${index + 1}`}
+                placeholder={t('qty')}
+                aria-label={t('quantityN', { n: index + 1 })}
                 value={row.quantity}
                 onChange={(e) => setRow(index, { quantity: e.target.value })}
               />
               <span className="text-muted-foreground text-right text-xs">
-                {cost !== null ? formatCost(cost) : '—'}
+                {cost !== null
+                  ? formatCost(cost, locale, tCommon('currency'))
+                  : '—'}
               </span>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={`Retirer la ligne ${index + 1}`}
+                aria-label={t('removeLine', { n: index + 1 })}
                 onClick={() => removeRow(index)}
               >
                 <Trash2Icon />
@@ -206,20 +213,22 @@ export function RecipeEditor({
         onClick={addRow}
       >
         <PlusIcon />
-        Ajouter un ingrédient
+        {t('addIngredient')}
       </Button>
 
       <div className="border-t pt-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Coût de revient</span>
-          <span className="font-medium">{formatCost(margins.cost)}</span>
+          <span className="text-muted-foreground">{t('costPrice')}</span>
+          <span className="font-medium">
+            {formatCost(margins.cost, locale, tCommon('currency'))}
+          </span>
         </div>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Marge brute</span>
+          <span className="text-muted-foreground">{t('grossMargin')}</span>
           <span className={marginColorClass(margins.marginPercent)}>
-            {formatCost(margins.margin)}
+            {formatCost(margins.margin, locale, tCommon('currency'))}
             {margins.marginPercent !== null &&
-              ` · ${formatPercent(margins.marginPercent)}`}
+              ` · ${formatPercent(margins.marginPercent, locale)}`}
           </span>
         </div>
       </div>
@@ -235,12 +244,12 @@ export function RecipeEditor({
 
       {state?.success && (
         <p className="rounded-md px-3 py-2 text-xs text-emerald-600">
-          Recette enregistrée.
+          {t('saved')}
         </p>
       )}
 
       <Button type="submit" disabled={pending}>
-        {pending ? 'Enregistrement…' : 'Enregistrer la recette'}
+        {pending ? t('saving') : t('saveRecipe')}
       </Button>
     </form>
   );

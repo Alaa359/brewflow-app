@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,6 +49,7 @@ export function EstablishmentForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Establishments');
   const [timezone, setTimezone] = useState(
     establishment?.timezone ?? 'Africa/Tunis'
   );
@@ -59,12 +61,12 @@ export function EstablishmentForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Nom</Label>
+        <Label htmlFor="name">{t('form.name')}</Label>
         <Input
           id="name"
           name="name"
           type="text"
-          placeholder="Ex. : El Farès Café"
+          placeholder={t('form.namePlaceholder')}
           defaultValue={establishment?.name}
           aria-invalid={!!state?.errors?.name}
         />
@@ -76,12 +78,12 @@ export function EstablishmentForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="address">Adresse</Label>
+        <Label htmlFor="address">{t('form.address')}</Label>
         <Input
           id="address"
           name="address"
           type="text"
-          placeholder="Ex. : Avenue Habib Bourguiba, Sousse"
+          placeholder={t('form.addressPlaceholder')}
           defaultValue={establishment?.address ?? ''}
           aria-invalid={!!state?.errors?.address}
         />
@@ -93,12 +95,12 @@ export function EstablishmentForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="phone">Téléphone</Label>
+        <Label htmlFor="phone">{t('form.phone')}</Label>
         <Input
           id="phone"
           name="phone"
           type="text"
-          placeholder="Ex. : +216 73 111 222"
+          placeholder={t('form.phonePlaceholder')}
           defaultValue={establishment?.phone ?? ''}
           aria-invalid={!!state?.errors?.phone}
         />
@@ -110,7 +112,7 @@ export function EstablishmentForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Fuseau horaire</Label>
+        <Label>{t('form.timezone')}</Label>
         <input type="hidden" name="timezone" value={timezone} />
         <Select value={timezone} onValueChange={setTimezone}>
           <SelectTrigger className="w-full">
@@ -142,10 +144,10 @@ export function EstablishmentForm({
 
       <Button type="submit" disabled={pending}>
         {pending
-          ? 'Enregistrement…'
+          ? t('form.submitting')
           : establishment
-            ? 'Enregistrer les modifications'
-            : 'Créer l’établissement'}
+            ? t('form.submitEdit')
+            : t('form.submitCreate')}
       </Button>
     </form>
   );

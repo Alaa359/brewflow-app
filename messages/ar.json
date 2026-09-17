@@ -1,63 +1,4 @@
 {
-  "Metadata": {
-    "title": "BrewFlow — إدارة المقهى والمطعم",
-    "description": "تطبيق إدارة للمقاهي والمطاعم: المبيعات، المخزون، الوصفات والهوامش."
-  },
-  "Common": {
-    "appName": "BrewFlow",
-    "language": "اللغة",
-    "currency": "د.ت",
-    "loading": "جارٍ التحميل…",
-    "locale": {
-      "fr": "Français",
-      "en": "English",
-      "ar": "العربية"
-    },
-    "actions": {
-      "save": "حفظ",
-      "cancel": "إلغاء",
-      "delete": "حذف",
-      "edit": "تعديل",
-      "create": "إنشاء",
-      "close": "إغلاق",
-      "add": "إضافة",
-      "remove": "إزالة",
-      "search": "بحث",
-      "back": "رجوع",
-      "confirm": "تأكيد",
-      "download": "تنزيل",
-      "print": "طباعة",
-      "refresh": "تحديث",
-      "view": "عرض",
-      "apply": "تطبيق",
-      "reset": "إعادة تعيين",
-      "yes": "نعم",
-      "no": "لا"
-    }
-  },
-  "Nav": {
-    "dashboard": "لوحة القيادة",
-    "reports": "التقارير",
-    "pos": "الصندوق",
-    "ingredients": "المكوّنات",
-    "dishes": "الأطباق",
-    "tables": "الطاولات",
-    "kitchen": "المطبخ",
-    "planning": "جدول العمل",
-    "employees": "الموظفون",
-    "establishments": "الفروع",
-    "logout": "تسجيل الخروج"
-  },
-  "Roles": {
-    "ADMIN": "مدير",
-    "SERVER": "نادل",
-    "KITCHEN": "طاهٍ"
-  },
-  "Landing": {
-    "tagline": "إدارة كاملة لمقهاك أو مطعمك: المبيعات، المخزون، الوصفات والهوامش.",
-    "login": "تسجيل الدخول",
-    "register": "إنشاء منشأة"
-  },
   "Auth": {
     "login": {
       "title": "تسجيل الدخول",
@@ -92,14 +33,638 @@
       "loginLink": "تسجيل الدخول"
     }
   },
+  "Categories": {
+    "manageCategories": "إدارة الفئات",
+    "description": "أنشئ الفئات أو أعد تسميتها أو أعد ترتيبها في القائمة.",
+    "empty": "لا توجد فئات. أضف فئة للبدء.",
+    "orderLabel": "الترتيب {order}",
+    "dishCount": "{count, plural, =0 {لا أطباق} =1 {طبق واحد} =2 {طبقان} few {# أطباق} many {# طبقًا} other {# طبق}}",
+    "confirmDelete": "حذف؟",
+    "editCategory": "تعديل {name}",
+    "deleteCategory": "حذف {name}",
+    "addCategory": "إضافة فئة",
+    "saving": "جارٍ الحفظ…",
+    "form": {
+      "namePlaceholder": "اسم الفئة",
+      "order": "الترتيب"
+    }
+  },
+  "Common": {
+    "appName": "BrewFlow",
+    "language": "اللغة",
+    "currency": "د.ت",
+    "loading": "جارٍ التحميل…",
+    "locale": {
+      "fr": "Français",
+      "en": "English",
+      "ar": "العربية"
+    },
+    "actions": {
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "create": "إنشاء",
+      "close": "إغلاق",
+      "add": "إضافة",
+      "remove": "إزالة",
+      "search": "بحث",
+      "back": "رجوع",
+      "confirm": "تأكيد",
+      "download": "تنزيل",
+      "print": "طباعة",
+      "refresh": "تحديث",
+      "view": "عرض",
+      "apply": "تطبيق",
+      "reset": "إعادة تعيين",
+      "yes": "نعم",
+      "no": "لا"
+    }
+  },
+  "Dashboard": {
+    "title": "لوحة التحكم",
+    "subtitle": "المبيعات — {period} · {establishmentName}",
+    "kpi": {
+      "revenue": {
+        "label": "رقم المعاملات",
+        "description": "المبيعات المحصّلة"
+      },
+      "orders": {
+        "label": "الطلبات",
+        "description": "{count, plural, =0 {لا مبيعات} one {بيع واحد} other {كلها مدفوعة}}"
+      },
+      "averageBasket": {
+        "label": "متوسط السلة",
+        "description": "لكل طلب"
+      }
+    },
+    "topDishes": {
+      "title": "الأطباق الأعلى مبيعاً",
+      "empty": "لا مبيعات خلال هذه الفترة."
+    },
+    "lowStock": {
+      "title": "المكونات تحت الحد الأدنى",
+      "empty": "لا توجد مكونات تحت الحد الأدنى.",
+      "columns": {
+        "ingredient": "المكوّن",
+        "stock": "المخزون",
+        "threshold": "الحد الأدنى",
+        "status": "الحالة"
+      },
+      "badges": {
+        "outOfStock": "نفد المخزون",
+        "belowThreshold": "تحت الحد الأدنى"
+      }
+    }
+  },
+  "Dishes": {
+    "title": "الأطباق",
+    "dishCount": "{count, plural, =0 {لا أطباق} =1 {طبق واحد} =2 {طبقان} few {# أطباق} many {# طبقًا} other {# طبق}}",
+    "categoryCount": "{count, plural, =0 {لا فئات} =1 {فئة واحدة} =2 {فئتان} few {# فئات} many {# فئةً} other {# فئة}}",
+    "manageCategories": "إدارة الفئات",
+    "addDish": "إضافة طبق",
+    "createDish": "إنشاء الطبق",
+    "newDish": "طبق جديد",
+    "createDescription": "أدخل الاسم والوصف والسعر والفئة والصورة.",
+    "errors": {
+      "categoryHasDishes": "تعذّر الحذف: تحتوي هذه الفئة على أطباق.",
+      "dishInRecipe": "تعذّر الحذف: يُستخدم هذا الطبق في وصفة.",
+      "dishInOrders": "تعذّر الحذف: يظهر هذا الطبق في الطلبات."
+    },
+    "noCategoriesHint": "أنشئ فئة أولًا لإضافة الأطباق.",
+    "columns": {
+      "photo": "الصورة",
+      "dish": "الطبق",
+      "price": "السعر",
+      "cost": "التكلفة",
+      "margin": "الهامش",
+      "status": "الحالة",
+      "actions": "إجراءات"
+    },
+    "emptyCategories": "لا توجد فئات. ابدأ بإنشاء فئة.",
+    "categoryExtra": "— {count, plural, =0 {لا أطباق} =1 {طبق واحد} =2 {طبقان} few {# أطباق} many {# طبقًا} other {# طبق}}",
+    "emptyCategory": "لا أطباق في هذه الفئة.",
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "recipeOf": "وصفة {name}",
+    "editDish": "تعديل {name}",
+    "deleteDish": "حذف {name}",
+    "recipeIngredientCount": "{count, plural, =1 {مكوّن واحد} =2 {مكوّنان} few {# مكوّنات} many {# مكوّنًا} other {# مكوّن}}",
+    "orderCount": "{count, plural, =1 {طلب واحد} =2 {طلبان} few {# طلبات} many {# طلبًا} other {# طلب}}",
+    "editDescription": "عدّل الاسم أو الوصف أو السعر أو الفئة أو الحالة.",
+    "recipeDescription": "المكوّنات والكميات اللازمة لحصة واحدة من الطبق.",
+    "deleteConfirm": "حذف « {name} »؟",
+    "deleteDescription": "لا يمكن التراجع عن هذا الإجراء. لا يمكن حذف الأطباق المستخدمة في وصفة أو في طلبات.",
+    "deletePermanently": "حذف نهائيًا",
+    "form": {
+      "name": "الاسم",
+      "namePlaceholder": "مثال: قهوة، شاي بالنعناع…",
+      "descriptionOptional": "الوصف (اختياري)",
+      "descriptionPlaceholder": "مثال: يُقدَّم ساخنًا مع السكر…",
+      "priceLabel": "السعر ({currency})",
+      "category": "الفئة",
+      "chooseCategory": "اختر فئة",
+      "status": "الحالة",
+      "photoOptional": "الصورة (اختياري)",
+      "preview": "معاينة",
+      "saving": "جارٍ الحفظ…",
+      "saveChanges": "حفظ التغييرات"
+    },
+    "recipe": {
+      "emptyIngredients": "لا توجد مكوّنات. أضف مكوّنًا لحساب التكلفة والهامش.",
+      "ingredientN": "المكوّن {n}",
+      "chooseIngredient": "اختر مكوّنًا",
+      "qty": "الكمية",
+      "quantityN": "الكمية {n}",
+      "removeLine": "إزالة السطر {n}",
+      "addIngredient": "إضافة مكوّن",
+      "costPrice": "تكلفة الإنتاج",
+      "grossMargin": "هامش الربح الإجمالي",
+      "saving": "جارٍ الحفظ…",
+      "saveRecipe": "حفظ الوصفة",
+      "saved": "تم حفظ الوصفة."
+    }
+  },
+  "Employees": {
+    "title": "الموظفون",
+    "subtitle": "{count, plural, one {# موظف في هذا الفرع} other {# موظفين في هذا الفرع}} · تدار الورديات عبر صفحة جدول العمل",
+    "create": "إنشاء موظف",
+    "createDialogTitle": "موظف جديد",
+    "createDialogDescription": "أنشئ حساب تسجيل دخول (نادل أو طاه أو مدير) واربطه بفروعك.",
+    "columns": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "establishments": "الفروع",
+      "actions": "إجراءات"
+    },
+    "empty": "لا يوجد موظفون في هذا الفرع.",
+    "you": "أنت",
+    "editDialogTitle": "تعديل {name}",
+    "editDialogDescription": "يمكنك تعديل الدور أو كلمة المرور أو الفروع المرتبطة.",
+    "deleteDialogTitle": "إزالة {name}؟",
+    "deleteSelf": "لا يمكنك إزالة حسابك الخاص من الفرع النشط.",
+    "deleteConfirm": "سيفقد {name} الوصول إلى هذا الفرع وسيتم إزالة وردياته المجدولة. تبقى الارتباطات الأخرى محفوظة.",
+    "form": {
+      "name": "الاسم",
+      "namePlaceholder": "مثال: Amine Ben Salah",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "مثال: amine@brewflow.tn",
+      "role": "الدور",
+      "passwordEdit": "كلمة المرور الجديدة",
+      "passwordCreate": "كلمة المرور الأولية",
+      "passwordPlaceholderEdit": "اتركه فارغا للاحتفاظ",
+      "passwordPlaceholderCreate": "8 أحرف على الأقل",
+      "establishments": "الفروع المرتبطة",
+      "active": "نشط",
+      "submitting": "يتم الحفظ…",
+      "submitEdit": "حفظ التغييرات",
+      "submitCreate": "إنشاء الموظف"
+    }
+  },
   "Establishments": {
-    "switcherLabel": "الفروع"
+    "switcherLabel": "الفروع",
+    "title": "الفروع",
+    "subtitle": "{count, plural, one {# فرع مرتبط} other {# فروع مرتبطة}} بحسابك · المحدد في الترويسة يبدل الفرع النشط",
+    "create": "إنشاء فرع",
+    "createDialogTitle": "فرع جديد",
+    "createDialogDescription": "سيتم ربطك بهذا الفرع تلقائيا ويمكنك التبديل إليه من الترويسة.",
+    "errorCurrent": "تعذر الحذف: لا يمكن حذف الفرع المحدد حاليا.",
+    "errorLast": "تعذر الحذف: يجب أن تحتفظ بفرع واحد على الأقل.",
+    "errorOrders": "تعذر الحذف: هذا الفرع يحتوي على طلبات.",
+    "columns": {
+      "name": "الاسم",
+      "address": "العنوان",
+      "phone": "الهاتف",
+      "timezone": "المنطقة الزمنية",
+      "members": "الأعضاء",
+      "status": "الحالة",
+      "actions": "إجراءات"
+    },
+    "empty": "لا توجد فروع. ابدأ بإنشاء فرع.",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "currentHint": "الفرع النشط — انقل إلى فرع آخر أولا",
+    "onlyOne": "الفرع الوحيد للحساب",
+    "editDialogTitle": "تعديل {name}",
+    "editDialogDescription": "يمكنك تعديل بيانات الفرع.",
+    "deleteDialogTitle": "حذف {name}؟",
+    "deleteDialogDescription": "هذا الإجراء لا يمكن التراجع عنه: سيتم حذف الأطباق والمكونات والطاولات والجداول ووصول جميع موظفي هذا الفرع.",
+    "deleteConfirm": "حذف نهائيا",
+    "form": {
+      "name": "الاسم",
+      "namePlaceholder": "مثال: El Farès Café",
+      "address": "العنوان",
+      "addressPlaceholder": "مثال: Avenue Habib Bourguiba, Sousse",
+      "phone": "الهاتف",
+      "phonePlaceholder": "مثال: +216 73 111 222",
+      "timezone": "المنطقة الزمنية",
+      "submitting": "يتم الحفظ…",
+      "submitEdit": "حفظ التغييرات",
+      "submitCreate": "إنشاء الفرع"
+    }
+  },
+  "Ingredients": {
+    "title": "المكوّنات",
+    "add": "إضافة مكوّن",
+    "count": "{count, plural, zero {{count} مكوّن} one {{count} مكوّن} two {{count} مكوّنان} few {{count} مكوّنات} many {{count} مكوّنا} other {{count} مكوّن}}",
+    "lowCount": "{count} تحت الحد الأدنى",
+    "noLowStock": "لا يوجد مخزون دون الحد الأدنى",
+    "deleteInRecipeError": "تعذر الحذف: هذا المكوّن مستخدم في وصفة.",
+    "newTitle": "مكوّن جديد",
+    "newDescription": "أدخل الاسم والوحدة والمخزون والحد الأدنى والتكلفة لكل وحدة.",
+    "editTitle": "تعديل {name}",
+    "editDescription": "اضبط الوحدة أو المخزون أو الحد أو التكلفة.",
+    "restockTitle": "إعادة تزويد {name}",
+    "restockDescription": "ستضاف الكمية إلى المخزون الحالي وسيظهر الإدخال في السجل.",
+    "deleteTitle": "حذف {name} ؟",
+    "deleteDescription": "لا يمكن التراجع عن هذا الإجراء. سيحذف مخزون المكوّن وصورته نهائيًا.",
+    "deletePermanently": "حذف نهائي",
+    "emptyTable": "لا توجد مكوّنات. ابدأ بإنشاء واحد.",
+    "statusLow": "مخزون منخفض",
+    "statusOk": "حسنًا",
+    "restockSr": "إعادة تزويد {name}",
+    "editSr": "تعديل {name}",
+    "deleteSr": "حذف {name}",
+    "usedInRecipes": "{count, plural, zero {مستخدم في {count} وصفة} one {مستخدم في {count} وصفة} two {مستخدم في {count} وصفتين} few {مستخدم في {count} وصفات} many {مستخدم في {count} وصفة} other {مستخدم في {count} وصفة}}",
+    "table": {
+      "photo": "الصورة",
+      "name": "الاسم",
+      "unit": "الوحدة",
+      "stock": "المخزون",
+      "minThreshold": "الحد الأدنى",
+      "cost": "التكلفة",
+      "status": "الحالة",
+      "actions": "إجراءات"
+    },
+    "form": {
+      "name": "الاسم",
+      "namePlaceholder": "مثال: قهوة، حليب، سكر…",
+      "unit": "الوحدة",
+      "unitKG": "كيلوغرام (كغ)",
+      "unitL": "لتر (ل)",
+      "unitPiece": "حبة",
+      "currentStock": "المخزون الحالي",
+      "minThreshold": "الحد الأدنى",
+      "costPerUnit": "تكلفة الوحدة ({currency})",
+      "photo": "الصورة (اختياري)",
+      "previewAlt": "معاينة",
+      "saving": "جارٍ الحفظ…",
+      "saveChanges": "حفظ التعديلات",
+      "createIngredient": "إنشاء المكوّن"
+    }
+  },
+  "Kitchen": {
+    "title": "المطبخ",
+    "count": "{count, plural, one {# طلب قيد المعالجة} other {# طلبات قيد المعالجة}}",
+    "action": {
+      "start": "ابدأ"
+    },
+    "columns": {
+      "toPrepare": "للتحضير",
+      "preparing": "قيد التحضير",
+      "ready": "جاهزة"
+    },
+    "empty": "لا توجد طلبات.",
+    "tableNumber": "الطاولة رقم {number}",
+    "clientBadge": "عميل",
+    "paidOnlineBadge": "مدفوعة عبر الإنترنت",
+    "readyWaiting": "جاهزة — بانتظار التحصيل.",
+    "awaitingConfirmation": "في انتظار تأكيد النادل.",
+    "updatedToast": "تم تحديث الطلب.",
+    "actionImpossibleToast": "تعذر تنفيذ الإجراء."
+  },
+  "Landing": {
+    "tagline": "إدارة كاملة لمقهاك أو مطعمك: المبيعات، المخزون، الوصفات والهوامش.",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء منشأة"
   },
   "Menu": {
+    "title": "قائمتنا",
+    "subtitle": "اختر أطباقك ثم أرسل طلبك: يصل مباشرة إلى المطبخ.",
+    "table": "الطاولة رقم {number}",
+    "unavailable": "القائمة غير متاحة بعد.",
+    "noDishes": "لا توجد أطباق في هذه الفئة.",
+    "confirmed": {
+      "title": "تم إرسال الطلب!",
+      "description": "تم تسليم طلبك بنجاح. سيحضر النادل إليك الإجمالي لتسديده."
+    },
+    "cart": {
+      "title": "طلبك",
+      "empty": "سلة طلبك فارغة.",
+      "perUnit": "/ للوحدة",
+      "decrement": "إنقاص واحد",
+      "increment": "زيادة واحد",
+      "removeLine": "إزالة السطر",
+      "total": "الإجمالي",
+      "submit": "إرسال الطلب",
+      "submitting": "جارٍ الإرسال…"
+    },
     "notFound": {
       "title": "رمز QR غير صالح",
       "description": "رابط الطلب هذا لم يعد صالحًا. اطلب من النادل رمز QR المحدّث.",
       "back": "العودة إلى BrewFlow"
     }
+  },
+  "Metadata": {
+    "title": "BrewFlow — إدارة المقهى والمطعم",
+    "description": "تطبيق إدارة للمقاهي والمطاعم: المبيعات، المخزون، الوصفات والهوامش."
+  },
+  "Nav": {
+    "dashboard": "لوحة القيادة",
+    "reports": "التقارير",
+    "pos": "الصندوق",
+    "ingredients": "المكوّنات",
+    "dishes": "الأطباق",
+    "tables": "الطاولات",
+    "kitchen": "المطبخ",
+    "planning": "جدول العمل",
+    "employees": "الموظفون",
+    "establishments": "الفروع",
+    "logout": "تسجيل الخروج"
+  },
+  "Orders": {
+    "columns": {
+      "time": "الوقت",
+      "table": "الطاولة",
+      "detail": "التفاصيل",
+      "total": "الإجمالي",
+      "status": "الحالة",
+      "method": "طريقة الدفع",
+      "ticket": "الفاتورة",
+      "action": "إجراء"
+    },
+    "pending": {
+      "title": "الطلبات في الانتظار",
+      "subtitle": "طلبات العملاء التي يجب تأكيدها ثم تحصيلها.",
+      "empty": "لا توجد طلبات في الانتظار.",
+      "tableNumber": "رقم {number}",
+      "clientBadge": "عميل",
+      "settle": {
+        "button": "تحصيل",
+        "title": "تحصيل الطلب رقم {number}",
+        "description": "الإجمالي المطلوب سداده: {amount}.",
+        "amountReceived": "المبلغ المستلم (د.ت)",
+        "change": "المبلغ الواجب إرجاعه: {amount}",
+        "amountInsufficient": "المبلغ غير كافٍ.",
+        "recording": "جارٍ التحصيل…"
+      }
+    },
+    "today": {
+      "title": "مبيعات اليوم",
+      "summary": "{count, plural, one {# عملية بيع} other {# عمليات بيع}} · الإيرادات {revenue}",
+      "empty": "لا توجد مبيعات اليوم.",
+      "reprintLabel": "إعادة طباعة الفاتورة"
+    },
+    "updatedToast": "تم تحديث الطلب.",
+    "actionImpossibleToast": "تعذر تنفيذ الإجراء.",
+    "settledToast": "تم تحصيل الطلب.",
+    "settleImpossibleToast": "تعذر التحصيل."
+  },
+  "OrderStatus": {
+    "EN_ATTENTE": "في الانتظار",
+    "CONFIRMEE": "مؤكَّدة",
+    "EN_PREPARATION": "قيد التحضير",
+    "PRETE": "جاهزة",
+    "PAYEE": "مدفوعة"
+  },
+  "PaymentMethod": {
+    "CASH": "نقدًا",
+    "STRIPE": "بطاقة"
+  },
+  "Period": {
+    "jour": "اليوم",
+    "semaine": "هذا الأسبوع",
+    "mois": "هذا الشهر"
+  },
+  "Planning": {
+    "title": "جدول العمل",
+    "currentWeek": "الأسبوع الحالي",
+    "prevWeek": "الأسبوع السابق",
+    "nextWeek": "الأسبوع القادم",
+    "free": "متاح",
+    "addSlot": "أضف فتحة {day}",
+    "removeSlot": "أزل {name} ({times})",
+    "removeSlotTitle": "إزالة هذه الفتحة؟",
+    "removeSlotConfirm": "لن يتم جدولة {name}، {day} {times} بعد الآن.",
+    "noEmployees": "لا يوجد موظفون في هذا الفرع:",
+    "noEmployeesLink": "أنشئ موظفا",
+    "noEmployeesHint": "لجدولة الورديات.",
+    "days": {
+      "0": "الاثنين",
+      "1": "الثلاثاء",
+      "2": "الأربعاء",
+      "3": "الخميس",
+      "4": "الجمعة",
+      "5": "السبت",
+      "6": "الأحد"
+    },
+    "daysShort": {
+      "0": "إثنين",
+      "1": "ثلاثاء",
+      "2": "أربعاء",
+      "3": "خميس",
+      "4": "جمعة",
+      "5": "سبت",
+      "6": "أحد"
+    },
+    "presets": {
+      "MATIN": "صباح",
+      "APRES_MIDI": "بعد الظهر",
+      "SOIR": "مساء"
+    },
+    "shiftDialog": {
+      "title": "إضافة فتحة",
+      "description": "خصص موظفا لنطاق زمني.",
+      "employee": "الموظف",
+      "employeePlaceholder": "اختر موظفا",
+      "day": "اليوم",
+      "preset": "الفتحة النموذجية",
+      "start": "البداية",
+      "end": "النهاية",
+      "submitting": "يتم الحفظ…",
+      "submit": "إضافة الفتحة"
+    }
+  },
+  "Pos": {
+    "title": "الصندوق (POS)",
+    "subtitle": "اختر طبقًا لإضافته إلى السلة، ثم أكّد عملية البيع.",
+    "noCategories": "لا توجد فئات متاحة.",
+    "noDishes": "لا توجد أطباق في هذه الفئة.",
+    "cart": {
+      "title": "السلة",
+      "lineTotal": "{cost} / الوحدة",
+      "empty": "السلة فارغة.",
+      "removeOne": "إزالة واحد",
+      "addOne": "إضافة واحد",
+      "deleteLine": "حذف السطر",
+      "downloadTicket": "تنزيل الفاتورة",
+      "total": "الإجمالي"
+    },
+    "table": {
+      "label": "الطاولة",
+      "placeholder": "اختر طاولة"
+    },
+    "payment": {
+      "label": "الدفع",
+      "amountReceived": "المبلغ المستلم (د.ت)",
+      "amountInvalid": "مبلغ غير صالح.",
+      "change": "المبلغ الواجب إرجاعه: {amount}",
+      "amountInsufficient": "المبلغ غير كافٍ.",
+      "stripeNotice": "سيتم تحويلك إلى Stripe للدفع باليورو."
+    },
+    "submit": {
+      "recording": "جارٍ التسجيل…",
+      "cash": "تحصيل نقدًا",
+      "card": "الدفع بالبطاقة"
+    },
+    "saleRecordedToast": "تم تسجيل البيع."
+  },
+  "Reports": {
+    "title": "التقارير",
+    "presets": {
+      "today": "اليوم",
+      "sevenDays": "7 أيام",
+      "thirtyDays": "30 يوم",
+      "thisMonth": "هذا الشهر"
+    },
+    "downloadPdf": "تحميل ملف PDF",
+    "summary": {
+      "items": "العناصر المباعة"
+    },
+    "columns": {
+      "category": "الفئة",
+      "dish": "الطبق",
+      "quantity": "الكمية",
+      "fullQuantity": "الكمية",
+      "revenue": "رقم المعاملات",
+      "share": "الحصة",
+      "cost": "التكلفة",
+      "margin": "الهامش",
+      "marginPercent": "هامش %",
+      "ingredient": "المكوّن",
+      "entries": "الإدخالات",
+      "suppliers": "الموردون",
+      "date": "التاريخ",
+      "supplier": "المورد",
+      "enteredBy": "أدخل بواسطة"
+    },
+    "range": {
+      "from": "من",
+      "to": "إلى",
+      "submit": "عرض"
+    },
+    "categories": {
+      "title": "رقم المعاملات حسب الفئة",
+      "description": "توزيع المبيعات المحصّلة",
+      "empty": "لا مبيعات خلال هذه الفترة."
+    },
+    "restock": {
+      "title": "عمليات التزويد",
+      "description": "{count, plural, =0 {لا إدخالات خلال الفترة} one {# إدخال خلال الفترة} two {# إدخالان خلال الفترة} few {# إدخالات خلال الفترة} other {# إدخال خلال الفترة}}",
+      "empty": "لا عمليات تزويد خلال الفترة."
+    },
+    "dishes": {
+      "title": "رقم المعاملات والهامش حسب الطبق",
+      "description": "الهامش محسوب على التكاليف الحالية للمكونات",
+      "empty": "لا مبيعات خلال هذه الفترة."
+    },
+    "restockDetail": {
+      "title": "تفاصيل عمليات التزويد",
+      "count": "{count, plural, =0 {لا إدخالات} one {# إدخال} two {# إدخالان} few {# إدخالات} other {# إدخال}}",
+      "recentCount": "أحدث {shown} من أصل {total}"
+    }
+  },
+  "Roles": {
+    "ADMIN": "مدير",
+    "SERVER": "نادل",
+    "KITCHEN": "طاهٍ"
+  },
+  "Stock": {
+    "form": {
+      "currentStock": "المخزون الحالي :",
+      "saving": "جارٍ الحفظ…",
+      "quantityAdded": "الكمية المضافة ({unit})",
+      "quantityPlaceholder": "مثال: {quantity}",
+      "supplierName": "المورد (اختياري)",
+      "supplierPlaceholder": "مثال: السوق المركزي",
+      "date": "التاريخ",
+      "addStock": "إضافة إلى المخزون"
+    },
+    "entries": {
+      "title": "سجل إدخالات المخزون",
+      "count": "{count, plural, zero {{count} إدخال} one {{count} إدخال} two {{count} إدخالان} few {{count} إدخالات} many {{count} إدخالا} other {{count} إدخال}}",
+      "restockNote": " — إعادة تزويد المكوّنات ",
+      "showingRecent": "(عرض أحدث {count} منها)",
+      "empty": "لا توجد إدخالات مخزون حتى الآن. استخدم زر «إعادة التزويد» على أحد المكوّنات.",
+      "table": {
+        "date": "التاريخ",
+        "ingredient": "المكوّن",
+        "quantityAdded": "الكمية المضافة",
+        "supplier": "المورد",
+        "by": "بواسطة"
+      }
+    }
+  },
+  "Tables": {
+    "title": "الطاولات",
+    "subtitle": "{count} {count, plural, one {طاولة} two {طاولتان} few {طاولات} many {طاولة} other {طاولة}} لـ {name} · كل رمز QR يفتح قائمة العميل للطاولة",
+    "addTable": "إضافة طاولة",
+    "viewQr": "عرض رمز QR",
+    "generateQr": "إنشاء رمز QR",
+    "regenerateQr": "إعادة إنشاء رمز QR",
+    "generatingLink": "جارٍ إنشاء الرابط…",
+    "openMenu": "فتح القائمة",
+    "linkCopied": "تم نسخ الرابط",
+    "copyLink": "نسخ الرابط",
+    "editAria": "تعديل الطاولة {number}",
+    "deleteAria": "حذف الطاولة {number}",
+    "numberLabel": "رقم {number}",
+    "empty": "لا توجد طاولات بعد. ابدأ بإضافة واحدة.",
+    "hasOrders": "توجد طلبات مرتبطة بهذه الطاولة",
+    "columns": {
+      "table": "الطاولة",
+      "zone": "المنطقة",
+      "orders": "الطلبات",
+      "qrCode": "رمز QR",
+      "actions": "الإجراءات"
+    },
+    "error": {
+      "hasOrders": "تعذّر الحذف: توجد طلبات مرتبطة بهذه الطاولة. عطّلها بدلاً من حذفها.",
+      "notFound": "الطاولة غير موجودة في هذه المنشأة."
+    },
+    "createDialog": {
+      "title": "طاولة جديدة",
+      "description": "يتم إنشاء رمز QR لقائمة العميل تلقائيًا."
+    },
+    "editDialog": {
+      "title": "تعديل الطاولة {number}",
+      "description": "حدّث رقم الطاولة أو منطقتها."
+    },
+    "qrDialog": {
+      "title": "رمز QR — الطاولة {number}",
+      "description": "اطبع هذا الرمز وضعه على الطاولة: يمسحه العميل لفتح القائمة وإرسال طلبه."
+    },
+    "deleteDialog": {
+      "title": "حذف الطاولة {number}؟",
+      "description": "لا يمكن التراجع عن هذا الإجراء. سيتوقف رمز QR المرتبط عن العمل فورًا.",
+      "confirm": "حذف نهائيًا"
+    },
+    "form": {
+      "number": "الرقم",
+      "numberPlaceholder": "مثال: 1",
+      "zone": "المنطقة",
+      "zonePlaceholder": "مثال: القاعة، الشرفة…",
+      "saving": "جارٍ الحفظ…",
+      "save": "حفظ التعديلات",
+      "create": "إنشاء الطاولة"
+    }
+  },
+  "Units": {
+    "KG": "كغ",
+    "L": "ل",
+    "PIECE": "حبة"
   }
 }

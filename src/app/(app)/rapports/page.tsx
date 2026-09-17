@@ -1,4 +1,5 @@
 import { Role } from '@/generated/client';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { addDays, formatDateLabel } from '@/lib/planning';
 import { startOfMonthTunisia, toDateInputTunisia } from '@/lib/sales';
@@ -17,15 +18,17 @@ export default async function RapportsPage({
 }) {
   const user = await requireRole(Role.ADMIN);
   const { debut, fin } = await searchParams;
+  const locale = await getLocale();
+  const t = await getTranslations('Reports');
 
   const today = toDateInputTunisia();
   const monthStart = startOfMonthTunisia(new Date()).toISOString().slice(0, 10);
 
   const presets: ReportPreset[] = [
-    { label: 'Aujourd’hui', debut: today, fin: today },
-    { label: '7 jours', debut: addDays(today, -6), fin: today },
-    { label: '30 jours', debut: addDays(today, -29), fin: today },
-    { label: 'Ce mois', debut: monthStart, fin: today },
+    { label: t('presets.today'), debut: today, fin: today },
+    { label: t('presets.sevenDays'), debut: addDays(today, -6), fin: today },
+    { label: t('presets.thirtyDays'), debut: addDays(today, -29), fin: today },
+    { label: t('presets.thisMonth'), debut: monthStart, fin: today },
   ];
 
   const parsed = reportRangeSchema.safeParse({
@@ -48,10 +51,12 @@ export default async function RapportsPage({
     <main className="flex flex-1 flex-col gap-6 p-6">
       <section className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Rapports</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t('title')}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            {formatDateLabel(range.debut)} – {formatDateLabel(range.fin)} ·{' '}
-            {user.establishmentName}
+            {formatDateLabel(range.debut, locale)} –{' '}
+            {formatDateLabel(range.fin, locale)} · {user.establishmentName}
           </p>
         </div>
         <ReportRangePicker

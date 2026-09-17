@@ -3,7 +3,8 @@ import {
   ReceiptTextIcon,
   ShoppingBasketIcon,
 } from 'lucide-react';
-import { formatCost } from '@/lib/ingredients';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { formatCurrency, formatNumber } from '@/lib/i18n/format';
 import {
   Card,
   CardContent,
@@ -17,33 +18,32 @@ export type KpiCardsProps = {
   averageBasket: number;
 };
 
-export function KpiCards({
+export async function KpiCards({
   revenue,
   orderCount,
   averageBasket,
 }: KpiCardsProps) {
+  const t = await getTranslations('Dashboard.kpi');
+  const tCommon = await getTranslations('Common');
+  const locale = await getLocale();
+
   const items = [
     {
-      label: 'Chiffre d’affaires',
-      value: formatCost(revenue),
-      description: 'Ventes encaissées',
+      label: t('revenue.label'),
+      value: formatCurrency(revenue, locale, tCommon('currency')),
+      description: t('revenue.description'),
       Icon: BanknoteIcon,
     },
     {
-      label: 'Commandes',
-      value: String(orderCount),
-      description:
-        orderCount > 1
-          ? 'Toutes encaissées'
-          : orderCount === 1
-            ? 'Vente encaissée'
-            : 'Aucune vente',
+      label: t('orders.label'),
+      value: formatNumber(orderCount, locale),
+      description: t('orders.description', { count: orderCount }),
       Icon: ReceiptTextIcon,
     },
     {
-      label: 'Panier moyen',
-      value: formatCost(averageBasket),
-      description: 'Par commande',
+      label: t('averageBasket.label'),
+      value: formatCurrency(averageBasket, locale, tCommon('currency')),
+      description: t('averageBasket.description'),
       Icon: ShoppingBasketIcon,
     },
   ] as const;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +44,8 @@ function CategoryForm({
   onCancel?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Categories');
+  const tCommon = useTranslations('Common');
 
   useEffect(() => {
     if (state?.success) onSuccess?.();
@@ -54,7 +57,7 @@ function CategoryForm({
         <Input
           name="name"
           type="text"
-          placeholder="Nom de la catégorie"
+          placeholder={t('form.namePlaceholder')}
           defaultValue={defaults?.name}
           aria-invalid={!!state?.errors?.name}
         />
@@ -67,7 +70,7 @@ function CategoryForm({
 
       <div className="flex items-center gap-2">
         <Label htmlFor="sortOrder" className="shrink-0 text-xs">
-          Ordre
+          {t('form.order')}
         </Label>
         <Input
           id="sortOrder"
@@ -96,10 +99,14 @@ function CategoryForm({
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-          Annuler
+          {tCommon('actions.cancel')}
         </Button>
         <Button type="submit" size="sm" disabled={pending}>
-          {pending ? 'Enregistrement…' : defaults ? 'Enregistrer' : 'Ajouter'}
+          {pending
+            ? t('saving')
+            : defaults
+              ? tCommon('actions.save')
+              : tCommon('actions.add')}
         </Button>
       </div>
     </form>
@@ -118,9 +125,12 @@ export function CategoriesManager({
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const t = useTranslations('Categories');
+  const tCommon = useTranslations('Common');
+  const locale = useLocale();
 
   const list = [...categories].sort(
-    (a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'fr')
+    (a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, locale)
   );
   const nextOrder =
     list.reduce((max, cat) => Math.max(max, cat.sortOrder), 0) + 1;
@@ -129,16 +139,14 @@ export function CategoriesManager({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Gérer les catégories</DialogTitle>
-          <DialogDescription>
-            Créez, renommez ou réordonnez les catégories du menu.
-          </DialogDescription>
+          <DialogTitle>{t('manageCategories')}</DialogTitle>
+          <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex max-h-80 flex-col gap-2 overflow-y-auto pr-1">
           {list.length === 0 && !adding && (
             <p className="text-muted-foreground py-4 text-center text-sm">
-              Aucune catégorie. Ajoutez-en une pour commencer.
+              {t('empty')}
             </p>
           )}
 
@@ -165,10 +173,8 @@ export function CategoriesManager({
                     {cat.name}
                   </span>
                   <span className="text-muted-foreground text-xs">
-                    Ordre {cat.sortOrder} ·{' '}
-                    {cat.dishCount === 0
-                      ? 'aucun plat'
-                      : `${cat.dishCount} plat${cat.dishCount > 1 ? 's' : ''}`}
+                    {t('orderLabel', { order: cat.sortOrder })} ·{' '}
+                    {t('dishCount', { count: cat.dishCount })}
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
@@ -176,7 +182,7 @@ export function CategoriesManager({
                     <>
                       <form action={deleteCategory.bind(null, cat.id)}>
                         <Button type="submit" size="sm" variant="destructive">
-                          Supprimer ?
+                          {t('confirmDelete')}
                         </Button>
                       </form>
                       <Button
@@ -185,7 +191,7 @@ export function CategoriesManager({
                         variant="ghost"
                         onClick={() => setConfirmDeleteId(null)}
                       >
-                        Annuler
+                        {tCommon('actions.cancel')}
                       </Button>
                     </>
                   ) : (
@@ -193,7 +199,7 @@ export function CategoriesManager({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Modifier ${cat.name}`}
+                        aria-label={t('editCategory', { name: cat.name })}
                         onClick={() => setEditingId(cat.id)}
                       >
                         <PencilIcon />
@@ -201,7 +207,7 @@ export function CategoriesManager({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Supprimer ${cat.name}`}
+                        aria-label={t('deleteCategory', { name: cat.name })}
                         disabled={cat.dishCount > 0}
                         onClick={() => setConfirmDeleteId(cat.id)}
                       >
@@ -233,7 +239,7 @@ export function CategoriesManager({
             onClick={() => setAdding(true)}
           >
             <PlusIcon />
-            Ajouter une catégorie
+            {t('addCategory')}
           </Button>
         )}
       </DialogContent>

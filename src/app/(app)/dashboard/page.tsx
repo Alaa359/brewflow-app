@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { Role } from '@/generated/client';
+import { getTranslations } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
-import { PERIOD_LABEL, periodStart, type Period } from '@/lib/sales';
+import { periodStart, type Period } from '@/lib/sales';
 import { PeriodSwitcher } from '@/components/dashboard/period-switcher';
 import { KpiCards } from '@/components/dashboard/kpi-cards';
 import { TopDishes, type TopDish } from '@/components/dashboard/top-dishes';
@@ -22,6 +23,9 @@ export default async function DashboardPage({
   const { periode } = await searchParams;
   const period: Period = periodSchema.parse(periode);
   const start = periodStart(period);
+
+  const t = await getTranslations('Dashboard');
+  const tPeriod = await getTranslations('Period');
 
   const [orders, ingredients] = await Promise.all([
     prisma.order.findMany({
@@ -98,11 +102,13 @@ export default async function DashboardPage({
       <section className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Tableau de bord
+            {t('title')}
           </h1>
           <p className="text-muted-foreground text-sm">
-            Ventes — {PERIOD_LABEL[period].toLocaleLowerCase('fr-FR')} ·{' '}
-            {user.establishmentName}
+            {t('subtitle', {
+              period: tPeriod(period).toLowerCase(),
+              establishmentName: user.establishmentName,
+            })}
           </p>
         </div>
         <PeriodSwitcher current={period} />

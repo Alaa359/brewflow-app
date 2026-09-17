@@ -1,3 +1,5 @@
+import { formatNumber } from '@/lib/i18n/format';
+
 export function roundMoney(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
@@ -20,12 +22,8 @@ export function computeMargins(
   return { cost, margin, marginPercent };
 }
 
-const percentFormatter = new Intl.NumberFormat('fr-FR', {
-  maximumFractionDigits: 0,
-});
-
-export function formatPercent(value: number): string {
-  return `${percentFormatter.format(value)} %`;
+export function formatPercent(value: number, locale = 'fr'): string {
+  return `${formatNumber(value, locale, { maximumFractionDigits: 0 })} %`;
 }
 
 export function marginColorClass(percent: number | null): string {

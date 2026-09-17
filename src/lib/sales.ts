@@ -1,4 +1,5 @@
 import type { OrderStatus, PaymentMethod } from '@/generated/client';
+import { createDateFormatter } from '@/lib/i18n/format';
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   EN_ATTENTE: 'En attente',
@@ -35,27 +36,25 @@ export function toDateInputTunisia(date: Date = new Date()): string {
   return dateFormatter.format(date);
 }
 
-const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
-  timeZone: LOCAL_TIME_ZONE,
-  hour: '2-digit',
-  minute: '2-digit',
-});
-
-export function formatTime(date: Date): string {
-  return timeFormatter.format(date);
+export function formatTime(date: Date, locale = 'fr'): string {
+  return createDateFormatter(locale, {
+    timeZone: LOCAL_TIME_ZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 }
 
-const dateTimeFormatter = new Intl.DateTimeFormat('fr-FR', {
-  timeZone: LOCAL_TIME_ZONE,
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-});
-
-export function formatDateTime(date: Date): string {
-  return dateTimeFormatter.format(date);
+export function formatDateTime(date: Date, locale = 'fr'): string {
+  return createDateFormatter(locale, {
+    timeZone: LOCAL_TIME_ZONE,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 }
 
 export type Period = 'jour' | 'semaine' | 'mois';

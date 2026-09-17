@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useActionState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import {
   MinusIcon,
@@ -87,14 +88,19 @@ export function PosClient({
     createCheckoutSession,
     undefined
   );
+  const t = useTranslations('Pos');
+  const tCommon = useTranslations('Common');
+  const tPayment = useTranslations('PaymentMethod');
+  const locale = useLocale();
 
   useEffect(() => {
     if (state?.success) {
-      toast.success(state.message ?? 'Vente enregistrée.');
+      toast.success(state.message ?? t('saleRecordedToast'));
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCart([]);
       setAmountReceived('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   const cartCount = cart.reduce((acc, line) => acc + line.quantity, 0);
@@ -163,17 +169,14 @@ export function PosClient({
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Caisse (POS)
+            {t('title')}
           </h1>
-          <p className="text-muted-foreground text-sm">
-            Sélectionnez un plat pour l’ajouter au panier, puis validez la
-            vente.
-          </p>
+          <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
         </div>
 
         {categories.length === 0 ? (
           <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-            Aucune catégorie disponible.
+            {t('noCategories')}
           </p>
         ) : (
           <>
@@ -193,7 +196,7 @@ export function PosClient({
 
             {activeDishes.length === 0 ? (
               <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-                Aucun plat dans cette catégorie.
+                {t('noDishes')}
               </p>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
@@ -208,7 +211,7 @@ export function PosClient({
                     <div className="flex flex-col gap-0.5 p-3">
                       <span className="text-sm font-medium">{dish.name}</span>
                       <span className="text-muted-foreground text-xs">
-                        {formatCost(dish.price)}
+                        {formatCost(dish.price, locale, tCommon('currency'))}
                       </span>
                     </div>
                   </button>
@@ -223,7 +226,7 @@ export function PosClient({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShoppingCartIcon className="size-4" />
-            Panier
+            {t('cart.title')}
             {cartCount > 0 && (
               <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
                 {cartCount}
@@ -250,10 +253,10 @@ export function PosClient({
           />
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label>Table</Label>
+              <Label>{t('table.label')}</Label>
               <Select value={tableId} onValueChange={setTableId}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choisir une table" />
+                  <SelectValue placeholder={t('table.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {tables.map((table) => (
@@ -268,7 +271,7 @@ export function PosClient({
 
             {cart.length === 0 ? (
               <p className="text-muted-foreground rounded-lg border px-3 py-6 text-center text-sm">
-                Panier vide.
+                {t('cart.empty')}
               </p>
             ) : (
               <ul className="flex flex-col gap-3">
@@ -282,7 +285,13 @@ export function PosClient({
                         {line.dish.name}
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        {formatCost(line.dish.price)} / unité
+                        {t('cart.lineTotal', {
+                          cost: formatCost(
+                            line.dish.price,
+                            locale,
+                            tCommon('currency')
+                          ),
+                        })}
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -294,7 +303,7 @@ export function PosClient({
                         onClick={() => bump(index, -1)}
                       >
                         <MinusIcon />
-                        <span className="sr-only">Retirer un</span>
+                        <span className="sr-only">{t('cart.removeOne')}</span>
                       </Button>
                       <span className="w-7 text-center text-sm tabular-nums">
                         {line.quantity}
@@ -307,7 +316,7 @@ export function PosClient({
                         onClick={() => bump(index, 1)}
                       >
                         <PlusIcon />
-                        <span className="sr-only">Ajouter un</span>
+                        <span className="sr-only">{t('cart.addOne')}</span>
                       </Button>
                       <Button
                         type="button"
@@ -317,7 +326,7 @@ export function PosClient({
                         onClick={() => removeLine(index)}
                       >
                         <Trash2Icon />
-                        <span className="sr-only">Supprimer la ligne</span>
+                        <span className="sr-only">{t('cart.deleteLine')}</span>
                       </Button>
                     </div>
                   </li>
@@ -333,20 +342,20 @@ export function PosClient({
                 className="text-primary hover:text-primary/80 flex items-center gap-1.5 text-xs font-medium"
               >
                 <ReceiptTextIcon className="size-3.5" />
-                Télécharger le ticket
+                {t('cart.downloadTicket')}
               </a>
             ) : null}
 
             <div className="flex flex-col gap-4 border-t pt-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Total</span>
+                <span className="text-sm font-medium">{t('cart.total')}</span>
                 <span className="text-lg font-semibold tabular-nums">
-                  {formatCost(cartTotal)}
+                  {formatCost(cartTotal, locale, tCommon('currency'))}
                 </span>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label>Paiement</Label>
+                <Label>{t('payment.label')}</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     type="button"
@@ -354,7 +363,7 @@ export function PosClient({
                     size="sm"
                     onClick={() => setMethod('CASH')}
                   >
-                    Espèces
+                    {tPayment('CASH')}
                   </Button>
                   {canStripe ? (
                     <Button
@@ -363,7 +372,7 @@ export function PosClient({
                       size="sm"
                       onClick={() => setMethod('STRIPE')}
                     >
-                      Carte
+                      {tPayment('STRIPE')}
                     </Button>
                   ) : null}
                 </div>
@@ -371,7 +380,9 @@ export function PosClient({
 
               {method === 'CASH' ? (
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="amountReceived">Montant reçu (TND)</Label>
+                  <Label htmlFor="amountReceived">
+                    {t('payment.amountReceived')}
+                  </Label>
                   <Input
                     id="amountReceived"
                     value={amountReceived}
@@ -383,7 +394,7 @@ export function PosClient({
                     (receivedAmount === null ||
                       Number.isNaN(receivedAmount)) && (
                       <p className="text-destructive text-xs">
-                        Montant invalide.
+                        {t('payment.amountInvalid')}
                       </p>
                     )}
                   {receivedAmount !== null &&
@@ -397,14 +408,20 @@ export function PosClient({
                         }
                       >
                         {changeAmount >= 0
-                          ? `Monnaie à rendre : ${formatCost(changeAmount)}`
-                          : 'Montant insuffisant.'}
+                          ? t('payment.change', {
+                              amount: formatCost(
+                                changeAmount,
+                                locale,
+                                tCommon('currency')
+                              ),
+                            })
+                          : t('payment.amountInsufficient')}
                       </p>
                     )}
                 </div>
               ) : (
                 <p className="text-muted-foreground text-xs">
-                  Vous serez redirigé vers Stripe pour régler en euros.
+                  {t('payment.stripeNotice')}
                 </p>
               )}
             </div>
@@ -445,10 +462,10 @@ export function PosClient({
           <CardFooter>
             <Button type="submit" className="w-full" disabled={!canSubmit}>
               {viewPending
-                ? 'Enregistrement…'
+                ? t('submit.recording')
                 : method === 'CASH'
-                  ? 'Encaisser'
-                  : 'Payer par carte'}
+                  ? t('submit.cash')
+                  : t('submit.card')}
             </Button>
           </CardFooter>
         </form>

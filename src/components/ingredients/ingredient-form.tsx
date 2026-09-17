@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,6 +38,8 @@ export function IngredientForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const t = useTranslations('Ingredients');
+  const tCommon = useTranslations('Common');
   const [unit, setUnit] = useState<Unit>(ingredient?.unit ?? 'KG');
   const [filePreview, setFilePreview] = useState<string | null>(null);
 
@@ -49,12 +52,12 @@ export function IngredientForm({
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Nom</Label>
+        <Label htmlFor="name">{t('form.name')}</Label>
         <Input
           id="name"
           name="name"
           type="text"
-          placeholder="Ex. : café, lait, sucre…"
+          placeholder={t('form.namePlaceholder')}
           defaultValue={ingredient?.name}
           aria-invalid={!!state?.errors?.name}
         />
@@ -66,16 +69,16 @@ export function IngredientForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label>Unité</Label>
+        <Label>{t('form.unit')}</Label>
         <input type="hidden" name="unit" value={unit} />
         <Select value={unit} onValueChange={(v) => setUnit(v as Unit)}>
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="KG">Kilogramme (kg)</SelectItem>
-            <SelectItem value="L">Litre (L)</SelectItem>
-            <SelectItem value="PIECE">Pièce</SelectItem>
+            <SelectItem value="KG">{t('form.unitKG')}</SelectItem>
+            <SelectItem value="L">{t('form.unitL')}</SelectItem>
+            <SelectItem value="PIECE">{t('form.unitPiece')}</SelectItem>
           </SelectContent>
         </Select>
         {state?.errors?.unit?.map((e) => (
@@ -87,7 +90,7 @@ export function IngredientForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="currentStock">Stock actuel</Label>
+          <Label htmlFor="currentStock">{t('form.currentStock')}</Label>
           <Input
             id="currentStock"
             name="currentStock"
@@ -106,7 +109,7 @@ export function IngredientForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="minThreshold">Seuil minimum</Label>
+          <Label htmlFor="minThreshold">{t('form.minThreshold')}</Label>
           <Input
             id="minThreshold"
             name="minThreshold"
@@ -126,7 +129,9 @@ export function IngredientForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="costPerUnit">Coût par unité (DT)</Label>
+        <Label htmlFor="costPerUnit">
+          {t('form.costPerUnit', { currency: tCommon('currency') })}
+        </Label>
         <Input
           id="costPerUnit"
           name="costPerUnit"
@@ -145,13 +150,13 @@ export function IngredientForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="image">Photo (optionnel)</Label>
+        <Label htmlFor="image">{t('form.photo')}</Label>
         <div className="flex items-center gap-3">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
-              alt="Aperçu"
+              alt={t('form.previewAlt')}
               className="bg-muted size-14 rounded-lg object-cover"
             />
           ) : (
@@ -183,10 +188,10 @@ export function IngredientForm({
 
       <Button type="submit" disabled={pending}>
         {pending
-          ? 'Enregistrement…'
+          ? t('form.saving')
           : ingredient
-            ? 'Enregistrer les modifications'
-            : 'Créer l’ingrédient'}
+            ? t('form.saveChanges')
+            : t('form.createIngredient')}
       </Button>
     </form>
   );

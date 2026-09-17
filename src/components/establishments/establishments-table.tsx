@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   PencilIcon,
   PlusIcon,
@@ -55,6 +56,8 @@ export function EstablishmentsTable({
   error?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations('Establishments');
+  const tCommon = useTranslations('Common');
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<EstablishmentRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EstablishmentRow | null>(
@@ -67,11 +70,11 @@ export function EstablishmentsTable({
 
   const errorMessage =
     error === 'courant'
-      ? "Suppression impossible : l'établissement actuellement sélectionné ne peut pas être supprimé."
+      ? t('errorCurrent')
       : error === 'dernier'
-        ? 'Suppression impossible : vous devez conserver au moins un établissement.'
+        ? t('errorLast')
         : error === 'commandes'
-          ? 'Suppression impossible : cet établissement possède des commandes.'
+          ? t('errorOrders')
           : undefined;
 
   return (
@@ -79,13 +82,10 @@ export function EstablishmentsTable({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Établissements
+            {t('title')}
           </h1>
           <p className="text-muted-foreground text-sm">
-            {establishments.length} établissement
-            {establishments.length > 1 ? 's' : ''} rattaché
-            {establishments.length > 1 ? 's' : ''} à votre compte · le sélecteur
-            dans l’en-tête bascule le magasin actif
+            {t('subtitle', { count: establishments.length })}
           </p>
         </div>
 
@@ -93,15 +93,14 @@ export function EstablishmentsTable({
           <DialogTrigger asChild>
             <Button onClick={() => setCreateOpen(true)}>
               <PlusIcon />
-              Créer un établissement
+              {t('create')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Nouvel établissement</DialogTitle>
+              <DialogTitle>{t('createDialogTitle')}</DialogTitle>
               <DialogDescription>
-                Vous serez rattaché à ce magasin automatiquement et pourrez y
-                basculer depuis l’en-tête.
+                {t('createDialogDescription')}
               </DialogDescription>
             </DialogHeader>
             <EstablishmentForm
@@ -122,7 +121,7 @@ export function EstablishmentsTable({
             onClick={() => router.replace('/etablissements')}
           >
             <XIcon />
-            <span className="sr-only">Fermer</span>
+            <span className="sr-only">{tCommon('actions.close')}</span>
           </Button>
         </div>
       )}
@@ -131,13 +130,17 @@ export function EstablishmentsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Adresse</TableHead>
-              <TableHead>Téléphone</TableHead>
-              <TableHead>Fuseau</TableHead>
-              <TableHead className="text-right">Membres</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('columns.name')}</TableHead>
+              <TableHead>{t('columns.address')}</TableHead>
+              <TableHead>{t('columns.phone')}</TableHead>
+              <TableHead>{t('columns.timezone')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.members')}
+              </TableHead>
+              <TableHead>{t('columns.status')}</TableHead>
+              <TableHead className="text-right">
+                {t('columns.actions')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -147,7 +150,7 @@ export function EstablishmentsTable({
                   colSpan={7}
                   className="text-muted-foreground h-24 text-center"
                 >
-                  Aucun établissement. Commencez par en créer un.
+                  {t('empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -173,10 +176,10 @@ export function EstablishmentsTable({
                     </TableCell>
                     <TableCell>
                       {est.isCurrent ? (
-                        <Badge>Actif</Badge>
+                        <Badge>{t('active')}</Badge>
                       ) : (
                         <span className="text-muted-foreground text-xs">
-                          Inactif
+                          {t('inactive')}
                         </span>
                       )}
                     </TableCell>
@@ -188,7 +191,9 @@ export function EstablishmentsTable({
                           onClick={() => setEditTarget(est)}
                         >
                           <PencilIcon />
-                          <span className="sr-only">Modifier {est.name}</span>
+                          <span className="sr-only">
+                            {`${tCommon('actions.edit')} ${est.name}`}
+                          </span>
                         </Button>
                         <Button
                           variant="ghost"
@@ -197,17 +202,19 @@ export function EstablishmentsTable({
                           onClick={() => setDeleteTarget(est)}
                         >
                           <Trash2Icon />
-                          <span className="sr-only">Supprimer {est.name}</span>
+                          <span className="sr-only">
+                            {`${tCommon('actions.delete')} ${est.name}`}
+                          </span>
                         </Button>
                       </div>
                       {est.isCurrent && (
                         <p className="text-muted-foreground mt-1 text-xs">
-                          Magasin actif — basculez d’abord ailleurs
+                          {t('currentHint')}
                         </p>
                       )}
                       {!est.isCurrent && membershipCount <= 1 && (
                         <p className="text-muted-foreground mt-1 text-xs">
-                          Seul établissement du compte
+                          {t('onlyOne')}
                         </p>
                       )}
                     </TableCell>
@@ -225,10 +232,10 @@ export function EstablishmentsTable({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier {editTarget?.name}</DialogTitle>
-            <DialogDescription>
-              Mettez à jour les coordonnées du magasin.
-            </DialogDescription>
+            <DialogTitle>
+              {t('editDialogTitle', { name: editTarget?.name ?? '' })}
+            </DialogTitle>
+            <DialogDescription>{t('editDialogDescription')}</DialogDescription>
           </DialogHeader>
           {editTarget && (
             <EstablishmentForm
@@ -247,22 +254,22 @@ export function EstablishmentsTable({
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Supprimer {deleteTarget?.name} ?</DialogTitle>
+            <DialogTitle>
+              {t('deleteDialogTitle', { name: deleteTarget?.name ?? '' })}
+            </DialogTitle>
             <DialogDescription>
-              Cette action est irréversible : plats, ingrédients, tables,
-              plannings et accès de tout le personnel de ce magasin seront
-              supprimés.
+              {t('deleteDialogDescription')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Annuler
+              {tCommon('actions.cancel')}
             </Button>
             {deleteTarget && (
               <form action={deleteEstablishment.bind(null, deleteTarget.id)}>
                 <Button variant="destructive" type="submit">
                   <Trash2Icon />
-                  Supprimer définitivement
+                  {t('deleteConfirm')}
                 </Button>
               </form>
             )}

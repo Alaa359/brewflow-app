@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { cn } from 'cn';
+import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export type ReportPreset = { label: string; debut: string; fin: string };
 
-export function ReportRangePicker({
+export async function ReportRangePicker({
   debut,
   fin,
   presets,
@@ -17,6 +18,8 @@ export function ReportRangePicker({
   presets: ReportPreset[];
   error?: string;
 }) {
+  const t = await getTranslations('Reports.range');
+
   return (
     <div className="flex flex-col items-end gap-2">
       <form
@@ -26,7 +29,7 @@ export function ReportRangePicker({
       >
         <div className="grid gap-1">
           <Label htmlFor="debut" className="text-muted-foreground text-xs">
-            Du
+            {t('from')}
           </Label>
           <Input
             id="debut"
@@ -39,7 +42,7 @@ export function ReportRangePicker({
         </div>
         <div className="grid gap-1">
           <Label htmlFor="fin" className="text-muted-foreground text-xs">
-            Au
+            {t('to')}
           </Label>
           <Input
             id="fin"
@@ -51,7 +54,7 @@ export function ReportRangePicker({
           />
         </div>
         <Button type="submit" size="sm">
-          Afficher
+          {t('submit')}
         </Button>
       </form>
 

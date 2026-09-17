@@ -1,5 +1,6 @@
 import { TrophyIcon } from 'lucide-react';
-import { formatCost } from '@/lib/ingredients';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { formatCurrency, formatNumber } from '@/lib/i18n/format';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export type TopDish = {
@@ -8,7 +9,11 @@ export type TopDish = {
   revenue: number;
 };
 
-export function TopDishes({ dishes }: { dishes: TopDish[] }) {
+export async function TopDishes({ dishes }: { dishes: TopDish[] }) {
+  const t = await getTranslations('Dashboard.topDishes');
+  const tCommon = await getTranslations('Common');
+  const locale = await getLocale();
+
   const maxQuantity = Math.max(...dishes.map((dish) => dish.quantity), 1);
 
   return (
@@ -16,14 +21,12 @@ export function TopDishes({ dishes }: { dishes: TopDish[] }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrophyIcon className="text-muted-foreground size-4" />
-          Top plats vendus
+          {t('title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {dishes.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            Aucune vente sur cette période.
-          </p>
+          <p className="text-muted-foreground text-sm">{t('empty')}</p>
         ) : (
           dishes.map((dish, index) => (
             <div key={dish.name} className="flex items-center gap-3">
@@ -34,7 +37,8 @@ export function TopDishes({ dishes }: { dishes: TopDish[] }) {
                 <div className="flex items-baseline justify-between gap-2 text-sm">
                   <span className="truncate font-medium">{dish.name}</span>
                   <span className="text-muted-foreground shrink-0 tabular-nums">
-                    {dish.quantity} · {formatCost(dish.revenue)}
+                    {formatNumber(dish.quantity, locale)} ·{' '}
+                    {formatCurrency(dish.revenue, locale, tCommon('currency'))}
                   </span>
                 </div>
                 <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
