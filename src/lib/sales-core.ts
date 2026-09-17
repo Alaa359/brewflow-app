@@ -1,7 +1,12 @@
 import 'server-only';
 import { OrderStatus, PaymentMethod, Prisma } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
-import { formatQuantity } from '@/lib/ingredients';
+import type { MessageTranslator } from '@/lib/i18n/translator';
+
+export type SaleContext = {
+  t: MessageTranslator;
+  formatQuantity: (value: number, unit: string) => string;
+};
 
 export type SaleLine = { dishId: string; quantity: number };
 
@@ -31,7 +36,7 @@ export const SALE_TX_OPTIONS = {
 export class SaleValidationError extends Error {
   errors: string[];
 
-  constructor(errors: string[], message = 'Vente impossible.') {
+  constructor(errors: string[], message: string) {
     super(message);
     this.name = 'SaleValidationError';
     this.errors = errors;
@@ -52,7 +57,8 @@ async function fetchSaleDishes(
   tx: Prisma.TransactionClient,
   establishmentId: string,
   lines: SaleLine[],
-  checkActive: boolean
+  checkActive: boolean,
+  t: MessageTranslator
 ): Promise<DishWithRecipe[]> {
   const dishes = await tx.dish.findMany({
     where: {
@@ -69,7 +75,7 @@ async function fetchSaleDishes(
     },
   });
   if (dishes.length !== lines.length) {
-    throw new SaleValidationError(['Un article du panier est indisponible.']);
+    throw new SaleValidationError([t('cartUnavailable')], t('saleFailed'));
   }
   return dishes;
 }
@@ -80,13 +86,15 @@ export async function buildSalePlan(
   tx: Prisma.TransactionClient,
   establishmentId: string,
   lines: SaleLine[],
+  context: SaleContext,
   options: SalePlanOptions = {}
 ): Promise<SalePlan> {
   const dishes = await fetchSaleDishes(
     tx,
     establishmentId,
     lines,
-    options.checkActive ?? true
+    options.checkActive ?? true,
+    context.t
   );
   const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
 
@@ -134,18 +142,22 @@ export async function buildSalePlan(
   for (const [ingredientId, required] of needed) {
     const available = stockById.get(ingredientId);
     if (!available) {
-      shortfalls.push('Un ingrédient requis est introuvable.');
+      shortfalls.push(context.t('ingredientMissing'));
       continue;
     }
     if (available.lt(required)) {
       const meta = ingredientMeta.get(ingredientId)!;
       shortfalls.push(
-        `Stock insuffisant : ${meta.name} — reste ${formatQuantity(available.toNumber(), meta.unit)}, besoin ${formatQuantity(required.toNumber(), meta.unit)}.`
+        context.t('insufficientStock', {
+          name: meta.name,
+          available: context.formatQuantity(available.toNumber(), meta.unit),
+          needed: context.formatQuantity(required.toNumber(), meta.unit),
+        })
       );
     }
   }
   if (shortfalls.length > 0) {
-    throw new SaleValidationError(shortfalls);
+    throw new SaleValidationError(shortfalls, context.t('saleFailed'));
   }
 
   const totalAmount = lines.reduce(
@@ -161,7 +173,8 @@ export async function decrementStock(
   establishmentId: string,
   needed: Map<string, Prisma.Decimal>,
   ingredientMeta: Map<string, { name: string; unit: string }>,
-  stockById: Map<string, Prisma.Decimal>
+  stockById: Map<string, Prisma.Decimal>,
+  context: SaleContext
 ): Promise<void> {
   for (const [ingredientId, required] of needed) {
     if (required.isZero()) continue;
@@ -176,7 +189,14 @@ export async function decrementStock(
     });
     if (updated.count !== 1) {
       throw new StockCheckError(
-        `Stock insuffisant : ${meta.name} — reste ${formatQuantity(stockById.get(ingredientId)?.toNumber() ?? 0, meta.unit)}, besoin ${formatQuantity(required.toNumber(), meta.unit)}.`
+        context.t('insufficientStock', {
+          name: meta.name,
+          available: context.formatQuantity(
+            stockById.get(ingredientId)?.toNumber() ?? 0,
+            meta.unit
+          ),
+          needed: context.formatQuantity(required.toNumber(), meta.unit),
+        })
       );
     }
   }
@@ -199,7 +219,10 @@ const SETTLEABLE_STATUSES: OrderStatus[] = [
   'PRETE',
 ];
 
-export async function settleOrder(input: SettleOrderInput): Promise<string> {
+export async function settleOrder(
+  input: SettleOrderInput,
+  context: SaleContext
+): Promise<string> {
   const order = await prisma.order.findUnique({
     where: { id: input.orderId },
     include: {
@@ -208,20 +231,27 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
     },
   });
   if (!order) {
-    throw new SaleValidationError(['Commande introuvable.']);
+    throw new SaleValidationError(
+      [context.t('orderNotFound')],
+      context.t('saleFailed')
+    );
   }
   if (
     input.establishmentId &&
     order.table.establishmentId !== input.establishmentId
   ) {
-    throw new SaleValidationError(['Commande introuvable.']);
+    throw new SaleValidationError(
+      [context.t('orderNotFound')],
+      context.t('saleFailed')
+    );
   }
 
   const allowed = input.allowedStatuses ?? SETTLEABLE_STATUSES;
   if (!allowed.includes(order.status)) {
-    throw new SaleValidationError([
-      'Cette commande ne peut plus être encaissée.',
-    ]);
+    throw new SaleValidationError(
+      [context.t('orderNotSettleable')],
+      context.t('saleFailed')
+    );
   }
 
   const lines: SaleLine[] = order.orderItems.map((item) => ({
@@ -230,12 +260,21 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
   }));
 
   return prisma.$transaction(async (tx) => {
-    const plan = await buildSalePlan(tx, order.table.establishmentId, lines, {
-      checkActive: false,
-    });
+    const plan = await buildSalePlan(
+      tx,
+      order.table.establishmentId,
+      lines,
+      context,
+      {
+        checkActive: false,
+      }
+    );
 
     if (input.amountReceived && input.amountReceived.lt(order.totalAmount)) {
-      throw new SaleValidationError(['Montant reçu insuffisant.']);
+      throw new SaleValidationError(
+        [context.t('amountInsufficient')],
+        context.t('saleFailed')
+      );
     }
 
     await decrementStock(
@@ -243,7 +282,8 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
       order.table.establishmentId,
       plan.needed,
       plan.ingredientMeta,
-      plan.stockById
+      plan.stockById,
+      context
     );
 
     const updated = await tx.order.updateMany({
@@ -259,7 +299,10 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
       },
     });
     if (updated.count !== 1) {
-      throw new SaleValidationError(['Commande déjà encaissée.']);
+      throw new SaleValidationError(
+        [context.t('orderAlreadySettled')],
+        context.t('saleFailed')
+      );
     }
 
     const pendingStripe = await tx.payment.findFirst({
@@ -269,7 +312,10 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
 
     if (input.method === 'STRIPE') {
       if (!pendingStripe) {
-        throw new SaleValidationError(['Paiement par carte introuvable.']);
+        throw new SaleValidationError(
+          [context.t('cardPaymentNotFound')],
+          context.t('saleFailed')
+        );
       }
       const payUpdated = await tx.payment.updateMany({
         where: { orderId: order.id, method: 'STRIPE', status: 'PENDING' },
@@ -279,15 +325,17 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
         },
       });
       if (payUpdated.count !== 1) {
-        throw new SaleValidationError([
-          'Impossible de valider le paiement par carte.',
-        ]);
+        throw new SaleValidationError(
+          [context.t('cardPaymentInvalid')],
+          context.t('saleFailed')
+        );
       }
     } else {
       if (pendingStripe) {
-        throw new SaleValidationError([
-          'Un paiement par carte est déjà en cours pour cette commande.',
-        ]);
+        throw new SaleValidationError(
+          [context.t('pendingCardPayment')],
+          context.t('saleFailed')
+        );
       }
       await tx.payment.create({
         data: {
@@ -305,9 +353,10 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
 
 export async function completePendingOrder(
   orderId: string,
-  transactionId: string | null
+  transactionId: string | null,
+  context: SaleContext
 ): Promise<string> {
-  return settleOrder({ orderId, method: 'STRIPE', transactionId });
+  return settleOrder({ orderId, method: 'STRIPE', transactionId }, context);
 }
 
 export function consolidateItems(items: SaleLine[]): SaleLine[] {

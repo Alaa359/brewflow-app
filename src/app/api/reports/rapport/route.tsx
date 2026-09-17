@@ -1,16 +1,21 @@
 import { NextRequest } from 'next/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { renderToBuffer } from '@react-pdf/renderer';
 import { Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
 import { buildReport } from '@/lib/reports';
-import { reportRangeSchema } from '@/lib/validations/report';
-import { ReportDocument } from '@/components/reports/report-document';
+import { createReportRangeSchema } from '@/lib/validations/report';
+import {
+  ReportDocument,
+  type ReportLabels,
+} from '@/components/reports/report-document';
 
 export async function GET(request: NextRequest) {
   const user = await requireRole(Role.ADMIN);
 
-  const parsed = reportRangeSchema.safeParse({
+  const tValidation = await getTranslations('Validation');
+  const parsed = createReportRangeSchema(tValidation).safeParse({
     debut: request.nextUrl.searchParams.get('debut') ?? '',
     fin: request.nextUrl.searchParams.get('fin') ?? '',
   });
@@ -32,8 +37,65 @@ export async function GET(request: NextRequest) {
     parsed.data.fin
   );
 
+  const locale = await getLocale();
+  const pdfLocale = locale === 'ar' ? 'fr' : locale;
+  const [t, tUnits] = await Promise.all([
+    getTranslations({ locale: pdfLocale, namespace: 'Pdf.report' }),
+    getTranslations({ locale: pdfLocale, namespace: 'Units' }),
+  ]);
+
+  const labels: ReportLabels = {
+    title: t('title'),
+    documentTitle: t('documentTitle'),
+    headerMeta: t('headerMeta'),
+    generatedAt: t('generatedAt'),
+    page: t('page'),
+    period: t('period'),
+    summary: t('summary'),
+    revenue: t('revenue'),
+    settledOrders: t('settledOrders'),
+    itemsSold: t('itemsSold'),
+    averageBasket: t('averageBasket'),
+    cashRevenue: t('cashRevenue'),
+    cardRevenue: t('cardRevenue'),
+    byCategory: t('byCategory'),
+    byDish: t('byDish'),
+    restockByIngredient: t('restockByIngredient'),
+    restockDetails: t('restockDetails'),
+    restockTruncated: t('restockTruncated'),
+    colCategory: t('colCategory'),
+    colDish: t('colDish'),
+    colIngredient: t('colIngredient'),
+    colQuantity: t('colQuantity'),
+    colQty: t('colQty'),
+    colRevenue: t('colRevenue'),
+    colCost: t('colCost'),
+    colMargin: t('colMargin'),
+    colMarginPercent: t('colMarginPercent'),
+    colShare: t('colShare'),
+    colEntries: t('colEntries'),
+    colSuppliers: t('colSuppliers'),
+    colDate: t('colDate'),
+    colSupplier: t('colSupplier'),
+    colUser: t('colUser'),
+    noSales: t('noSales'),
+    noRestock: t('noRestock'),
+  };
+
+  const unitLabels: Record<string, string> = {
+    KG: tUnits('KG'),
+    L: tUnits('L'),
+    PIECE: tUnits('PIECE'),
+  };
+
   const buffer = await renderToBuffer(
-    <ReportDocument report={report} establishment={establishment} />
+    <ReportDocument
+      report={report}
+      establishment={establishment}
+      locale={pdfLocale}
+      labels={labels}
+      unitLabels={unitLabels}
+    />
   );
 
   return new Response(new Uint8Array(buffer), {

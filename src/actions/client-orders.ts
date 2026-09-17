@@ -1,11 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 import { Prisma } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import {
-  clientOrderItemsSchema,
-  tableTokenSchema,
+  createClientOrderItemsSchema,
+  createTableTokenSchema,
   type ClientOrderLine,
 } from '@/lib/validations/client-order';
 
@@ -38,11 +39,16 @@ export async function submitTableOrder(
   _prev: ClientOrderState,
   formData: FormData
 ): Promise<ClientOrderState> {
-  const tokenParsed = tableTokenSchema.safeParse(formData.get('token'));
+  const t = await getTranslations('Feedback.orders');
+  const tValidation = await getTranslations('Validation');
+
+  const tokenParsed = createTableTokenSchema(tValidation).safeParse(
+    formData.get('token')
+  );
   if (!tokenParsed.success) {
     return {
-      errors: { form: ['Ce lien de commande est invalide.'] },
-      message: 'Commande impossible.',
+      errors: { form: [t('invalidLink')] },
+      message: t('orderFailed'),
     } satisfies ClientOrderState;
   }
 
@@ -52,8 +58,8 @@ export async function submitTableOrder(
   });
   if (!table) {
     return {
-      errors: { form: ['Cette table n’est plus disponible.'] },
-      message: 'Commande impossible.',
+      errors: { form: [t('tableUnavailable')] },
+      message: t('orderFailed'),
     } satisfies ClientOrderState;
   }
 
@@ -62,21 +68,20 @@ export async function submitTableOrder(
     rawItems = JSON.parse(String(formData.get('items') ?? ''));
   } catch {
     return {
-      errors: { items: ['Le panier est invalide.'] },
-      message: 'Commande impossible.',
+      errors: { items: [t('cartInvalid')] },
+      message: t('orderFailed'),
     } satisfies ClientOrderState;
   }
 
-  const itemsParsed = clientOrderItemsSchema.safeParse(rawItems);
+  const itemsParsed =
+    createClientOrderItemsSchema(tValidation).safeParse(rawItems);
   if (!itemsParsed.success) {
     const empty = Array.isArray(rawItems) && rawItems.length === 0;
     return {
       errors: {
-        items: [
-          empty ? 'Le panier est vide.' : 'Un article du panier est invalide.',
-        ],
+        items: [empty ? t('cartEmpty') : t('cartItemInvalid')],
       },
-      message: 'Commande impossible.',
+      message: t('orderFailed'),
     } satisfies ClientOrderState;
   }
 
@@ -93,9 +98,9 @@ export async function submitTableOrder(
   if (dishes.length !== lines.length) {
     return {
       errors: {
-        items: ['Un article du menu n’est plus disponible.'],
+        items: [t('dishUnavailable')],
       },
-      message: 'Commande impossible.',
+      message: t('orderFailed'),
     } satisfies ClientOrderState;
   }
 
@@ -126,7 +131,7 @@ export async function submitTableOrder(
   revalidatePath('/caisse');
   return {
     success: true,
-    message: 'Commande envoyée en cuisine !',
+    message: t('sent'),
     orderId: order.id,
   } satisfies ClientOrderState;
 }

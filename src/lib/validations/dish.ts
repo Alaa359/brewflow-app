@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function toDecimal(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -7,31 +8,35 @@ function toDecimal(value: unknown): number | null {
   return Math.round(n * 1000) / 1000;
 }
 
-const priceField = z
-  .any()
-  .refine((v) => toDecimal(v) !== null, {
-    message: 'Prix invalide (doit être supérieur à zéro).',
-  })
-  .transform((v) => toDecimal(v) as number);
+function priceField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => toDecimal(v) !== null, {
+      message: t('dish.priceInvalid'),
+    })
+    .transform((v) => toDecimal(v) as number);
+}
 
-export const dishSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, 'Le nom est obligatoire.')
-    .max(60, 'Maximum 60 caractères.'),
-  description: z
-    .union([
-      z.literal(''),
-      z.string().trim().max(200, 'Maximum 200 caractères.'),
-    ])
-    .optional()
-    .transform((v) => (v === undefined || v === '' ? null : v)),
-  price: priceField,
-  categoryId: z.string().min(1, 'Choisissez une catégorie.'),
-  isActive: z
-    .enum(['true', 'false'], { message: 'Statut invalide.' })
-    .transform((v) => v === 'true'),
-});
+export function createDishSchema(t: MessageTranslator) {
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, t('dish.nameRequired'))
+      .max(60, t('dish.nameMax')),
+    description: z
+      .union([
+        z.literal(''),
+        z.string().trim().max(200, t('dish.descriptionMax')),
+      ])
+      .optional()
+      .transform((v) => (v === undefined || v === '' ? null : v)),
+    price: priceField(t),
+    categoryId: z.string().min(1, t('dish.categoryRequired')),
+    isActive: z
+      .enum(['true', 'false'], { message: t('dish.invalidStatus') })
+      .transform((v) => v === 'true'),
+  });
+}
 
-export type DishFormData = z.infer<typeof dishSchema>;
+export type DishFormData = z.infer<ReturnType<typeof createDishSchema>>;

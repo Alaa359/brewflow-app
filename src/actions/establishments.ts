@@ -4,11 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { getSession, requireRole } from '@/lib/auth/dal';
 import { SESSION_COOKIE, SESSION_MAX_AGE, encrypt } from '@/lib/auth/session';
-import { establishmentSchema } from '@/lib/validations/establishment';
+import { createEstablishmentSchema } from '@/lib/validations/establishment';
 import { ROLE_HOME } from '@/lib/auth/roles';
 
 export type EstablishmentErrors = {
@@ -79,7 +80,10 @@ export async function createEstablishment(
 ): Promise<EstablishmentState> {
   const user = await requireRole(Role.ADMIN);
 
-  const validated = establishmentSchema.safeParse({
+  const t = await getTranslations('Feedback.establishments');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createEstablishmentSchema(tValidation).safeParse({
     name: formData.get('name'),
     address: formData.get('address') || undefined,
     phone: formData.get('phone') || undefined,
@@ -89,7 +93,7 @@ export async function createEstablishment(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies EstablishmentState;
   }
 
@@ -105,7 +109,7 @@ export async function createEstablishment(
   revalidatePath('/', 'layout');
   return {
     success: true,
-    message: 'Établissement créé.',
+    message: t('created'),
   } satisfies EstablishmentState;
 }
 
@@ -118,7 +122,10 @@ export async function updateEstablishment(
 
   if (!(await isMember(user.id, id))) redirect('/etablissements');
 
-  const validated = establishmentSchema.safeParse({
+  const t = await getTranslations('Feedback.establishments');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createEstablishmentSchema(tValidation).safeParse({
     name: formData.get('name'),
     address: formData.get('address') || undefined,
     phone: formData.get('phone') || undefined,
@@ -128,7 +135,7 @@ export async function updateEstablishment(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies EstablishmentState;
   }
 
@@ -140,8 +147,8 @@ export async function updateEstablishment(
   } catch (error) {
     if (isDuplicate(error)) {
       return {
-        errors: { form: ['Un établissement porte déjà ce nom.'] },
-        message: 'Mise à jour impossible.',
+        errors: { form: [t('nameTaken')] },
+        message: t('updateFailed'),
       } satisfies EstablishmentState;
     }
     throw error;
@@ -150,7 +157,7 @@ export async function updateEstablishment(
   revalidatePath('/', 'layout');
   return {
     success: true,
-    message: 'Établissement mis à jour.',
+    message: t('updated'),
   } satisfies EstablishmentState;
 }
 

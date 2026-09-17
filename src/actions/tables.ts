@@ -2,11 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { tableSchema } from '@/lib/validations/table';
+import { createTableSchema } from '@/lib/validations/table';
 
 export type TableErrors = {
   number?: string[];
@@ -49,8 +50,10 @@ export async function createTable(
   formData: FormData
 ): Promise<TableState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.tables');
+  const tValidation = await getTranslations('Validation');
 
-  const validated = tableSchema.safeParse({
+  const validated = createTableSchema(tValidation).safeParse({
     number: formData.get('number'),
     zone: formData.get('zone') || undefined,
   });
@@ -58,7 +61,7 @@ export async function createTable(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies TableState;
   }
 
@@ -74,16 +77,16 @@ export async function createTable(
     if (isDuplicate(error)) {
       return {
         errors: {
-          number: ['Une table porte déjà ce numéro dans cet établissement.'],
+          number: [t('numberDuplicate')],
         },
-        message: 'Création impossible.',
+        message: t('createFailed'),
       } satisfies TableState;
     }
     throw error;
   }
 
   revalidatePath('/tables');
-  return { success: true, message: 'Table créée.' } satisfies TableState;
+  return { success: true, message: t('created') } satisfies TableState;
 }
 
 export async function updateTable(
@@ -95,7 +98,10 @@ export async function updateTable(
 
   if (!(await findOwnTable(id, user.establishmentId))) redirect('/tables');
 
-  const validated = tableSchema.safeParse({
+  const t = await getTranslations('Feedback.tables');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createTableSchema(tValidation).safeParse({
     number: formData.get('number'),
     zone: formData.get('zone') || undefined,
   });
@@ -103,7 +109,7 @@ export async function updateTable(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies TableState;
   }
 
@@ -116,16 +122,16 @@ export async function updateTable(
     if (isDuplicate(error)) {
       return {
         errors: {
-          number: ['Une table porte déjà ce numéro dans cet établissement.'],
+          number: [t('numberDuplicate')],
         },
-        message: 'Mise à jour impossible.',
+        message: t('updateFailed'),
       } satisfies TableState;
     }
     throw error;
   }
 
   revalidatePath('/tables');
-  return { success: true, message: 'Table mise à jour.' } satisfies TableState;
+  return { success: true, message: t('updated') } satisfies TableState;
 }
 
 export async function deleteTable(id: string) {

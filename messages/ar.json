@@ -266,6 +266,136 @@
       "submitCreate": "إنشاء الفرع"
     }
   },
+  "Feedback": {
+    "auth": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "loginFailed": "تعذر تسجيل الدخول.",
+      "tooManyAttempts": "محاولات كثيرة جدا. أعد المحاولة بعد بضع دقائق.",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      "noEstablishment": "لا توجد منشأة مرتبطة بهذا الحساب.",
+      "emailInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
+      "registerFailed": "تعذر إنشاء الحساب."
+    },
+    "categories": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "duplicateName": "يوجد تصنيف بهذا الاسم بالفعل.",
+      "createFailed": "تعذر الإنشاء.",
+      "created": "تم إنشاء التصنيف.",
+      "updateFailed": "تعذر التحديث.",
+      "updated": "تم تحديث التصنيف."
+    },
+    "dishes": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "categoryNotFound": "التصنيف غير موجود.",
+      "duplicateName": "يوجد طبق بهذا الاسم بالفعل.",
+      "createFailed": "تعذر الإنشاء.",
+      "created": "تم إنشاء الطبق.",
+      "updateFailed": "تعذر التحديث.",
+      "updated": "تم تحديث الطبق."
+    },
+    "employees": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "createFailed": "تعذر الإنشاء.",
+      "created": "تم إنشاء الموظف.",
+      "emailInUseAttach": "هذا البريد الإلكتروني مستخدم بالفعل. استخدم زر التعديل لربط حساب موجود.",
+      "notInYourEstablishments": "هذا الموظف ليس جزءا من فروعك.",
+      "updateFailed": "تعذر التعديل.",
+      "mustKeepOneEstablishment": "يجب أن يحتفظ هذا الموظف بفرع واحد مرتبط على الأقل.",
+      "emailInUseOtherAccount": "هذا البريد الإلكتروني مستخدم بالفعل من حساب آخر.",
+      "updated": "تم تحديث الموظف."
+    },
+    "establishments": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "created": "تم إنشاء المنشأة.",
+      "updated": "تم تحديث المنشأة.",
+      "nameTaken": "توجد منشأة تحمل هذا الاسم بالفعل.",
+      "updateFailed": "تعذر التحديث."
+    },
+    "ingredients": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "duplicate": "يوجد مكوّن بهذا الاسم بالفعل.",
+      "createFailed": "تعذر الإنشاء.",
+      "created": "تم إنشاء المكوّن.",
+      "updateFailed": "تعذر التحديث.",
+      "updated": "تم تحديث المكوّن."
+    },
+    "orders": {
+      "invalidAction": "إجراء غير صالح.",
+      "actionFailed": "تعذر تنفيذ الإجراء.",
+      "orderNotFound": "الطلب غير موجود.",
+      "forbidden": "لا يمكنك تنفيذ هذا الإجراء.",
+      "statusChanged": "تغيّرت حالة هذا الطلب بالفعل.",
+      "statusAdvanced": "الطلب {status}.",
+      "invalidOrder": "طلب غير صالح.",
+      "settleFailed": "تعذر التحصيل.",
+      "settleRetry": "هناك عملية تحصيل جارية على نفس المخزون، يرجى إعادة المحاولة.",
+      "settled": "تم تحصيل الطلب.",
+      "invalidLink": "رابط الطلب هذا غير صالح.",
+      "tableUnavailable": "هذه الطاولة لم تعد متاحة.",
+      "cartInvalid": "سلة الطلبات غير صالحة.",
+      "cartEmpty": "سلة الطلبات فارغة.",
+      "cartItemInvalid": "أحد عناصر السلة غير صالح.",
+      "orderFailed": "تعذر إتمام الطلب.",
+      "dishUnavailable": "أحد عناصر القائمة لم يعد متاحًا.",
+      "sent": "تم إرسال الطلب إلى المطبخ!"
+    },
+    "recipes": {
+      "invalidData": "بيانات الوصفة غير صالحة.",
+      "duplicateIngredient": "يتكرر أحد المكوّنات أكثر من مرة.",
+      "ingredientNotFound": "تعذر العثور على أحد المكوّنات في هذه المؤسسة.",
+      "ingredientDeleted": "تم حذف أحد المكوّنات أثناء الحفظ.",
+      "saveFailed": "تعذر الحفظ.",
+      "saved": "تم حفظ الوصفة."
+    },
+    "sales": {
+      "cartInvalid": "سلة الطلبات غير صالحة.",
+      "cartEmpty": "سلة الطلبات فارغة.",
+      "cartItemInvalid": "أحد عناصر السلة غير صالح.",
+      "unknownTable": "طاولة غير معروفة.",
+      "saleFailed": "تعذر إتمام البيع.",
+      "saleRetry": "هناك عملية بيع جارية على نفس المخزون، يرجى إعادة المحاولة.",
+      "amountInsufficient": "المبلغ المستلم غير كافٍ.",
+      "saleRecorded": "تم تسجيل البيع.",
+      "paymentStarted": "تم بدء الدفع.",
+      "cardUnavailable": "الدفع بالبطاقة غير متاح.",
+      "paymentFailed": "تعذر الدفع.",
+      "cardFailed": "فشل الدفع بالبطاقة.",
+      "stripeOrderName": "طلب — {name}",
+      "cartUnavailable": "أحد عناصر السلة غير متاح.",
+      "ingredientMissing": "تعذر العثور على أحد المكوّنات المطلوبة.",
+      "insufficientStock": "المخزون غير كافٍ: {name} — المتبقي {available}، المطلوب {needed}.",
+      "orderNotFound": "الطلب غير موجود.",
+      "orderNotSettleable": "لم يعد من الممكن تحصيل هذا الطلب.",
+      "orderAlreadySettled": "تم تحصيل الطلب بالفعل.",
+      "cardPaymentNotFound": "لم يتم العثور على الدفع بالبطاقة.",
+      "cardPaymentInvalid": "تعذر تأكيد الدفع بالبطاقة.",
+      "pendingCardPayment": "هناك دفعة بالبطاقة معلّقة بالفعل لهذا الطلب."
+    },
+    "shifts": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "assignmentFailed": "تعذر الإسناد.",
+      "employeeNotInActiveEstablishment": "هذا الموظف لا ينتمي إلى المنشأة النشطة.",
+      "overlapWithExisting": "تتداخل هذه الفتحة مع وردية مجدولة بالفعل لهذا الموظف في ذلك اليوم.",
+      "slotRejected": "تم رفض الفتحة.",
+      "slotAdded": "تمت إضافة الفتحة."
+    },
+    "stock": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "created": "تمت إضافة المخزون."
+    },
+    "tables": {
+      "invalidFields": "بعض الحقول غير صالحة.",
+      "created": "تم إنشاء الطاولة.",
+      "createFailed": "تعذر الإنشاء.",
+      "numberDuplicate": "توجد طاولة تحمل هذا الرقم بالفعل في هذه المنشأة.",
+      "updateFailed": "تعذر التحديث.",
+      "updated": "تم تحديث الطاولة."
+    },
+    "uploads": {
+      "tooLarge": "الصورة كبيرة جدًا (الحد الأقصى 2 ميغابايت).",
+      "unsupportedType": "صيغة الصورة غير مدعومة (jpg أو png أو webp)."
+    }
+  },
   "Ingredients": {
     "title": "المكوّنات",
     "add": "إضافة مكوّن",
@@ -433,6 +563,61 @@
   "PaymentMethod": {
     "CASH": "نقدًا",
     "STRIPE": "بطاقة"
+  },
+  "Pdf": {
+    "ticket": {
+      "order": "طلب",
+      "date": "التاريخ",
+      "table": "طاولة",
+      "server": "النادل",
+      "method": "طريقة الدفع",
+      "status": "الحالة",
+      "itemsHeader": "العنصر",
+      "totalHeader": "المجموع",
+      "perUnit": "{price} / للوحدة",
+      "total": "المجموع",
+      "thanks": "شكرًا لزيارتكم!",
+      "tableNumber": "رقم {number}",
+      "tableNumberWithZone": "رقم {number} — {zone}",
+      "clientOrder": "طلب العميل (رمز QR)"
+    },
+    "report": {
+      "title": "تقرير النشاط",
+      "documentTitle": "تقرير النشاط {period}",
+      "headerMeta": "تقرير النشاط · {period}",
+      "generatedAt": "صدر في {date}",
+      "page": "صفحة {page} / {total}",
+      "period": "الفترة: {period}",
+      "summary": "الملخص",
+      "revenue": "رقم الأعمال",
+      "settledOrders": "الطلبات المحصّلة",
+      "itemsSold": "العناصر المبيعة",
+      "averageBasket": "متوسط السلة",
+      "cashRevenue": "المحصّل نقدًا",
+      "cardRevenue": "المحصّل بالبطاقة",
+      "byCategory": "رقم الأعمال حسب التصنيف",
+      "byDish": "رقم الأعمال والهامش حسب الطبق",
+      "restockByIngredient": "إعادة التزويد حسب المكوّن",
+      "restockDetails": "تفاصيل إعادة التزويد",
+      "restockTruncated": "{shown} الأحدث من {total}",
+      "colCategory": "التصنيف",
+      "colDish": "الطبق",
+      "colIngredient": "المكوّن",
+      "colQuantity": "الكمية",
+      "colQty": "الكمية",
+      "colRevenue": "رقم الأعمال",
+      "colCost": "التكلفة",
+      "colMargin": "الهامش",
+      "colMarginPercent": "الهامش %",
+      "colShare": "الحصة",
+      "colEntries": "الإدخالات",
+      "colSuppliers": "الموردون",
+      "colDate": "التاريخ",
+      "colSupplier": "المورد",
+      "colUser": "أدخله",
+      "noSales": "لا توجد مبيعات في هذه الفترة.",
+      "noRestock": "لا توجد عمليات إعادة تزويد في هذه الفترة."
+    }
   },
   "Period": {
     "jour": "اليوم",
@@ -666,5 +851,98 @@
     "KG": "كغ",
     "L": "ل",
     "PIECE": "حبة"
+  },
+  "Validation": {
+    "auth": {
+      "login": {
+        "emailInvalid": "البريد الإلكتروني غير صالح.",
+        "passwordRequired": "كلمة المرور مطلوبة."
+      },
+      "register": {
+        "nameTooShort": "يجب أن يحتوي الاسم على حرفين على الأقل.",
+        "emailInvalid": "البريد الإلكتروني غير صالح.",
+        "passwordTooShort": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل.",
+        "establishmentNameTooShort": "يجب أن يحتوي اسم المنشأة على حرفين على الأقل."
+      }
+    },
+    "category": {
+      "invalidOrder": "ترتيب غير صالح.",
+      "nameRequired": "الاسم مطلوب.",
+      "nameMax": "40 حرفا كحد أقصى."
+    },
+    "clientOrder": {
+      "invalidLink": "رابط غير صالح.",
+      "cartEmpty": "السلة فارغة.",
+      "cartTooMany": "عدد كبير جدا من العناصر في السلة."
+    },
+    "dish": {
+      "priceInvalid": "سعر غير صالح (يجب أن يكون أكبر من الصفر).",
+      "nameRequired": "الاسم مطلوب.",
+      "nameMax": "60 حرفا كحد أقصى.",
+      "descriptionMax": "200 حرف كحد أقصى.",
+      "categoryRequired": "اختر فئة.",
+      "invalidStatus": "حالة غير صالحة."
+    },
+    "employee": {
+      "nameTooShort": "يجب أن يحتوي الاسم على حرفين على الأقل.",
+      "emailInvalid": "بريد إلكتروني غير صالح.",
+      "invalidRole": "دور غير صالح.",
+      "passwordTooShort": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل."
+    },
+    "establishment": {
+      "nameTooShort": "يجب أن يحتوي اسم المنشأة على حرفين على الأقل.",
+      "timezoneRequired": "المنطقة الزمنية مطلوبة."
+    },
+    "ingredient": {
+      "nameRequired": "الاسم مطلوب.",
+      "nameMax": "60 حرفا كحد أقصى.",
+      "invalidUnit": "وحدة غير صالحة.",
+      "invalidStock": "مخزون غير صالح.",
+      "invalidThreshold": "حد غير صالح.",
+      "invalidCost": "تكلفة غير صالحة."
+    },
+    "order": {
+      "invalidOrder": "طلب غير صالح.",
+      "invalidStatus": "حالة غير صالحة."
+    },
+    "recipe": {
+      "invalidQuantity": "كمية غير صالحة (يجب أن تكون بين 0.001 و 999.999).",
+      "ingredientRequired": "اختر مكونا.",
+      "tooManyIngredients": "50 مكونا كحد أقصى لكل وصفة."
+    },
+    "report": {
+      "invalidDate": "تاريخ غير صالح.",
+      "startBeforeEnd": "يجب أن يكون تاريخ البداية قبل تاريخ النهاية.",
+      "maxDays": "الفترة محدودة بحد أقصى {days} يوم."
+    },
+    "sale": {
+      "invalidPaymentMethod": "طريقة دفع غير صالحة.",
+      "invalidAmountReceived": "المبلغ المستلم غير صالح.",
+      "amountTooHigh": "المبلغ المستلم كبير جدا.",
+      "threeDecimalsMax": "يقبل المبلغ حتى 3 خانات عشرية كحد أقصى.",
+      "invalidArticle": "عنصر غير صالح.",
+      "invalidQuantity": "كمية غير صالحة.",
+      "quantityTooHigh": "الكمية كبيرة جدا.",
+      "cartEmpty": "السلة فارغة.",
+      "cartTooMany": "عدد كبير جدا من العناصر في السلة.",
+      "tableRequired": "اختر طاولة."
+    },
+    "shift": {
+      "employeeRequired": "اختر موظفا.",
+      "invalidDay": "يوم أسبوع غير صالح.",
+      "invalidStartTime": "وقت بداية غير صالح (تنسيق HH:mm).",
+      "invalidEndTime": "وقت نهاية غير صالح (تنسيق HH:mm).",
+      "endAfterStart": "يجب أن يكون وقت النهاية بعد وقت البداية."
+    },
+    "stockEntry": {
+      "quantityPositive": "يجب أن تكون الكمية أكبر من الصفر.",
+      "supplierInvalid": "مورد غير صالح (80 حرفا كحد أقصى).",
+      "invalidDate": "تاريخ غير صالح.",
+      "dateNotFuture": "لا يمكن أن يكون التاريخ في المستقبل."
+    },
+    "table": {
+      "invalidNumber": "رقم غير صالح (من 1 إلى 999).",
+      "zoneMax": "40 حرفا كحد أقصى."
+    }
   }
 }

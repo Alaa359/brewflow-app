@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function toQuantity(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -7,20 +8,26 @@ function toQuantity(value: unknown): number | null {
   return Math.round(n * 1000) / 1000;
 }
 
-const quantityField = z
-  .any()
-  .refine((v) => toQuantity(v) !== null, {
-    message: 'Quantité invalide (doit être comprise entre 0.001 et 999.999).',
-  })
-  .transform((v) => toQuantity(v) as number);
+function quantityField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => toQuantity(v) !== null, {
+      message: t('recipe.invalidQuantity'),
+    })
+    .transform((v) => toQuantity(v) as number);
+}
 
-export const recipeLineSchema = z.object({
-  ingredientId: z.string().min(1, 'Choisissez un ingrédient.'),
-  quantityNeeded: quantityField,
-});
+export function createRecipeLineSchema(t: MessageTranslator) {
+  return z.object({
+    ingredientId: z.string().min(1, t('recipe.ingredientRequired')),
+    quantityNeeded: quantityField(t),
+  });
+}
 
-export const recipeSchema = z
-  .array(recipeLineSchema)
-  .max(50, 'Maximum 50 ingrédients par recette.');
+export function createRecipeSchema(t: MessageTranslator) {
+  return z
+    .array(createRecipeLineSchema(t))
+    .max(50, t('recipe.tooManyIngredients'));
+}
 
-export type RecipeLineData = z.infer<typeof recipeSchema>;
+export type RecipeLineData = z.infer<ReturnType<typeof createRecipeSchema>>;

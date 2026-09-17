@@ -2,10 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { stockEntrySchema } from '@/lib/validations/stock-entry';
+import { createStockEntrySchema } from '@/lib/validations/stock-entry';
 
 export type StockEntryErrors = {
   quantityAdded?: string[];
@@ -31,7 +32,10 @@ export async function createStockEntry(
   });
   if (!ingredient) redirect('/ingredients');
 
-  const validated = stockEntrySchema.safeParse({
+  const t = await getTranslations('Feedback.stock');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createStockEntrySchema(tValidation).safeParse({
     quantityAdded: formData.get('quantityAdded'),
     supplierName: formData.get('supplierName'),
     date: formData.get('date'),
@@ -39,7 +43,7 @@ export async function createStockEntry(
   if (!validated.success) {
     return {
       errors: validated.error.flatten().fieldErrors as StockEntryErrors,
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies StockEntryState;
   }
 
@@ -62,6 +66,6 @@ export async function createStockEntry(
   revalidatePath('/ingredients');
   return {
     success: true,
-    message: 'Stock ajouté.',
+    message: t('created'),
   } satisfies StockEntryState;
 }

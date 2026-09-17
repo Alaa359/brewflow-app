@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getStripe, stripeConfigured } from '@/lib/stripe';
+import { getSaleContext } from '@/lib/i18n/sale-context';
 import { completePendingOrder } from '@/lib/sales-core';
 
 const CAISSE_URL = '/caisse';
@@ -21,11 +22,13 @@ export async function GET(request: NextRequest) {
     orderId = session.metadata?.orderId;
     if (orderId) {
       if (session.payment_status === 'paid') {
+        const saleContext = await getSaleContext();
         await completePendingOrder(
           orderId,
           typeof session.payment_intent === 'string'
             ? session.payment_intent
-            : session.id
+            : session.id,
+          saleContext
         );
       } else {
         await prisma.payment.updateMany({

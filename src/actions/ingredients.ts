@@ -2,11 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { ingredientSchema } from '@/lib/validations/ingredient';
+import { createIngredientSchema } from '@/lib/validations/ingredient';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 import { removeImage, saveImage } from '@/lib/uploads';
 
 export type IngredientErrors = {
@@ -33,8 +35,8 @@ function isDuplicate(error: unknown): boolean {
   );
 }
 
-function parseIngredient(formData: FormData) {
-  return ingredientSchema.safeParse({
+function parseIngredient(formData: FormData, t: MessageTranslator) {
+  return createIngredientSchema(t).safeParse({
     name: formData.get('name'),
     unit: formData.get('unit'),
     currentStock: formData.get('currentStock'),
@@ -48,12 +50,15 @@ export async function createIngredient(
   formData: FormData
 ): Promise<IngredientState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.ingredients');
+  const tValidation = await getTranslations('Validation');
+  const tUploads = await getTranslations('Feedback.uploads');
 
-  const validated = parseIngredient(formData);
+  const validated = parseIngredient(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies IngredientState;
   }
 
@@ -61,7 +66,8 @@ export async function createIngredient(
   try {
     imageUrl = await saveImage(
       'ingredients',
-      formData.get('image') as File | null
+      formData.get('image') as File | null,
+      tUploads
     );
   } catch (error) {
     return {
@@ -85,8 +91,8 @@ export async function createIngredient(
     if (isDuplicate(error)) {
       await removeImage(imageUrl);
       return {
-        errors: { name: ['Un ingrédient de ce nom existe déjà.'] },
-        message: 'Création impossible.',
+        errors: { name: [t('duplicate')] },
+        message: t('createFailed'),
       } satisfies IngredientState;
     }
     await removeImage(imageUrl);
@@ -96,7 +102,7 @@ export async function createIngredient(
   revalidatePath('/ingredients');
   return {
     success: true,
-    message: 'Ingrédient créé.',
+    message: t('created'),
   } satisfies IngredientState;
 }
 
@@ -112,11 +118,15 @@ export async function updateIngredient(
   });
   if (!existing) redirect('/ingredients');
 
-  const validated = parseIngredient(formData);
+  const t = await getTranslations('Feedback.ingredients');
+  const tValidation = await getTranslations('Validation');
+  const tUploads = await getTranslations('Feedback.uploads');
+
+  const validated = parseIngredient(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies IngredientState;
   }
 
@@ -124,7 +134,8 @@ export async function updateIngredient(
   try {
     newImage = await saveImage(
       'ingredients',
-      formData.get('image') as File | null
+      formData.get('image') as File | null,
+      tUploads
     );
   } catch (error) {
     return {
@@ -150,8 +161,8 @@ export async function updateIngredient(
     if (isDuplicate(error)) {
       await removeImage(newImage);
       return {
-        errors: { name: ['Un ingrédient de ce nom existe déjà.'] },
-        message: 'Mise à jour impossible.',
+        errors: { name: [t('duplicate')] },
+        message: t('updateFailed'),
       } satisfies IngredientState;
     }
     await removeImage(newImage);
@@ -162,7 +173,7 @@ export async function updateIngredient(
   revalidatePath('/ingredients');
   return {
     success: true,
-    message: 'Ingrédient mis à jour.',
+    message: t('updated'),
   } satisfies IngredientState;
 }
 

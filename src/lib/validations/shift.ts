@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 export const DAY_NAMES = [
   'Lundi',
@@ -42,20 +43,20 @@ export function rangesOverlap(
   return aStart < bEnd && bStart < aEnd;
 }
 
-export const shiftSchema = z
-  .object({
-    employeeId: z.string().min(1, 'Sélectionnez un employé.'),
-    dayOfWeek: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .max(6, 'Jour de la semaine invalide.'),
-    startTime: z
-      .string()
-      .regex(TIME_RE, 'Heure de début invalide (format HH:mm).'),
-    endTime: z.string().regex(TIME_RE, 'Heure de fin invalide (format HH:mm).'),
-  })
-  .refine((shift) => shift.startTime < shift.endTime, {
-    path: ['endTime'],
-    message: "L'heure de fin doit être postérieure à l'heure de début.",
-  });
+export function createShiftSchema(t: MessageTranslator) {
+  return z
+    .object({
+      employeeId: z.string().min(1, t('shift.employeeRequired')),
+      dayOfWeek: z.coerce
+        .number()
+        .int()
+        .min(0)
+        .max(6, t('shift.invalidDay')),
+      startTime: z.string().regex(TIME_RE, t('shift.invalidStartTime')),
+      endTime: z.string().regex(TIME_RE, t('shift.invalidEndTime')),
+    })
+    .refine((shift) => shift.startTime < shift.endTime, {
+      path: ['endTime'],
+      message: t('shift.endAfterStart'),
+    });
+}

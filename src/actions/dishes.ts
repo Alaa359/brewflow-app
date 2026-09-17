@@ -2,11 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { dishSchema } from '@/lib/validations/dish';
+import { createDishSchema } from '@/lib/validations/dish';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 import { removeImage, saveImage } from '@/lib/uploads';
 
 export type DishErrors = {
@@ -32,8 +34,8 @@ function isDuplicate(error: unknown): boolean {
   );
 }
 
-function parseDish(formData: FormData) {
-  return dishSchema.safeParse({
+function parseDish(formData: FormData, t: MessageTranslator) {
+  return createDishSchema(t).safeParse({
     name: formData.get('name'),
     description: formData.get('description'),
     price: formData.get('price'),
@@ -47,12 +49,15 @@ export async function createDish(
   formData: FormData
 ): Promise<DishState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.dishes');
+  const tValidation = await getTranslations('Validation');
+  const tUploads = await getTranslations('Feedback.uploads');
 
-  const validated = parseDish(formData);
+  const validated = parseDish(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies DishState;
   }
 
@@ -65,8 +70,8 @@ export async function createDish(
   });
   if (!category) {
     return {
-      errors: { categoryId: ['Catégorie introuvable.'] },
-      message: 'Création impossible.',
+      errors: { categoryId: [t('categoryNotFound')] },
+      message: t('createFailed'),
     } satisfies DishState;
   }
 
@@ -78,14 +83,18 @@ export async function createDish(
   });
   if (duplicate) {
     return {
-      errors: { name: ['Un plat de ce nom existe déjà.'] },
-      message: 'Création impossible.',
+      errors: { name: [t('duplicateName')] },
+      message: t('createFailed'),
     } satisfies DishState;
   }
 
   let imageUrl: string | null = null;
   try {
-    imageUrl = await saveImage('dishes', formData.get('image') as File | null);
+    imageUrl = await saveImage(
+      'dishes',
+      formData.get('image') as File | null,
+      tUploads
+    );
   } catch (error) {
     return {
       errors: { form: [(error as Error).message] },
@@ -108,8 +117,8 @@ export async function createDish(
     await removeImage(imageUrl);
     if (isDuplicate(error)) {
       return {
-        errors: { name: ['Un plat de ce nom existe déjà.'] },
-        message: 'Création impossible.',
+        errors: { name: [t('duplicateName')] },
+        message: t('createFailed'),
       } satisfies DishState;
     }
     if (
@@ -117,8 +126,8 @@ export async function createDish(
       error.code === 'P2003'
     ) {
       return {
-        errors: { categoryId: ['Catégorie introuvable.'] },
-        message: 'Création impossible.',
+        errors: { categoryId: [t('categoryNotFound')] },
+        message: t('createFailed'),
       } satisfies DishState;
     }
     throw error;
@@ -127,7 +136,7 @@ export async function createDish(
   revalidatePath('/plats');
   return {
     success: true,
-    message: 'Plat créé.',
+    message: t('created'),
   } satisfies DishState;
 }
 
@@ -143,11 +152,15 @@ export async function updateDish(
   });
   if (!existing) redirect('/plats');
 
-  const validated = parseDish(formData);
+  const t = await getTranslations('Feedback.dishes');
+  const tValidation = await getTranslations('Validation');
+  const tUploads = await getTranslations('Feedback.uploads');
+
+  const validated = parseDish(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies DishState;
   }
 
@@ -160,8 +173,8 @@ export async function updateDish(
   });
   if (duplicate) {
     return {
-      errors: { name: ['Un plat de ce nom existe déjà.'] },
-      message: 'Mise à jour impossible.',
+      errors: { name: [t('duplicateName')] },
+      message: t('updateFailed'),
     } satisfies DishState;
   }
 
@@ -174,14 +187,18 @@ export async function updateDish(
   });
   if (!category) {
     return {
-      errors: { categoryId: ['Catégorie introuvable.'] },
-      message: 'Mise à jour impossible.',
+      errors: { categoryId: [t('categoryNotFound')] },
+      message: t('updateFailed'),
     } satisfies DishState;
   }
 
   let newImage: string | null = null;
   try {
-    newImage = await saveImage('dishes', formData.get('image') as File | null);
+    newImage = await saveImage(
+      'dishes',
+      formData.get('image') as File | null,
+      tUploads
+    );
   } catch (error) {
     return {
       errors: { form: [(error as Error).message] },
@@ -206,8 +223,8 @@ export async function updateDish(
     await removeImage(newImage);
     if (isDuplicate(error)) {
       return {
-        errors: { name: ['Un plat de ce nom existe déjà.'] },
-        message: 'Mise à jour impossible.',
+        errors: { name: [t('duplicateName')] },
+        message: t('updateFailed'),
       } satisfies DishState;
     }
     if (
@@ -215,8 +232,8 @@ export async function updateDish(
       error.code === 'P2003'
     ) {
       return {
-        errors: { categoryId: ['Catégorie introuvable.'] },
-        message: 'Mise à jour impossible.',
+        errors: { categoryId: [t('categoryNotFound')] },
+        message: t('updateFailed'),
       } satisfies DishState;
     }
     throw error;
@@ -226,7 +243,7 @@ export async function updateDish(
   revalidatePath('/plats');
   return {
     success: true,
-    message: 'Plat mis à jour.',
+    message: t('updated'),
   } satisfies DishState;
 }
 

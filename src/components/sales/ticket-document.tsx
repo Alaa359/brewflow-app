@@ -1,10 +1,7 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import type { OrderStatus, PaymentMethod } from '@/generated/client';
-import {
-  ORDER_STATUS_LABEL,
-  PAYMENT_METHOD_LABEL,
-  formatDateTime,
-} from '@/lib/sales';
+import { formatCost } from '@/lib/ingredients';
+import { formatDateTime } from '@/lib/sales';
 
 export type TicketOrderItem = {
   dishName: string;
@@ -31,6 +28,22 @@ export type TicketEstablishment = {
   phone: string | null;
 };
 
+export type TicketLabels = {
+  order: string;
+  date: string;
+  table: string;
+  server: string;
+  method: string;
+  status: string;
+  itemsHeader: string;
+  totalHeader: string;
+  perUnit: string;
+  total: string;
+  thanks: string;
+  tableNumber: string;
+  tableNumberWithZone: string;
+};
+
 const PAGE_WIDTH = 227;
 const PAGE_PADDING = 14;
 
@@ -43,12 +56,11 @@ function pageHeightFor(itemCount: number): number {
   return contentBase + PAGE_PADDING * 2;
 }
 
-const numberFormatter = new Intl.NumberFormat('fr-FR', {
-  maximumFractionDigits: 3,
-});
-
-function formatCost(value: number): string {
-  return `${numberFormatter.format(value)} DT`;
+function fill(
+  template: string,
+  values: Record<string, string | number>
+): string {
+  return template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
 }
 
 const styles = StyleSheet.create({
@@ -136,21 +148,28 @@ const styles = StyleSheet.create({
 export function TicketDocument({
   order,
   establishment,
+  locale,
+  statusLabel,
+  methodLabel,
+  labels,
 }: {
   order: TicketOrder;
   establishment: TicketEstablishment;
+  locale: string;
+  statusLabel: string;
+  methodLabel: string;
+  labels: TicketLabels;
 }) {
   const lines = order.items.map((item) => ({
     ...item,
     total: item.quantity * item.unitPrice,
   }));
-  const tableLabel = `n° ${order.tableNumber}${
-    order.tableZone ? ` — ${order.tableZone}` : ''
-  }`;
-  const methodLabel = order.paymentMethod
-    ? (PAYMENT_METHOD_LABEL[order.paymentMethod] ?? order.paymentMethod)
-    : '—';
-  const statusLabel = ORDER_STATUS_LABEL[order.status] ?? order.status;
+  const tableLabel = order.tableZone
+    ? fill(labels.tableNumberWithZone, {
+        number: order.tableNumber,
+        zone: order.tableZone,
+      })
+    : fill(labels.tableNumber, { number: order.tableNumber });
 
   return (
     <Document>
@@ -169,29 +188,29 @@ export function TicketDocument({
 
         <View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Commande</Text>
+            <Text style={styles.metaLabel}>{labels.order}</Text>
             <Text style={styles.metaValue}>#{order.number}</Text>
           </View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Date</Text>
+            <Text style={styles.metaLabel}>{labels.date}</Text>
             <Text style={styles.metaValue}>
-              {formatDateTime(order.createdAt)}
+              {formatDateTime(order.createdAt, locale)}
             </Text>
           </View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Table</Text>
+            <Text style={styles.metaLabel}>{labels.table}</Text>
             <Text style={styles.metaValue}>{tableLabel}</Text>
           </View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Serveur</Text>
+            <Text style={styles.metaLabel}>{labels.server}</Text>
             <Text style={styles.metaValue}>{order.serverName}</Text>
           </View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Méthode</Text>
+            <Text style={styles.metaLabel}>{labels.method}</Text>
             <Text style={styles.metaValue}>{methodLabel}</Text>
           </View>
           <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Statut</Text>
+            <Text style={styles.metaLabel}>{labels.status}</Text>
             <Text style={styles.metaValue}>{statusLabel}</Text>
           </View>
         </View>
@@ -199,8 +218,8 @@ export function TicketDocument({
         <View style={styles.divider} />
 
         <View style={styles.itemsHeader}>
-          <Text>Article</Text>
-          <Text>Total</Text>
+          <Text>{labels.itemsHeader}</Text>
+          <Text>{labels.totalHeader}</Text>
         </View>
 
         {lines.map((line, index) => (
@@ -209,21 +228,25 @@ export function TicketDocument({
               <Text style={styles.itemName}>
                 {line.quantity} × {line.dishName}
               </Text>
-              <Text>{formatCost(line.total)}</Text>
+              <Text>{formatCost(line.total, locale)}</Text>
             </View>
             <Text style={styles.itemSub}>
-              {formatCost(line.unitPrice)} / unité
+              {fill(labels.perUnit, {
+                price: formatCost(line.unitPrice, locale),
+              })}
             </Text>
           </View>
         ))}
 
         <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>TOTAL</Text>
-          <Text style={styles.totalValue}>{formatCost(order.totalAmount)}</Text>
+          <Text style={styles.totalLabel}>{labels.total}</Text>
+          <Text style={styles.totalValue}>
+            {formatCost(order.totalAmount, locale)}
+          </Text>
         </View>
 
         <View style={styles.footer}>
-          <Text>Merci de votre visite !</Text>
+          <Text>{labels.thanks}</Text>
         </View>
       </Page>
     </Document>

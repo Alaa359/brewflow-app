@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { addDays, formatDateLabel } from '@/lib/planning';
 import { startOfMonthTunisia, toDateInputTunisia } from '@/lib/sales';
-import { reportRangeSchema } from '@/lib/validations/report';
+import { createReportRangeSchema } from '@/lib/validations/report';
 import { buildReport } from '@/lib/reports';
 import {
   ReportRangePicker,
@@ -31,7 +31,8 @@ export default async function RapportsPage({
     { label: t('presets.thisMonth'), debut: monthStart, fin: today },
   ];
 
-  const parsed = reportRangeSchema.safeParse({
+  const tValidation = await getTranslations('Validation');
+  const parsed = createReportRangeSchema(tValidation).safeParse({
     debut: debut ?? monthStart,
     fin: fin ?? today,
   });

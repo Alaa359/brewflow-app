@@ -2,11 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { categorySchema } from '@/lib/validations/category';
+import { createCategorySchema } from '@/lib/validations/category';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 export type CategoryErrors = {
   name?: string[];
@@ -28,8 +30,8 @@ function isDuplicate(error: unknown): boolean {
   );
 }
 
-function parseCategory(formData: FormData) {
-  return categorySchema.safeParse({
+function parseCategory(formData: FormData, t: MessageTranslator) {
+  return createCategorySchema(t).safeParse({
     name: formData.get('name'),
     sortOrder: formData.get('sortOrder'),
   });
@@ -40,12 +42,14 @@ export async function createCategory(
   formData: FormData
 ): Promise<CategoryState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.categories');
+  const tValidation = await getTranslations('Validation');
 
-  const validated = parseCategory(formData);
+  const validated = parseCategory(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies CategoryState;
   }
 
@@ -60,8 +64,8 @@ export async function createCategory(
   } catch (error) {
     if (isDuplicate(error)) {
       return {
-        errors: { name: ['Une catégorie de ce nom existe déjà.'] },
-        message: 'Création impossible.',
+        errors: { name: [t('duplicateName')] },
+        message: t('createFailed'),
       } satisfies CategoryState;
     }
     throw error;
@@ -70,7 +74,7 @@ export async function createCategory(
   revalidatePath('/plats');
   return {
     success: true,
-    message: 'Catégorie créée.',
+    message: t('created'),
   } satisfies CategoryState;
 }
 
@@ -86,11 +90,14 @@ export async function updateCategory(
   });
   if (!existing) redirect('/plats');
 
-  const validated = parseCategory(formData);
+  const t = await getTranslations('Feedback.categories');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = parseCategory(formData, tValidation);
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies CategoryState;
   }
 
@@ -105,8 +112,8 @@ export async function updateCategory(
   } catch (error) {
     if (isDuplicate(error)) {
       return {
-        errors: { name: ['Une catégorie de ce nom existe déjà.'] },
-        message: 'Mise à jour impossible.',
+        errors: { name: [t('duplicateName')] },
+        message: t('updateFailed'),
       } satisfies CategoryState;
     }
     throw error;
@@ -115,7 +122,7 @@ export async function updateCategory(
   revalidatePath('/plats');
   return {
     success: true,
-    message: 'Catégorie mise à jour.',
+    message: t('updated'),
   } satisfies CategoryState;
 }
 

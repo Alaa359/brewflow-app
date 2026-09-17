@@ -266,6 +266,136 @@
       "submitCreate": "Créer l’établissement"
     }
   },
+  "Feedback": {
+    "auth": {
+      "invalidFields": "Certains champs sont invalides.",
+      "loginFailed": "Connexion impossible.",
+      "tooManyAttempts": "Trop de tentatives. Réessayez dans quelques minutes.",
+      "invalidCredentials": "Email ou mot de passe incorrect.",
+      "noEstablishment": "Aucun établissement rattaché à ce compte.",
+      "emailInUse": "Cet email est déjà utilisé.",
+      "registerFailed": "Inscription impossible."
+    },
+    "categories": {
+      "invalidFields": "Certains champs sont invalides.",
+      "duplicateName": "Une catégorie de ce nom existe déjà.",
+      "createFailed": "Création impossible.",
+      "created": "Catégorie créée.",
+      "updateFailed": "Mise à jour impossible.",
+      "updated": "Catégorie mise à jour."
+    },
+    "dishes": {
+      "invalidFields": "Certains champs sont invalides.",
+      "categoryNotFound": "Catégorie introuvable.",
+      "duplicateName": "Un plat de ce nom existe déjà.",
+      "createFailed": "Création impossible.",
+      "created": "Plat créé.",
+      "updateFailed": "Mise à jour impossible.",
+      "updated": "Plat mis à jour."
+    },
+    "employees": {
+      "invalidFields": "Certains champs sont invalides.",
+      "createFailed": "Création impossible.",
+      "created": "Employé créé.",
+      "emailInUseAttach": "Cet email est déjà utilisé. Utilisez le bouton Éditer pour rattacher un compte existant.",
+      "notInYourEstablishments": "Cet employé ne fait pas partie de vos établissements.",
+      "updateFailed": "Modification impossible.",
+      "mustKeepOneEstablishment": "Cet employé doit conserver au moins un établissement de rattachement.",
+      "emailInUseOtherAccount": "Cet email est déjà utilisé par un autre compte.",
+      "updated": "Employé mis à jour."
+    },
+    "establishments": {
+      "invalidFields": "Certains champs sont invalides.",
+      "created": "Établissement créé.",
+      "updated": "Établissement mis à jour.",
+      "nameTaken": "Un établissement porte déjà ce nom.",
+      "updateFailed": "Mise à jour impossible."
+    },
+    "ingredients": {
+      "invalidFields": "Certains champs sont invalides.",
+      "duplicate": "Un ingrédient de ce nom existe déjà.",
+      "createFailed": "Création impossible.",
+      "created": "Ingrédient créé.",
+      "updateFailed": "Mise à jour impossible.",
+      "updated": "Ingrédient mis à jour."
+    },
+    "orders": {
+      "invalidAction": "Action invalide.",
+      "actionFailed": "Action impossible.",
+      "orderNotFound": "Commande introuvable.",
+      "forbidden": "Vous ne pouvez pas effectuer cette action.",
+      "statusChanged": "Le statut de cette commande a déjà changé.",
+      "statusAdvanced": "Commande {status}.",
+      "invalidOrder": "Commande invalide.",
+      "settleFailed": "Encaissement impossible.",
+      "settleRetry": "Encaissement en cours sur le même stock, réessayez.",
+      "settled": "Commande encaissée.",
+      "invalidLink": "Ce lien de commande est invalide.",
+      "tableUnavailable": "Cette table n’est plus disponible.",
+      "cartInvalid": "Le panier est invalide.",
+      "cartEmpty": "Le panier est vide.",
+      "cartItemInvalid": "Un article du panier est invalide.",
+      "orderFailed": "Commande impossible.",
+      "dishUnavailable": "Un article du menu n’est plus disponible.",
+      "sent": "Commande envoyée en cuisine !"
+    },
+    "recipes": {
+      "invalidData": "Données de recette invalides.",
+      "duplicateIngredient": "Un ingrédient apparaît plusieurs fois.",
+      "ingredientNotFound": "Un ingrédient est introuvable dans cet établissement.",
+      "ingredientDeleted": "Un ingrédient a été supprimé pendant la sauvegarde.",
+      "saveFailed": "Enregistrement impossible.",
+      "saved": "Recette enregistrée."
+    },
+    "sales": {
+      "cartInvalid": "Le panier est invalide.",
+      "cartEmpty": "Le panier est vide.",
+      "cartItemInvalid": "Un article du panier est invalide.",
+      "unknownTable": "Table inconnue.",
+      "saleFailed": "Vente impossible.",
+      "saleRetry": "Vente en cours sur le même stock, réessayez.",
+      "amountInsufficient": "Montant reçu insuffisant.",
+      "saleRecorded": "Vente enregistrée.",
+      "paymentStarted": "Paiement lancé.",
+      "cardUnavailable": "Paiement par carte indisponible.",
+      "paymentFailed": "Paiement impossible.",
+      "cardFailed": "Le paiement par carte a échoué.",
+      "stripeOrderName": "Commande — {name}",
+      "cartUnavailable": "Un article du panier est indisponible.",
+      "ingredientMissing": "Un ingrédient requis est introuvable.",
+      "insufficientStock": "Stock insuffisant : {name} — reste {available}, besoin {needed}.",
+      "orderNotFound": "Commande introuvable.",
+      "orderNotSettleable": "Cette commande ne peut plus être encaissée.",
+      "orderAlreadySettled": "Commande déjà encaissée.",
+      "cardPaymentNotFound": "Paiement par carte introuvable.",
+      "cardPaymentInvalid": "Impossible de valider le paiement par carte.",
+      "pendingCardPayment": "Un paiement par carte est déjà en cours pour cette commande."
+    },
+    "shifts": {
+      "invalidFields": "Certains champs sont invalides.",
+      "assignmentFailed": "Affectation impossible.",
+      "employeeNotInActiveEstablishment": "Cet employé n'appartient pas à l'établissement actif.",
+      "overlapWithExisting": "Ce créneau chevauche un horaire déjà planifié pour cet employé ce jour-là.",
+      "slotRejected": "Créneau refusé.",
+      "slotAdded": "Créneau ajouté."
+    },
+    "stock": {
+      "invalidFields": "Certains champs sont invalides.",
+      "created": "Stock ajouté."
+    },
+    "tables": {
+      "invalidFields": "Certains champs sont invalides.",
+      "created": "Table créée.",
+      "createFailed": "Création impossible.",
+      "numberDuplicate": "Une table porte déjà ce numéro dans cet établissement.",
+      "updateFailed": "Mise à jour impossible.",
+      "updated": "Table mise à jour."
+    },
+    "uploads": {
+      "tooLarge": "Image trop lourde (maximum 2 Mo).",
+      "unsupportedType": "Format d’image non supporté (jpg, png ou webp)."
+    }
+  },
   "Ingredients": {
     "title": "Ingrédients",
     "add": "Ajouter un ingrédient",
@@ -433,6 +563,61 @@
   "PaymentMethod": {
     "CASH": "Espèces",
     "STRIPE": "Carte"
+  },
+  "Pdf": {
+    "ticket": {
+      "order": "Commande",
+      "date": "Date",
+      "table": "Table",
+      "server": "Serveur",
+      "method": "Méthode",
+      "status": "Statut",
+      "itemsHeader": "Article",
+      "totalHeader": "Total",
+      "perUnit": "{price} / unité",
+      "total": "TOTAL",
+      "thanks": "Merci de votre visite !",
+      "tableNumber": "n° {number}",
+      "tableNumberWithZone": "n° {number} — {zone}",
+      "clientOrder": "Commande client (QR)"
+    },
+    "report": {
+      "title": "Rapport d’activité",
+      "documentTitle": "Rapport d’activité {period}",
+      "headerMeta": "Rapport d’activité · {period}",
+      "generatedAt": "Édité le {date}",
+      "page": "Page {page} / {total}",
+      "period": "Période : {period}",
+      "summary": "Synthèse",
+      "revenue": "Chiffre d’affaires",
+      "settledOrders": "Commandes encaissées",
+      "itemsSold": "Articles vendus",
+      "averageBasket": "Panier moyen",
+      "cashRevenue": "Encaissé espèces",
+      "cardRevenue": "Encaissé carte",
+      "byCategory": "Chiffre d’affaires par catégorie",
+      "byDish": "Chiffre d’affaires & marge par plat",
+      "restockByIngredient": "Réapprovisionnements par ingrédient",
+      "restockDetails": "Détail des réapprovisionnements",
+      "restockTruncated": "{shown} plus récents sur {total}",
+      "colCategory": "Catégorie",
+      "colDish": "Plat",
+      "colIngredient": "Ingrédient",
+      "colQuantity": "Quantité",
+      "colQty": "Qté",
+      "colRevenue": "CA",
+      "colCost": "Coût",
+      "colMargin": "Marge",
+      "colMarginPercent": "Marge %",
+      "colShare": "Part",
+      "colEntries": "Entrées",
+      "colSuppliers": "Fournisseurs",
+      "colDate": "Date",
+      "colSupplier": "Fournisseur",
+      "colUser": "Saisi par",
+      "noSales": "Aucune vente sur la période.",
+      "noRestock": "Aucun réapprovisionnement sur la période."
+    }
   },
   "Period": {
     "jour": "Aujourd’hui",
@@ -666,5 +851,98 @@
     "KG": "kg",
     "L": "L",
     "PIECE": "pièce"
+  },
+  "Validation": {
+    "auth": {
+      "login": {
+        "emailInvalid": "Adresse email invalide.",
+        "passwordRequired": "Le mot de passe est requis."
+      },
+      "register": {
+        "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
+        "emailInvalid": "Adresse email invalide.",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+        "establishmentNameTooShort": "Le nom de l'établissement doit contenir au moins 2 caractères."
+      }
+    },
+    "category": {
+      "invalidOrder": "Ordre invalide.",
+      "nameRequired": "Le nom est obligatoire.",
+      "nameMax": "Maximum 40 caractères."
+    },
+    "clientOrder": {
+      "invalidLink": "Lien invalide.",
+      "cartEmpty": "Le panier est vide.",
+      "cartTooMany": "Trop d’articles dans le panier."
+    },
+    "dish": {
+      "priceInvalid": "Prix invalide (doit être supérieur à zéro).",
+      "nameRequired": "Le nom est obligatoire.",
+      "nameMax": "Maximum 60 caractères.",
+      "descriptionMax": "Maximum 200 caractères.",
+      "categoryRequired": "Choisissez une catégorie.",
+      "invalidStatus": "Statut invalide."
+    },
+    "employee": {
+      "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
+      "emailInvalid": "Email invalide.",
+      "invalidRole": "Rôle invalide.",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères."
+    },
+    "establishment": {
+      "nameTooShort": "Le nom de l'établissement doit contenir au moins 2 caractères.",
+      "timezoneRequired": "Le fuseau horaire est requis."
+    },
+    "ingredient": {
+      "nameRequired": "Le nom est obligatoire.",
+      "nameMax": "Maximum 60 caractères.",
+      "invalidUnit": "Unité invalide.",
+      "invalidStock": "Stock invalide.",
+      "invalidThreshold": "Seuil invalide.",
+      "invalidCost": "Coût invalide."
+    },
+    "order": {
+      "invalidOrder": "Commande invalide.",
+      "invalidStatus": "Statut invalide."
+    },
+    "recipe": {
+      "invalidQuantity": "Quantité invalide (doit être comprise entre 0.001 et 999.999).",
+      "ingredientRequired": "Choisissez un ingrédient.",
+      "tooManyIngredients": "Maximum 50 ingrédients par recette."
+    },
+    "report": {
+      "invalidDate": "Date invalide.",
+      "startBeforeEnd": "La date de début doit précéder la date de fin.",
+      "maxDays": "Période limitée à {days} jours."
+    },
+    "sale": {
+      "invalidPaymentMethod": "Méthode de paiement invalide.",
+      "invalidAmountReceived": "Montant reçu invalide.",
+      "amountTooHigh": "Montant reçu trop élevé.",
+      "threeDecimalsMax": "Le montant accepte 3 décimales maximum.",
+      "invalidArticle": "Article invalide.",
+      "invalidQuantity": "Quantité invalide.",
+      "quantityTooHigh": "Quantité trop élevée.",
+      "cartEmpty": "Le panier est vide.",
+      "cartTooMany": "Trop d’articles dans le panier.",
+      "tableRequired": "Sélectionnez une table."
+    },
+    "shift": {
+      "employeeRequired": "Sélectionnez un employé.",
+      "invalidDay": "Jour de la semaine invalide.",
+      "invalidStartTime": "Heure de début invalide (format HH:mm).",
+      "invalidEndTime": "Heure de fin invalide (format HH:mm).",
+      "endAfterStart": "L'heure de fin doit être postérieure à l'heure de début."
+    },
+    "stockEntry": {
+      "quantityPositive": "La quantité doit être supérieure à zéro.",
+      "supplierInvalid": "Fournisseur invalide (80 caractères maximum).",
+      "invalidDate": "Date invalide.",
+      "dateNotFuture": "La date ne peut pas être dans le futur."
+    },
+    "table": {
+      "invalidNumber": "Numéro invalide (1 à 999).",
+      "zoneMax": "Maximum 40 caractères."
+    }
   }
 }

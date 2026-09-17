@@ -1,10 +1,17 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
-export const orderIdSchema = z.string().min(1, 'Commande invalide.');
+export function createOrderIdSchema(t: MessageTranslator) {
+  return z.string().min(1, t('order.invalidOrder'));
+}
 
-export const orderTargetStatusSchema = z.enum(
-  ['CONFIRMEE', 'EN_PREPARATION', 'PRETE'],
-  { message: 'Statut invalide.' }
-);
+export function createOrderTargetStatusSchema(t: MessageTranslator) {
+  return z.enum(
+    ['CONFIRMEE', 'EN_PREPARATION', 'PRETE'],
+    { message: t('order.invalidStatus') }
+  );
+}
 
-export type OrderTargetStatus = z.infer<typeof orderTargetStatusSchema>;
+export type OrderTargetStatus = z.infer<
+  ReturnType<typeof createOrderTargetStatusSchema>
+>;

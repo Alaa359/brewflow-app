@@ -1,11 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { rangesOverlap, shiftSchema } from '@/lib/validations/shift';
+import { rangesOverlap, createShiftSchema } from '@/lib/validations/shift';
 
 export type ShiftErrors = {
   employeeId?: string[];
@@ -32,8 +33,10 @@ export async function createShift(
   formData: FormData
 ): Promise<ShiftState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.shifts');
+  const tValidation = await getTranslations('Validation');
 
-  const validated = shiftSchema.safeParse({
+  const validated = createShiftSchema(tValidation).safeParse({
     employeeId: formData.get('employeeId'),
     dayOfWeek: formData.get('dayOfWeek'),
     startTime: formData.get('startTime'),
@@ -43,7 +46,7 @@ export async function createShift(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies ShiftState;
   }
 
@@ -61,9 +64,9 @@ export async function createShift(
   if (!member) {
     return {
       errors: {
-        employeeId: ["Cet employé n'appartient pas à l'établissement actif."],
+        employeeId: [t('employeeNotInActiveEstablishment')],
       },
-      message: 'Affectation impossible.',
+      message: t('assignmentFailed'),
     } satisfies ShiftState;
   }
 
@@ -83,11 +86,9 @@ export async function createShift(
   ) {
     return {
       errors: {
-        form: [
-          'Ce créneau chevauche un horaire déjà planifié pour cet employé ce jour-là.',
-        ],
+        form: [t('overlapWithExisting')],
       },
-      message: 'Créneau refusé.',
+      message: t('slotRejected'),
     } satisfies ShiftState;
   }
 
@@ -104,7 +105,7 @@ export async function createShift(
   revalidatePath('/planning');
   return {
     success: true,
-    message: 'Créneau ajouté.',
+    message: t('slotAdded'),
   } satisfies ShiftState;
 }
 

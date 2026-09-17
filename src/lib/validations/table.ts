@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function toTableNumber(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -7,16 +8,20 @@ function toTableNumber(value: unknown): number | null {
   return n;
 }
 
-const numberField = z
-  .any()
-  .refine((v) => toTableNumber(v) !== null, {
-    message: 'Numéro invalide (1 à 999).',
-  })
-  .transform((v) => toTableNumber(v) as number);
+function numberField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => toTableNumber(v) !== null, {
+      message: t('table.invalidNumber'),
+    })
+    .transform((v) => toTableNumber(v) as number);
+}
 
-export const tableSchema = z.object({
-  number: numberField,
-  zone: z.string().trim().max(40, 'Maximum 40 caractères.').optional(),
-});
+export function createTableSchema(t: MessageTranslator) {
+  return z.object({
+    number: numberField(t),
+    zone: z.string().trim().max(40, t('table.zoneMax')).optional(),
+  });
+}
 
-export type TableFormData = z.infer<typeof tableSchema>;
+export type TableFormData = z.infer<ReturnType<typeof createTableSchema>>;

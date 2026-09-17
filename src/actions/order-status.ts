@@ -1,17 +1,19 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 import { OrderStatus, Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
 import { canTransition } from '@/lib/order-flow';
 import { transitionOrderStatus } from '@/lib/orders';
-import { ORDER_STATUS_LABEL } from '@/lib/sales';
+import type { MessageTranslator } from '@/lib/i18n/translator';
+import { getSaleContext } from '@/lib/i18n/sale-context';
 import {
-  orderIdSchema,
-  orderTargetStatusSchema,
+  createOrderIdSchema,
+  createOrderTargetStatusSchema,
 } from '@/lib/validations/order';
-import { amountReceivedSchema } from '@/lib/validations/sale';
+import { createAmountReceivedSchema } from '@/lib/validations/sale';
 import {
   SaleValidationError,
   StockCheckError,
@@ -34,11 +36,11 @@ export type OrderActionState =
     }
   | undefined;
 
-function mapOrderError(error: unknown): OrderActionState {
+function mapOrderError(error: unknown, t: MessageTranslator): OrderActionState {
   if (error instanceof StockCheckError) {
     return {
       errors: { form: [error.message] },
-      message: 'Encaissement impossible.',
+      message: t('settleFailed'),
     } satisfies OrderActionState;
   }
   if (error instanceof SaleValidationError) {
@@ -52,8 +54,8 @@ function mapOrderError(error: unknown): OrderActionState {
     error.code === 'P2034'
   ) {
     return {
-      errors: { form: ['Encaissement en cours sur le même stock, réessayez.'] },
-      message: 'Encaissement impossible.',
+      errors: { form: [t('settleRetry')] },
+      message: t('settleFailed'),
     } satisfies OrderActionState;
   }
   throw error;
@@ -64,15 +66,20 @@ export async function advanceOrderStatus(
   formData: FormData
 ): Promise<OrderActionState> {
   const user = await requireRole(Role.SERVER, Role.ADMIN, Role.KITCHEN);
+  const t = await getTranslations('Feedback.orders');
+  const tStatus = await getTranslations('OrderStatus');
+  const tValidation = await getTranslations('Validation');
 
-  const orderParsed = orderIdSchema.safeParse(formData.get('orderId'));
-  const targetParsed = orderTargetStatusSchema.safeParse(
+  const orderParsed = createOrderIdSchema(tValidation).safeParse(
+    formData.get('orderId')
+  );
+  const targetParsed = createOrderTargetStatusSchema(tValidation).safeParse(
     formData.get('status')
   );
   if (!orderParsed.success || !targetParsed.success) {
     return {
-      errors: { form: ['Action invalide.'] },
-      message: 'Action impossible.',
+      errors: { form: [t('invalidAction')] },
+      message: t('actionFailed'),
     } satisfies OrderActionState;
   }
 
@@ -85,15 +92,15 @@ export async function advanceOrderStatus(
   });
   if (!order) {
     return {
-      errors: { orderId: ['Commande introuvable.'] },
-      message: 'Action impossible.',
+      errors: { orderId: [t('orderNotFound')] },
+      message: t('actionFailed'),
     } satisfies OrderActionState;
   }
 
   if (!canTransition(order.status, targetParsed.data, user.role)) {
     return {
-      errors: { form: ['Vous ne pouvez pas effectuer cette action.'] },
-      message: 'Action impossible.',
+      errors: { form: [t('forbidden')] },
+      message: t('actionFailed'),
     } satisfies OrderActionState;
   }
 
@@ -105,8 +112,8 @@ export async function advanceOrderStatus(
   );
   if (!ok) {
     return {
-      errors: { form: ['Le statut de cette commande a déjà changé.'] },
-      message: 'Action impossible.',
+      errors: { form: [t('statusChanged')] },
+      message: t('actionFailed'),
     } satisfies OrderActionState;
   }
 
@@ -115,7 +122,9 @@ export async function advanceOrderStatus(
   return {
     success: true,
     status: targetParsed.data,
-    message: `Commande ${ORDER_STATUS_LABEL[targetParsed.data].toLowerCase()}.`,
+    message: t('statusAdvanced', {
+      status: tStatus(targetParsed.data).toLowerCase(),
+    }),
   } satisfies OrderActionState;
 }
 
@@ -124,16 +133,21 @@ export async function settlePendingOrder(
   formData: FormData
 ): Promise<OrderActionState> {
   const user = await requireRole(Role.SERVER, Role.ADMIN);
+  const t = await getTranslations('Feedback.orders');
+  const tValidation = await getTranslations('Validation');
+  const saleContext = await getSaleContext();
 
-  const orderParsed = orderIdSchema.safeParse(formData.get('orderId'));
+  const orderParsed = createOrderIdSchema(tValidation).safeParse(
+    formData.get('orderId')
+  );
   if (!orderParsed.success) {
     return {
-      errors: { orderId: ['Commande invalide.'] },
-      message: 'Encaissement impossible.',
+      errors: { orderId: [t('invalidOrder')] },
+      message: t('settleFailed'),
     } satisfies OrderActionState;
   }
 
-  const receivedParsed = amountReceivedSchema.safeParse(
+  const receivedParsed = createAmountReceivedSchema(tValidation).safeParse(
     formData.get('amountReceived')
   );
   if (!receivedParsed.success) {
@@ -141,22 +155,25 @@ export async function settlePendingOrder(
       errors: {
         amountReceived: receivedParsed.error.issues.map((i) => i.message),
       },
-      message: 'Encaissement impossible.',
+      message: t('settleFailed'),
     } satisfies OrderActionState;
   }
 
   let orderId: string;
   try {
-    orderId = await settleOrder({
-      orderId: orderParsed.data,
-      method: 'CASH',
-      establishmentId: user.establishmentId,
-      userId: user.id,
-      amountReceived: new Prisma.Decimal(receivedParsed.data),
-      allowedStatuses: ['PRETE'],
-    });
+    orderId = await settleOrder(
+      {
+        orderId: orderParsed.data,
+        method: 'CASH',
+        establishmentId: user.establishmentId,
+        userId: user.id,
+        amountReceived: new Prisma.Decimal(receivedParsed.data),
+        allowedStatuses: ['PRETE'],
+      },
+      saleContext
+    );
   } catch (error) {
-    return mapOrderError(error);
+    return mapOrderError(error, t);
   }
 
   revalidatePath('/caisse');
@@ -165,6 +182,6 @@ export async function settlePendingOrder(
     success: true,
     orderId,
     status: 'PAYEE',
-    message: 'Commande encaissée.',
+    message: t('settled'),
   } satisfies OrderActionState;
 }

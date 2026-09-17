@@ -1,15 +1,18 @@
 import { z } from 'zod';
 import { parseISODate } from '@/lib/planning';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 export const MAX_REPORT_DAYS = 366;
 
-const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date invalide.')
-  .refine((value) => {
-    const parsed = parseISODate(value);
-    return parsed !== null && parsed.toISOString().slice(0, 10) === value;
-  }, 'Date invalide.');
+function isoDate(t: MessageTranslator) {
+  return z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, t('report.invalidDate'))
+    .refine((value) => {
+      const parsed = parseISODate(value);
+      return parsed !== null && parsed.toISOString().slice(0, 10) === value;
+    }, t('report.invalidDate'));
+}
 
 function spanInDays(from: string, to: string): number {
   const start = parseISODate(from);
@@ -18,18 +21,20 @@ function spanInDays(from: string, to: string): number {
   return Math.round((end.getTime() - start.getTime()) / 86_400_000);
 }
 
-export const reportRangeSchema = z
-  .object({
-    debut: isoDate,
-    fin: isoDate,
-  })
-  .refine((value) => spanInDays(value.debut, value.fin) >= 0, {
-    message: 'La date de début doit précéder la date de fin.',
-    path: ['fin'],
-  })
-  .refine((value) => spanInDays(value.debut, value.fin) <= MAX_REPORT_DAYS, {
-    message: `Période limitée à ${MAX_REPORT_DAYS} jours.`,
-    path: ['fin'],
-  });
+export function createReportRangeSchema(t: MessageTranslator) {
+  return z
+    .object({
+      debut: isoDate(t),
+      fin: isoDate(t),
+    })
+    .refine((value) => spanInDays(value.debut, value.fin) >= 0, {
+      message: t('report.startBeforeEnd'),
+      path: ['fin'],
+    })
+    .refine((value) => spanInDays(value.debut, value.fin) <= MAX_REPORT_DAYS, {
+      message: t('report.maxDays', { days: MAX_REPORT_DAYS }),
+      path: ['fin'],
+    });
+}
 
-export type ReportRange = z.infer<typeof reportRangeSchema>;
+export type ReportRange = z.infer<ReturnType<typeof createReportRangeSchema>>;

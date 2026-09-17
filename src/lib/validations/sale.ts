@@ -1,42 +1,55 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
-export const paymentMethodSchema = z.enum(['CASH', 'STRIPE'], {
-  message: 'Méthode de paiement invalide.',
-});
+export function createPaymentMethodSchema(t: MessageTranslator) {
+  return z.enum(['CASH', 'STRIPE'], {
+    message: t('sale.invalidPaymentMethod'),
+  });
+}
 
-export const amountReceivedSchema = z.preprocess(
-  (value) => {
-    if (typeof value !== 'string') return value;
-    const trimmed = value.trim().replace(',', '.');
-    if (trimmed === '') return NaN;
-    return Number(trimmed);
-  },
-  z
-    .number('Montant reçu invalide.')
-    .finite('Montant reçu invalide.')
-    .min(0, 'Montant reçu invalide.')
-    .max(1_000_000, 'Montant reçu trop élevé.')
-    .refine(
-      (value) => Math.abs(value * 1000 - Math.round(value * 1000)) < 1e-9,
-      'Le montant accepte 3 décimales maximum.'
-    )
-);
+export function createAmountReceivedSchema(t: MessageTranslator) {
+  return z.preprocess(
+    (value) => {
+      if (typeof value !== 'string') return value;
+      const trimmed = value.trim().replace(',', '.');
+      if (trimmed === '') return NaN;
+      return Number(trimmed);
+    },
+    z
+      .number(t('sale.invalidAmountReceived'))
+      .finite(t('sale.invalidAmountReceived'))
+      .min(0, t('sale.invalidAmountReceived'))
+      .max(1_000_000, t('sale.amountTooHigh'))
+      .refine(
+        (value) => Math.abs(value * 1000 - Math.round(value * 1000)) < 1e-9,
+        t('sale.threeDecimalsMax')
+      )
+  );
+}
 
-export const saleItemSchema = z.object({
-  dishId: z.string().min(1, 'Article invalide.'),
-  quantity: z
-    .number()
-    .int('Quantité invalide.')
-    .min(1, 'Quantité invalide.')
-    .max(99, 'Quantité trop élevée.'),
-});
+export function createSaleItemSchema(t: MessageTranslator) {
+  return z.object({
+    dishId: z.string().min(1, t('sale.invalidArticle')),
+    quantity: z
+      .number()
+      .int(t('sale.invalidQuantity'))
+      .min(1, t('sale.invalidQuantity'))
+      .max(99, t('sale.quantityTooHigh')),
+  });
+}
 
-export const saleItemsSchema = z
-  .array(saleItemSchema)
-  .min(1, 'Le panier est vide.')
-  .max(50, 'Trop d’articles dans le panier.');
+export function createSaleItemsSchema(t: MessageTranslator) {
+  return z
+    .array(createSaleItemSchema(t))
+    .min(1, t('sale.cartEmpty'))
+    .max(50, t('sale.cartTooMany'));
+}
 
-export const tableIdSchema = z.string().min(1, 'Sélectionnez une table.');
+export function createTableIdSchema(t: MessageTranslator) {
+  return z.string().min(1, t('sale.tableRequired'));
+}
 
-export type SaleItem = z.infer<typeof saleItemSchema>;
-export type PaymentMethodValue = z.infer<typeof paymentMethodSchema>;
+export type SaleItem = z.infer<ReturnType<typeof createSaleItemSchema>>;
+export type PaymentMethodValue = z.infer<
+  ReturnType<typeof createPaymentMethodSchema>
+>;

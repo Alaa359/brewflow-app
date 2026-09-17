@@ -2,15 +2,18 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Prisma, Role, PaymentMethod } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
 import {
-  amountReceivedSchema,
-  paymentMethodSchema,
-  saleItemsSchema,
-  tableIdSchema,
+  createAmountReceivedSchema,
+  createPaymentMethodSchema,
+  createSaleItemsSchema,
+  createTableIdSchema,
 } from '@/lib/validations/sale';
+import type { MessageTranslator } from '@/lib/i18n/translator';
+import { getSaleContext } from '@/lib/i18n/sale-context';
 import {
   buildSalePlan,
   consolidateItems,
@@ -42,23 +45,26 @@ export type SaleState =
     }
   | undefined;
 
-function formError(
-  errors: SaleErrors['form'],
-  message = 'Vente impossible.'
-): SaleState {
+function formError(errors: SaleErrors['form'], message: string): SaleState {
   return { errors: { form: errors }, message } satisfies SaleState;
 }
 
-async function resolveSaleContext(formData: FormData) {
+async function resolveSaleContext(
+  formData: FormData,
+  t: MessageTranslator,
+  tValidation: MessageTranslator
+) {
   const user = await requireRole(Role.SERVER, Role.ADMIN);
 
-  const tableParsed = tableIdSchema.safeParse(formData.get('tableId'));
+  const tableParsed = createTableIdSchema(tValidation).safeParse(
+    formData.get('tableId')
+  );
   if (!tableParsed.success) {
     return {
       user,
       error: {
         errors: { tableId: tableParsed.error.issues.map((i) => i.message) },
-        message: 'Vente impossible.',
+        message: t('saleFailed'),
       } satisfies SaleState,
     };
   }
@@ -70,24 +76,22 @@ async function resolveSaleContext(formData: FormData) {
     return {
       user,
       error: {
-        errors: { items: ['Le panier est invalide.'] },
-        message: 'Vente impossible.',
+        errors: { items: [t('cartInvalid')] },
+        message: t('saleFailed'),
       } satisfies SaleState,
     };
   }
 
-  const itemsParsed = saleItemsSchema.safeParse(rawItems);
+  const itemsParsed = createSaleItemsSchema(tValidation).safeParse(rawItems);
   if (!itemsParsed.success) {
     const empty = Array.isArray(rawItems) && rawItems.length === 0;
     return {
       user,
       error: {
         errors: {
-          items: empty
-            ? ['Le panier est vide.']
-            : ['Un article du panier est invalide.'],
+          items: [empty ? t('cartEmpty') : t('cartItemInvalid')],
         },
-        message: 'Vente impossible.',
+        message: t('saleFailed'),
       } satisfies SaleState,
     };
   }
@@ -103,8 +107,8 @@ async function resolveSaleContext(formData: FormData) {
     return {
       user,
       error: {
-        errors: { tableId: ['Table inconnue.'] },
-        message: 'Vente impossible.',
+        errors: { tableId: [t('unknownTable')] },
+        message: t('saleFailed'),
       } satisfies SaleState,
     };
   }
@@ -116,11 +120,11 @@ async function resolveSaleContext(formData: FormData) {
   };
 }
 
-function mapSaleError(error: unknown): SaleState {
+function mapSaleError(error: unknown, t: MessageTranslator): SaleState {
   if (error instanceof StockCheckError) {
     return {
       errors: { form: [error.message] },
-      message: 'Vente impossible.',
+      message: t('saleFailed'),
     } satisfies SaleState;
   }
   if (error instanceof SaleValidationError) {
@@ -133,7 +137,7 @@ function mapSaleError(error: unknown): SaleState {
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === 'P2034'
   ) {
-    return formError(['Vente en cours sur le même stock, réessayez.']);
+    return formError([t('saleRetry')], t('saleFailed'));
   }
   throw error;
 }
@@ -142,18 +146,27 @@ export async function validateSale(
   _prev: SaleState,
   formData: FormData
 ): Promise<SaleState> {
-  const context = await resolveSaleContext(formData);
+  const t = await getTranslations('Feedback.sales');
+  const tValidation = await getTranslations('Validation');
+  const saleContext = await getSaleContext();
+
+  const context = await resolveSaleContext(formData, t, tValidation);
   if ('error' in context) return context.error;
 
-  const methodParsed = paymentMethodSchema.safeParse(formData.get('method'));
+  const methodParsed = createPaymentMethodSchema(tValidation).safeParse(
+    formData.get('method')
+  );
   if (!methodParsed.success) {
-    return formError(methodParsed.error.issues.map((i) => i.message));
+    return formError(
+      methodParsed.error.issues.map((i) => i.message),
+      t('saleFailed')
+    );
   }
   const method = methodParsed.data;
 
   let amountReceived: Prisma.Decimal | null = null;
   if (method === PaymentMethod.CASH) {
-    const receivedParsed = amountReceivedSchema.safeParse(
+    const receivedParsed = createAmountReceivedSchema(tValidation).safeParse(
       formData.get('amountReceived')
     );
     if (!receivedParsed.success) {
@@ -161,7 +174,7 @@ export async function validateSale(
         errors: {
           amountReceived: receivedParsed.error.issues.map((i) => i.message),
         },
-        message: 'Encaissement impossible.',
+        message: t('checkoutFailed'),
       } satisfies SaleState;
     }
     amountReceived = new Prisma.Decimal(receivedParsed.data);
@@ -173,12 +186,16 @@ export async function validateSale(
       const plan = await buildSalePlan(
         tx,
         context.user.establishmentId,
-        context.lines
+        context.lines,
+        saleContext
       );
 
       if (method === PaymentMethod.CASH) {
         if (!amountReceived!.gte(plan.totalAmount)) {
-          throw new SaleValidationError(['Montant reçu insuffisant.']);
+          throw new SaleValidationError(
+            [t('amountInsufficient')],
+            t('saleFailed')
+          );
         }
         const order = await tx.order.create({
           data: {
@@ -209,7 +226,8 @@ export async function validateSale(
           context.user.establishmentId,
           plan.needed,
           plan.ingredientMeta,
-          plan.stockById
+          plan.stockById,
+          saleContext
         );
         return order.id;
       }
@@ -241,14 +259,14 @@ export async function validateSale(
       return order.id;
     }, SALE_TX_OPTIONS);
   } catch (error) {
-    return mapSaleError(error);
+    return mapSaleError(error, t);
   }
 
   revalidatePath('/caisse');
   return {
     success: true,
     message:
-      method === PaymentMethod.CASH ? 'Vente enregistrée.' : 'Paiement lancé.',
+      method === PaymentMethod.CASH ? t('saleRecorded') : t('paymentStarted'),
     orderId,
   } satisfies SaleState;
 }
@@ -257,7 +275,11 @@ export async function createCheckoutSession(
   _prev: SaleState,
   formData: FormData
 ): Promise<SaleState> {
-  const context = await resolveSaleContext(formData);
+  const t = await getTranslations('Feedback.sales');
+  const tValidation = await getTranslations('Validation');
+  const saleContext = await getSaleContext();
+
+  const context = await resolveSaleContext(formData, t, tValidation);
   if ('error' in context) return context.error;
 
   let orderId: string;
@@ -267,7 +289,8 @@ export async function createCheckoutSession(
       const plan = await buildSalePlan(
         tx,
         context.user.establishmentId,
-        context.lines
+        context.lines,
+        saleContext
       );
       const order = await tx.order.create({
         data: {
@@ -298,13 +321,13 @@ export async function createCheckoutSession(
     orderId = created.id;
     totalAmount = created.totalAmount;
   } catch (error) {
-    return mapSaleError(error);
+    return mapSaleError(error, t);
   }
 
   if (!stripeConfigured()) {
     return {
-      errors: { form: ['Paiement par carte indisponible.'] },
-      message: 'Paiement impossible.',
+      errors: { form: [t('cardUnavailable')] },
+      message: t('paymentFailed'),
       orderId,
     } satisfies SaleState;
   }
@@ -323,7 +346,9 @@ export async function createCheckoutSession(
             currency: STRIPE_CURRENCY,
             unit_amount: tndToEuroCents(totalAmount.toNumber()),
             product_data: {
-              name: `Commande — ${context.user.establishmentName}`,
+              name: t('stripeOrderName', {
+                name: context.user.establishmentName,
+              }),
             },
           },
         },
@@ -336,8 +361,8 @@ export async function createCheckoutSession(
   } catch (error) {
     console.error('createCheckoutSession failed', error);
     return {
-      errors: { form: ['Le paiement par carte a échoué.'] },
-      message: 'Paiement impossible.',
+      errors: { form: [t('cardFailed')] },
+      message: t('paymentFailed'),
       orderId,
     } satisfies SaleState;
   }

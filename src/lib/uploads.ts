@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -8,15 +9,16 @@ const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
 export async function saveImage(
   folder: string,
-  file: File | null
+  file: File | null,
+  t: MessageTranslator
 ): Promise<string | null> {
   if (!file || file.size === 0) return null;
 
   if (file.size > MAX_IMAGE_SIZE) {
-    throw new Error('Image trop lourde (maximum 2 Mo).');
+    throw new Error(t('tooLarge'));
   }
   if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-    throw new Error('Format d’image non supporté (jpg, png ou webp).');
+    throw new Error(t('unsupportedType'));
   }
 
   const extension =

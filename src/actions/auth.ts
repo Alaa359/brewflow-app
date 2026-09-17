@@ -4,9 +4,13 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { hash, compare } from 'bcryptjs';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 import { Prisma } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
-import { loginSchema, registerSchema } from '@/lib/validations/auth';
+import {
+  createLoginSchema,
+  createRegisterSchema,
+} from '@/lib/validations/auth';
 import { SESSION_COOKIE, SESSION_MAX_AGE, encrypt } from '@/lib/auth/session';
 import { ROLE_HOME } from '@/lib/auth/roles';
 
@@ -63,7 +67,10 @@ export async function login(
   _prev: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const validated = loginSchema.safeParse({
+  const t = await getTranslations('Feedback.auth');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createLoginSchema(tValidation).safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
   });
@@ -71,7 +78,7 @@ export async function login(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies AuthState;
   }
 
@@ -80,9 +87,9 @@ export async function login(
   if (isLocked(email)) {
     return {
       errors: {
-        form: ['Trop de tentatives. Réessayez dans quelques minutes.'],
+        form: [t('tooManyAttempts')],
       },
-      message: 'Connexion impossible.',
+      message: t('loginFailed'),
     } satisfies AuthState;
   }
 
@@ -104,7 +111,7 @@ export async function login(
   if (!user) {
     registerFailure(email);
     return {
-      errors: { form: ['Email ou mot de passe incorrect.'] },
+      errors: { form: [t('invalidCredentials')] },
     } satisfies AuthState;
   }
 
@@ -112,14 +119,14 @@ export async function login(
   if (!passwordOk) {
     registerFailure(email);
     return {
-      errors: { form: ['Email ou mot de passe incorrect.'] },
+      errors: { form: [t('invalidCredentials')] },
     } satisfies AuthState;
   }
 
   const establishmentId = user.memberships[0]?.establishmentId ?? '';
   if (!establishmentId) {
     return {
-      errors: { form: ['Aucun établissement rattaché à ce compte.'] },
+      errors: { form: [t('noEstablishment')] },
     } satisfies AuthState;
   }
 
@@ -147,7 +154,10 @@ export async function register(
   _prev: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const validated = registerSchema.safeParse({
+  const t = await getTranslations('Feedback.auth');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createRegisterSchema(tValidation).safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
     password: formData.get('password'),
@@ -159,7 +169,7 @@ export async function register(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies AuthState;
   }
 
@@ -207,8 +217,8 @@ export async function register(
       error.code === 'P2002'
     ) {
       return {
-        errors: { email: ['Cet email est déjà utilisé.'] },
-        message: 'Inscription impossible.',
+        errors: { email: [t('emailInUse')] },
+        message: t('registerFailed'),
       } satisfies AuthState;
     }
     throw error;

@@ -11,7 +11,52 @@ export type ReportEstablishment = {
   phone: string | null;
 };
 
+export type ReportLabels = {
+  title: string;
+  documentTitle: string;
+  headerMeta: string;
+  generatedAt: string;
+  page: string;
+  period: string;
+  summary: string;
+  revenue: string;
+  settledOrders: string;
+  itemsSold: string;
+  averageBasket: string;
+  cashRevenue: string;
+  cardRevenue: string;
+  byCategory: string;
+  byDish: string;
+  restockByIngredient: string;
+  restockDetails: string;
+  restockTruncated: string;
+  colCategory: string;
+  colDish: string;
+  colIngredient: string;
+  colQuantity: string;
+  colQty: string;
+  colRevenue: string;
+  colCost: string;
+  colMargin: string;
+  colMarginPercent: string;
+  colShare: string;
+  colEntries: string;
+  colSuppliers: string;
+  colDate: string;
+  colSupplier: string;
+  colUser: string;
+  noSales: string;
+  noRestock: string;
+};
+
 type Column = { label: string; width: string; right?: boolean };
+
+function fill(
+  template: string,
+  values: Record<string, string | number>
+): string {
+  return template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
+}
 
 const styles = StyleSheet.create({
   page: {
@@ -175,57 +220,81 @@ function ReportTable({
 export function ReportDocument({
   report,
   establishment,
+  locale,
+  labels,
+  unitLabels,
 }: {
   report: ReportData;
   establishment: ReportEstablishment;
+  locale: string;
+  labels: ReportLabels;
+  unitLabels: Record<string, string>;
 }) {
   const { totals } = report;
-  const periodLabel = `${formatDateLabel(report.range.from)} – ${formatDateLabel(
-    report.range.to
+  const periodLabel = `${formatDateLabel(report.range.from, locale)} – ${formatDateLabel(
+    report.range.to,
+    locale
   )}`;
+  const quantity = (value: number, unit: string) =>
+    formatQuantity(value, unit, locale, unitLabels[unit]);
 
   const summary: { label: string; value: string }[] = [
-    { label: 'Chiffre d’affaires', value: formatCost(totals.revenue) },
-    { label: 'Commandes encaissées', value: String(totals.orderCount) },
-    { label: 'Articles vendus', value: String(totals.itemCount) },
-    { label: 'Panier moyen', value: formatCost(totals.averageBasket) },
-    { label: 'Encaissé espèces', value: formatCost(totals.cashRevenue) },
-    { label: 'Encaissé carte', value: formatCost(totals.cardRevenue) },
+    { label: labels.revenue, value: formatCost(totals.revenue, locale) },
+    { label: labels.settledOrders, value: String(totals.orderCount) },
+    { label: labels.itemsSold, value: String(totals.itemCount) },
+    {
+      label: labels.averageBasket,
+      value: formatCost(totals.averageBasket, locale),
+    },
+    {
+      label: labels.cashRevenue,
+      value: formatCost(totals.cashRevenue, locale),
+    },
+    {
+      label: labels.cardRevenue,
+      value: formatCost(totals.cardRevenue, locale),
+    },
   ];
 
   return (
     <Document
-      title={`Rapport d’activité ${periodLabel}`}
+      title={fill(labels.documentTitle, { period: periodLabel })}
       author={establishment.name}
     >
       <Page size="A4" style={styles.page}>
         <View fixed style={styles.pageHeader}>
           <Text style={styles.pageHeaderName}>{establishment.name}</Text>
           <Text style={styles.pageHeaderMeta}>
-            Rapport d’activité · {periodLabel}
+            {fill(labels.headerMeta, { period: periodLabel })}
           </Text>
         </View>
 
         <View fixed style={styles.pageFooter}>
-          <Text>Édité le {formatDateTime(report.generatedAt)}</Text>
+          <Text>
+            {fill(labels.generatedAt, {
+              date: formatDateTime(report.generatedAt, locale),
+            })}
+          </Text>
           <Text
             render={({ pageNumber, totalPages }) =>
-              `Page ${pageNumber} / ${totalPages}`
+              fill(labels.page, { page: pageNumber, total: totalPages })
             }
           />
         </View>
 
-        <Text style={styles.title}>Rapport d’activité</Text>
+        <Text style={styles.title}>{labels.title}</Text>
         <Text style={styles.subtitle}>
           {establishment.address ?? ''}
           {establishment.address && establishment.phone ? ' · ' : ''}
           {establishment.phone ?? ''}
         </Text>
-        <Text style={styles.subtitle}>Période : {periodLabel}</Text>
+        <Text style={styles.subtitle}>
+          {fill(labels.period, { period: periodLabel })}
+        </Text>
         <View style={styles.rule} />
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Synthèse</Text>
+          <Text style={styles.sectionTitle}>{labels.summary}</Text>
           {summary.map((line) => (
             <View key={line.label} style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>{line.label}</Text>
@@ -235,97 +304,94 @@ export function ReportDocument({
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Chiffre d’affaires par catégorie
-          </Text>
+          <Text style={styles.sectionTitle}>{labels.byCategory}</Text>
           <ReportTable
             columns={[
-              { label: 'Catégorie', width: '40%' },
-              { label: 'Qté', width: '15%', right: true },
-              { label: 'CA', width: '25%', right: true },
-              { label: 'Part', width: '20%', right: true },
+              { label: labels.colCategory, width: '40%' },
+              { label: labels.colQty, width: '15%', right: true },
+              { label: labels.colRevenue, width: '25%', right: true },
+              { label: labels.colShare, width: '20%', right: true },
             ]}
             rows={report.categories.map((category) => [
               category.categoryName,
               String(category.quantity),
-              formatCost(category.revenue),
+              formatCost(category.revenue, locale),
               `${category.sharePercent} %`,
             ])}
-            emptyLabel="Aucune vente sur la période."
+            emptyLabel={labels.noSales}
           />
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Chiffre d’affaires & marge par plat
-          </Text>
+          <Text style={styles.sectionTitle}>{labels.byDish}</Text>
           <ReportTable
             columns={[
-              { label: 'Plat', width: '28%' },
-              { label: 'Qté', width: '9%', right: true },
-              { label: 'CA', width: '19%', right: true },
-              { label: 'Coût', width: '16%', right: true },
-              { label: 'Marge', width: '16%', right: true },
-              { label: 'Marge %', width: '12%', right: true },
+              { label: labels.colDish, width: '28%' },
+              { label: labels.colQty, width: '9%', right: true },
+              { label: labels.colRevenue, width: '19%', right: true },
+              { label: labels.colCost, width: '16%', right: true },
+              { label: labels.colMargin, width: '16%', right: true },
+              { label: labels.colMarginPercent, width: '12%', right: true },
             ]}
             rows={report.dishes.map((dish) => [
               dish.dishName,
               String(dish.quantity),
-              formatCost(dish.revenue),
-              formatCost(dish.cost),
-              formatCost(dish.margin),
+              formatCost(dish.revenue, locale),
+              formatCost(dish.cost, locale),
+              formatCost(dish.margin, locale),
               dish.marginPercent === null
                 ? '—'
-                : formatPercent(dish.marginPercent),
+                : formatPercent(dish.marginPercent, locale),
             ])}
-            emptyLabel="Aucune vente sur la période."
+            emptyLabel={labels.noSales}
           />
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Réapprovisionnements par ingrédient
-          </Text>
+          <Text style={styles.sectionTitle}>{labels.restockByIngredient}</Text>
           <ReportTable
             columns={[
-              { label: 'Ingrédient', width: '34%' },
-              { label: 'Quantité', width: '20%', right: true },
-              { label: 'Entrées', width: '14%', right: true },
-              { label: 'Fournisseurs', width: '32%' },
+              { label: labels.colIngredient, width: '34%' },
+              { label: labels.colQuantity, width: '20%', right: true },
+              { label: labels.colEntries, width: '14%', right: true },
+              { label: labels.colSuppliers, width: '32%' },
             ]}
             rows={report.restock.map((line) => [
               line.ingredientName,
-              formatQuantity(line.quantityAdded, line.unit),
+              quantity(line.quantityAdded, line.unit),
               String(line.entryCount),
               line.suppliers.length > 0 ? line.suppliers.join(', ') : '—',
             ])}
-            emptyLabel="Aucun réapprovisionnement sur la période."
+            emptyLabel={labels.noRestock}
           />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            Détail des réapprovisionnements
+            {labels.restockDetails}
             {report.restockEntryCount > report.restockEntries.length
-              ? ` (${report.restockEntries.length} plus récents sur ${report.restockEntryCount})`
+              ? ` (${fill(labels.restockTruncated, {
+                  shown: report.restockEntries.length,
+                  total: report.restockEntryCount,
+                })})`
               : ''}
           </Text>
           <ReportTable
             columns={[
-              { label: 'Date', width: '14%' },
-              { label: 'Ingrédient', width: '28%' },
-              { label: 'Quantité', width: '18%', right: true },
-              { label: 'Fournisseur', width: '22%' },
-              { label: 'Saisi par', width: '18%' },
+              { label: labels.colDate, width: '14%' },
+              { label: labels.colIngredient, width: '28%' },
+              { label: labels.colQuantity, width: '18%', right: true },
+              { label: labels.colSupplier, width: '22%' },
+              { label: labels.colUser, width: '18%' },
             ]}
             rows={report.restockEntries.map((entry) => [
               entry.dateLabel,
               entry.ingredientName,
-              formatQuantity(entry.quantityAdded, entry.unit),
+              quantity(entry.quantityAdded, entry.unit),
               entry.supplierName ?? '—',
               entry.userName,
             ])}
-            emptyLabel="Aucun réapprovisionnement sur la période."
+            emptyLabel={labels.noRestock}
           />
         </View>
       </Page>

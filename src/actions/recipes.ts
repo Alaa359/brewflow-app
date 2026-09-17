@@ -2,10 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
-import { recipeSchema } from '@/lib/validations/recipe';
+import { createRecipeSchema } from '@/lib/validations/recipe';
 
 export type RecipeErrors = {
   form?: string[];
@@ -27,21 +28,24 @@ export async function saveRecipe(
   });
   if (!dish) redirect('/plats');
 
+  const t = await getTranslations('Feedback.recipes');
+  const tValidation = await getTranslations('Validation');
+
   let raw: unknown;
   try {
     raw = JSON.parse(String(formData.get('lines') ?? ''));
   } catch {
     return {
-      errors: { form: ['Données de recette invalides.'] },
-      message: 'Enregistrement impossible.',
+      errors: { form: [t('invalidData')] },
+      message: t('saveFailed'),
     } satisfies RecipeState;
   }
 
-  const validated = recipeSchema.safeParse(raw);
+  const validated = createRecipeSchema(tValidation).safeParse(raw);
   if (!validated.success) {
     return {
       errors: { form: validated.error.issues.map((issue) => issue.message) },
-      message: 'Enregistrement impossible.',
+      message: t('saveFailed'),
     } satisfies RecipeState;
   }
 
@@ -51,8 +55,8 @@ export async function saveRecipe(
   for (const line of lines) {
     if (seen.has(line.ingredientId)) {
       return {
-        errors: { form: ['Un ingrédient apparaît plusieurs fois.'] },
-        message: 'Enregistrement impossible.',
+        errors: { form: [t('duplicateIngredient')] },
+        message: t('saveFailed'),
       } satisfies RecipeState;
     }
     seen.add(line.ingredientId);
@@ -68,9 +72,9 @@ export async function saveRecipe(
   if (ingredients.length !== lines.length) {
     return {
       errors: {
-        form: ['Un ingrédient est introuvable dans cet établissement.'],
+        form: [t('ingredientNotFound')],
       },
-      message: 'Enregistrement impossible.',
+      message: t('saveFailed'),
     } satisfies RecipeState;
   }
 
@@ -94,9 +98,9 @@ export async function saveRecipe(
     ) {
       return {
         errors: {
-          form: ['Un ingrédient a été supprimé pendant la sauvegarde.'],
+          form: [t('ingredientDeleted')],
         },
-        message: 'Enregistrement impossible.',
+        message: t('saveFailed'),
       } satisfies RecipeState;
     }
     throw error;
@@ -105,6 +109,6 @@ export async function saveRecipe(
   revalidatePath('/plats');
   return {
     success: true,
-    message: 'Recette enregistrée.',
+    message: t('saved'),
   } satisfies RecipeState;
 }

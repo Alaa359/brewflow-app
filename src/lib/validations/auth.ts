@@ -1,20 +1,23 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
-export const loginSchema = z.object({
-  email: z.email('Adresse email invalide.').trim().toLowerCase(),
-  password: z.string().min(1, 'Le mot de passe est requis.'),
-});
+export function createLoginSchema(t: MessageTranslator) {
+  return z.object({
+    email: z.email(t('auth.login.emailInvalid')).trim().toLowerCase(),
+    password: z.string().min(1, t('auth.login.passwordRequired')),
+  });
+}
 
-export const registerSchema = z.object({
-  name: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères.'),
-  email: z.email('Adresse email invalide.').trim().toLowerCase(),
-  password: z
-    .string()
-    .min(8, 'Le mot de passe doit contenir au moins 8 caractères.'),
-  establishmentName: z
-    .string()
-    .trim()
-    .min(2, "Le nom de l'établissement doit contenir au moins 2 caractères."),
-  address: z.string().trim().optional(),
-  phone: z.string().trim().optional(),
-});
+export function createRegisterSchema(t: MessageTranslator) {
+  return z.object({
+    name: z.string().trim().min(2, t('auth.register.nameTooShort')),
+    email: z.email(t('auth.register.emailInvalid')).trim().toLowerCase(),
+    password: z.string().min(8, t('auth.register.passwordTooShort')),
+    establishmentName: z
+      .string()
+      .trim()
+      .min(2, t('auth.register.establishmentNameTooShort')),
+    address: z.string().trim().optional(),
+    phone: z.string().trim().optional(),
+  });
+}

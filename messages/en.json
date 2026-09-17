@@ -266,6 +266,136 @@
       "submitCreate": "Create the store"
     }
   },
+  "Feedback": {
+    "auth": {
+      "invalidFields": "Some fields are invalid.",
+      "loginFailed": "Login failed.",
+      "tooManyAttempts": "Too many attempts. Try again in a few minutes.",
+      "invalidCredentials": "Wrong email or password.",
+      "noEstablishment": "No establishment linked to this account.",
+      "emailInUse": "This email is already in use.",
+      "registerFailed": "Account creation failed."
+    },
+    "categories": {
+      "invalidFields": "Some fields are invalid.",
+      "duplicateName": "A category with this name already exists.",
+      "createFailed": "Could not create.",
+      "created": "Category created.",
+      "updateFailed": "Could not update.",
+      "updated": "Category updated."
+    },
+    "dishes": {
+      "invalidFields": "Some fields are invalid.",
+      "categoryNotFound": "Category not found.",
+      "duplicateName": "A dish with this name already exists.",
+      "createFailed": "Could not create.",
+      "created": "Dish created.",
+      "updateFailed": "Could not update.",
+      "updated": "Dish updated."
+    },
+    "employees": {
+      "invalidFields": "Some fields are invalid.",
+      "createFailed": "Creation failed.",
+      "created": "Employee created.",
+      "emailInUseAttach": "This email is already in use. Use the Edit button to attach an existing account.",
+      "notInYourEstablishments": "This employee is not part of your establishments.",
+      "updateFailed": "Update failed.",
+      "mustKeepOneEstablishment": "This employee must keep at least one attached establishment.",
+      "emailInUseOtherAccount": "This email is already in use by another account.",
+      "updated": "Employee updated."
+    },
+    "establishments": {
+      "invalidFields": "Some fields are invalid.",
+      "created": "Establishment created.",
+      "updated": "Establishment updated.",
+      "nameTaken": "An establishment with this name already exists.",
+      "updateFailed": "Update failed."
+    },
+    "ingredients": {
+      "invalidFields": "Some fields are invalid.",
+      "duplicate": "An ingredient with this name already exists.",
+      "createFailed": "Could not create.",
+      "created": "Ingredient created.",
+      "updateFailed": "Could not update.",
+      "updated": "Ingredient updated."
+    },
+    "orders": {
+      "invalidAction": "Invalid action.",
+      "actionFailed": "Action failed.",
+      "orderNotFound": "Order not found.",
+      "forbidden": "You cannot perform this action.",
+      "statusChanged": "This order’s status has already changed.",
+      "statusAdvanced": "Order {status}.",
+      "invalidOrder": "Invalid order.",
+      "settleFailed": "Checkout failed.",
+      "settleRetry": "A checkout is in progress on the same stock, please try again.",
+      "settled": "Order settled.",
+      "invalidLink": "This order link is invalid.",
+      "tableUnavailable": "This table is no longer available.",
+      "cartInvalid": "The cart is invalid.",
+      "cartEmpty": "The cart is empty.",
+      "cartItemInvalid": "An item in the cart is invalid.",
+      "orderFailed": "Order failed.",
+      "dishUnavailable": "A menu item is no longer available.",
+      "sent": "Order sent to the kitchen!"
+    },
+    "recipes": {
+      "invalidData": "Invalid recipe data.",
+      "duplicateIngredient": "An ingredient appears more than once.",
+      "ingredientNotFound": "An ingredient could not be found in this establishment.",
+      "ingredientDeleted": "An ingredient was deleted during saving.",
+      "saveFailed": "Could not save.",
+      "saved": "Recipe saved."
+    },
+    "sales": {
+      "cartInvalid": "The cart is invalid.",
+      "cartEmpty": "The cart is empty.",
+      "cartItemInvalid": "An item in the cart is invalid.",
+      "unknownTable": "Unknown table.",
+      "saleFailed": "Sale failed.",
+      "saleRetry": "A sale is in progress on the same stock, please try again.",
+      "amountInsufficient": "Amount received is insufficient.",
+      "saleRecorded": "Sale recorded.",
+      "paymentStarted": "Payment started.",
+      "cardUnavailable": "Card payment is unavailable.",
+      "paymentFailed": "Payment failed.",
+      "cardFailed": "Card payment failed.",
+      "stripeOrderName": "Order — {name}",
+      "cartUnavailable": "An item in the cart is unavailable.",
+      "ingredientMissing": "A required ingredient could not be found.",
+      "insufficientStock": "Insufficient stock: {name} — {available} left, {needed} needed.",
+      "orderNotFound": "Order not found.",
+      "orderNotSettleable": "This order can no longer be settled.",
+      "orderAlreadySettled": "Order already settled.",
+      "cardPaymentNotFound": "Card payment not found.",
+      "cardPaymentInvalid": "Could not validate the card payment.",
+      "pendingCardPayment": "A card payment is already pending for this order."
+    },
+    "shifts": {
+      "invalidFields": "Some fields are invalid.",
+      "assignmentFailed": "Assignment failed.",
+      "employeeNotInActiveEstablishment": "This employee does not belong to the active establishment.",
+      "overlapWithExisting": "This slot overlaps a shift already scheduled for this employee on that day.",
+      "slotRejected": "Slot rejected.",
+      "slotAdded": "Slot added."
+    },
+    "stock": {
+      "invalidFields": "Some fields are invalid.",
+      "created": "Stock added."
+    },
+    "tables": {
+      "invalidFields": "Some fields are invalid.",
+      "created": "Table created.",
+      "createFailed": "Creation failed.",
+      "numberDuplicate": "A table with this number already exists in this establishment.",
+      "updateFailed": "Update failed.",
+      "updated": "Table updated."
+    },
+    "uploads": {
+      "tooLarge": "Image too large (2 MB maximum).",
+      "unsupportedType": "Unsupported image format (jpg, png or webp)."
+    }
+  },
   "Ingredients": {
     "title": "Ingredients",
     "add": "Add an ingredient",
@@ -433,6 +563,61 @@
   "PaymentMethod": {
     "CASH": "Cash",
     "STRIPE": "Card"
+  },
+  "Pdf": {
+    "ticket": {
+      "order": "Order",
+      "date": "Date",
+      "table": "Table",
+      "server": "Server",
+      "method": "Method",
+      "status": "Status",
+      "itemsHeader": "Item",
+      "totalHeader": "Total",
+      "perUnit": "{price} / unit",
+      "total": "TOTAL",
+      "thanks": "Thank you for your visit!",
+      "tableNumber": "no. {number}",
+      "tableNumberWithZone": "no. {number} — {zone}",
+      "clientOrder": "Customer order (QR)"
+    },
+    "report": {
+      "title": "Activity report",
+      "documentTitle": "Activity report {period}",
+      "headerMeta": "Activity report · {period}",
+      "generatedAt": "Generated on {date}",
+      "page": "Page {page} / {total}",
+      "period": "Period: {period}",
+      "summary": "Summary",
+      "revenue": "Revenue",
+      "settledOrders": "Settled orders",
+      "itemsSold": "Items sold",
+      "averageBasket": "Average basket",
+      "cashRevenue": "Cash collected",
+      "cardRevenue": "Card collected",
+      "byCategory": "Revenue by category",
+      "byDish": "Revenue & margin by dish",
+      "restockByIngredient": "Restocking by ingredient",
+      "restockDetails": "Restocking details",
+      "restockTruncated": "{shown} most recent of {total}",
+      "colCategory": "Category",
+      "colDish": "Dish",
+      "colIngredient": "Ingredient",
+      "colQuantity": "Quantity",
+      "colQty": "Qty",
+      "colRevenue": "Rev.",
+      "colCost": "Cost",
+      "colMargin": "Margin",
+      "colMarginPercent": "Margin %",
+      "colShare": "Share",
+      "colEntries": "Entries",
+      "colSuppliers": "Suppliers",
+      "colDate": "Date",
+      "colSupplier": "Supplier",
+      "colUser": "Entered by",
+      "noSales": "No sales in this period.",
+      "noRestock": "No restocking in this period."
+    }
   },
   "Period": {
     "jour": "Today",
@@ -666,5 +851,98 @@
     "KG": "kg",
     "L": "L",
     "PIECE": "piece"
+  },
+  "Validation": {
+    "auth": {
+      "login": {
+        "emailInvalid": "Invalid email address.",
+        "passwordRequired": "Password is required."
+      },
+      "register": {
+        "nameTooShort": "Name must be at least 2 characters.",
+        "emailInvalid": "Invalid email address.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "establishmentNameTooShort": "Establishment name must be at least 2 characters."
+      }
+    },
+    "category": {
+      "invalidOrder": "Invalid order.",
+      "nameRequired": "Name is required.",
+      "nameMax": "Maximum 40 characters."
+    },
+    "clientOrder": {
+      "invalidLink": "Invalid link.",
+      "cartEmpty": "The cart is empty.",
+      "cartTooMany": "Too many items in the cart."
+    },
+    "dish": {
+      "priceInvalid": "Invalid price (must be greater than zero).",
+      "nameRequired": "Name is required.",
+      "nameMax": "Maximum 60 characters.",
+      "descriptionMax": "Maximum 200 characters.",
+      "categoryRequired": "Choose a category.",
+      "invalidStatus": "Invalid status."
+    },
+    "employee": {
+      "nameTooShort": "Name must be at least 2 characters.",
+      "emailInvalid": "Invalid email.",
+      "invalidRole": "Invalid role.",
+      "passwordTooShort": "Password must be at least 8 characters."
+    },
+    "establishment": {
+      "nameTooShort": "Establishment name must be at least 2 characters.",
+      "timezoneRequired": "Timezone is required."
+    },
+    "ingredient": {
+      "nameRequired": "Name is required.",
+      "nameMax": "Maximum 60 characters.",
+      "invalidUnit": "Invalid unit.",
+      "invalidStock": "Invalid stock.",
+      "invalidThreshold": "Invalid threshold.",
+      "invalidCost": "Invalid cost."
+    },
+    "order": {
+      "invalidOrder": "Invalid order.",
+      "invalidStatus": "Invalid status."
+    },
+    "recipe": {
+      "invalidQuantity": "Invalid quantity (must be between 0.001 and 999.999).",
+      "ingredientRequired": "Choose an ingredient.",
+      "tooManyIngredients": "Maximum 50 ingredients per recipe."
+    },
+    "report": {
+      "invalidDate": "Invalid date.",
+      "startBeforeEnd": "The start date must precede the end date.",
+      "maxDays": "Period limited to {days} days."
+    },
+    "sale": {
+      "invalidPaymentMethod": "Invalid payment method.",
+      "invalidAmountReceived": "Invalid amount received.",
+      "amountTooHigh": "Amount received too high.",
+      "threeDecimalsMax": "The amount accepts up to 3 decimals.",
+      "invalidArticle": "Invalid item.",
+      "invalidQuantity": "Invalid quantity.",
+      "quantityTooHigh": "Quantity too high.",
+      "cartEmpty": "The cart is empty.",
+      "cartTooMany": "Too many items in the cart.",
+      "tableRequired": "Select a table."
+    },
+    "shift": {
+      "employeeRequired": "Select an employee.",
+      "invalidDay": "Invalid day of the week.",
+      "invalidStartTime": "Invalid start time (format HH:mm).",
+      "invalidEndTime": "Invalid end time (format HH:mm).",
+      "endAfterStart": "The end time must be after the start time."
+    },
+    "stockEntry": {
+      "quantityPositive": "Quantity must be greater than zero.",
+      "supplierInvalid": "Invalid supplier (80 characters maximum).",
+      "invalidDate": "Invalid date.",
+      "dateNotFuture": "The date cannot be in the future."
+    },
+    "table": {
+      "invalidNumber": "Invalid number (1 to 999).",
+      "zoneMax": "Maximum 40 characters."
+    }
   }
 }

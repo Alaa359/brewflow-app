@@ -1,4 +1,5 @@
 import type { NextRequest } from 'next/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { renderToBuffer } from '@react-pdf/renderer';
 import { Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
@@ -6,6 +7,7 @@ import { requireRole } from '@/lib/auth/dal';
 import {
   TicketDocument,
   type TicketEstablishment,
+  type TicketLabels,
   type TicketOrder,
   type TicketOrderItem,
 } from '@/components/sales/ticket-document';
@@ -48,6 +50,14 @@ export async function GET(
     return new Response('Établissement introuvable.', { status: 404 });
   }
 
+  const locale = await getLocale();
+  const pdfLocale = locale === 'ar' ? 'fr' : locale;
+  const [t, tStatus, tPayment] = await Promise.all([
+    getTranslations({ locale: pdfLocale, namespace: 'Pdf.ticket' }),
+    getTranslations({ locale: pdfLocale, namespace: 'OrderStatus' }),
+    getTranslations({ locale: pdfLocale, namespace: 'PaymentMethod' }),
+  ]);
+
   const items: TicketOrderItem[] = order.orderItems.map((item) => ({
     dishName: item.dish.name,
     quantity: item.quantity,
@@ -60,7 +70,7 @@ export async function GET(
     createdAt: order.createdAt,
     tableNumber: order.table.number,
     tableZone: order.table.zone,
-    serverName: order.user?.name ?? 'Commande client (QR)',
+    serverName: order.user?.name ?? t('clientOrder'),
     status: order.status,
     paymentMethod: order.paymentMethod,
     items,
@@ -73,8 +83,31 @@ export async function GET(
     phone: establishment.phone,
   };
 
+  const labels: TicketLabels = {
+    order: t('order'),
+    date: t('date'),
+    table: t('table'),
+    server: t('server'),
+    method: t('method'),
+    status: t('status'),
+    itemsHeader: t('itemsHeader'),
+    totalHeader: t('totalHeader'),
+    perUnit: t('perUnit'),
+    total: t('total'),
+    thanks: t('thanks'),
+    tableNumber: t('tableNumber'),
+    tableNumberWithZone: t('tableNumberWithZone'),
+  };
+
   const buffer = await renderToBuffer(
-    <TicketDocument order={ticketOrder} establishment={ticketEstablishment} />
+    <TicketDocument
+      order={ticketOrder}
+      establishment={ticketEstablishment}
+      locale={pdfLocale}
+      statusLabel={tStatus(order.status)}
+      methodLabel={order.paymentMethod ? tPayment(order.paymentMethod) : '—'}
+      labels={labels}
+    />
   );
 
   return new Response(new Uint8Array(buffer), {

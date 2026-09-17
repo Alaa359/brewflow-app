@@ -1,5 +1,6 @@
 ﻿import { z } from 'zod';
 import { startOfDayTunisia, todayTunisia } from '@/lib/sales';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function parseQuantity(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -8,12 +9,14 @@ function parseQuantity(value: unknown): number | null {
   return Math.round(n * 1000) / 1000;
 }
 
-const quantityField = z
-  .any()
-  .refine((v) => parseQuantity(v) !== null, {
-    message: 'La quantité doit être supérieure à zéro.',
-  })
-  .transform((v) => parseQuantity(v) as number);
+function quantityField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => parseQuantity(v) !== null, {
+      message: t('stockEntry.quantityPositive'),
+    })
+    .transform((v) => parseQuantity(v) as number);
+}
 
 function toLocalDate(value: unknown): Date | null {
   if (value === '' || value === null || value === undefined) {
@@ -31,26 +34,32 @@ function isFuture(date: Date): boolean {
   return startOfDayTunisia(date).getTime() > todayTunisia().getTime();
 }
 
-const dateField = z
-  .any()
-  .refine((v) => toLocalDate(v) !== null, { message: 'Date invalide.' })
-  .refine(
-    (v) => !(toLocalDate(v) !== null && isFuture(toLocalDate(v) as Date)),
-    {
-      message: 'La date ne peut pas être dans le futur.',
-    }
-  )
-  .transform((v) => toLocalDate(v) as Date);
+function dateField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => toLocalDate(v) !== null, { message: t('stockEntry.invalidDate') })
+    .refine(
+      (v) => !(toLocalDate(v) !== null && isFuture(toLocalDate(v) as Date)),
+      {
+        message: t('stockEntry.dateNotFuture'),
+      }
+    )
+    .transform((v) => toLocalDate(v) as Date);
+}
 
-export const stockEntrySchema = z.object({
-  quantityAdded: quantityField,
-  supplierName: z
-    .string()
-    .trim()
-    .max(80, 'Fournisseur invalide (80 caractères maximum).')
-    .transform((v) => (v === '' ? null : v))
-    .optional(),
-  date: dateField,
-});
+export function createStockEntrySchema(t: MessageTranslator) {
+  return z.object({
+    quantityAdded: quantityField(t),
+    supplierName: z
+      .string()
+      .trim()
+      .max(80, t('stockEntry.supplierInvalid'))
+      .transform((v) => (v === '' ? null : v))
+      .optional(),
+    date: dateField(t),
+  });
+}
 
-export type StockEntryFormData = z.infer<typeof stockEntrySchema>;
+export type StockEntryFormData = z.infer<
+  ReturnType<typeof createStockEntrySchema>
+>;

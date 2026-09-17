@@ -3,12 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { hash } from 'bcryptjs';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 import { Prisma, Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
 import { requireRole } from '@/lib/auth/dal';
 import {
-  employeeSchema,
-  employeeUpdateSchema,
+  createEmployeeSchema,
+  createEmployeeUpdateSchema,
 } from '@/lib/validations/employee';
 
 export type EmployeeErrors = {
@@ -52,7 +53,10 @@ export async function createEmployee(
 ): Promise<EmployeeState> {
   const user = await requireRole(Role.ADMIN);
 
-  const validated = employeeSchema.safeParse({
+  const t = await getTranslations('Feedback.employees');
+  const tValidation = await getTranslations('Validation');
+
+  const validated = createEmployeeSchema(tValidation).safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
     role: formData.get('role'),
@@ -62,7 +66,7 @@ export async function createEmployee(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies EmployeeState;
   }
 
@@ -94,11 +98,9 @@ export async function createEmployee(
     if (isDuplicate(error)) {
       return {
         errors: {
-          email: [
-            'Cet email est déjà utilisé. Utilisez le bouton Éditer pour rattacher un compte existant.',
-          ],
+          email: [t('emailInUseAttach')],
         },
-        message: 'Création impossible.',
+        message: t('createFailed'),
       } satisfies EmployeeState;
     }
     throw error;
@@ -108,7 +110,7 @@ export async function createEmployee(
   revalidatePath('/planning');
   return {
     success: true,
-    message: 'Employé créé.',
+    message: t('created'),
   } satisfies EmployeeState;
 }
 
@@ -118,6 +120,8 @@ export async function updateEmployee(
   formData: FormData
 ): Promise<EmployeeState> {
   const user = await requireRole(Role.ADMIN);
+  const t = await getTranslations('Feedback.employees');
+  const tValidation = await getTranslations('Validation');
 
   const managed = await managedEstablishmentIds(user.id);
   const managedSet = new Set(managed);
@@ -129,13 +133,13 @@ export async function updateEmployee(
   if (!editable) {
     return {
       errors: {
-        form: ['Cet employé ne fait pas partie de vos établissements.'],
+        form: [t('notInYourEstablishments')],
       },
-      message: 'Modification impossible.',
+      message: t('updateFailed'),
     } satisfies EmployeeState;
   }
 
-  const validated = employeeUpdateSchema.safeParse({
+  const validated = createEmployeeUpdateSchema(tValidation).safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
     role: formData.get('role'),
@@ -145,7 +149,7 @@ export async function updateEmployee(
   if (!validated.success) {
     return {
       errors: fieldErrors(validated.error),
-      message: 'Certains champs sont invalides.',
+      message: t('invalidFields'),
     } satisfies EmployeeState;
   }
 
@@ -187,11 +191,9 @@ export async function updateEmployee(
   if (existing.length - toRemove.length === 0) {
     return {
       errors: {
-        form: [
-          'Cet employé doit conserver au moins un établissement de rattachement.',
-        ],
+        form: [t('mustKeepOneEstablishment')],
       },
-      message: 'Modification impossible.',
+      message: t('updateFailed'),
     } satisfies EmployeeState;
   }
 
@@ -220,8 +222,8 @@ export async function updateEmployee(
   } catch (error) {
     if (isDuplicate(error)) {
       return {
-        errors: { email: ['Cet email est déjà utilisé par un autre compte.'] },
-        message: 'Modification impossible.',
+        errors: { email: [t('emailInUseOtherAccount')] },
+        message: t('updateFailed'),
       } satisfies EmployeeState;
     }
     throw error;
@@ -231,7 +233,7 @@ export async function updateEmployee(
   revalidatePath('/planning');
   return {
     success: true,
-    message: 'Employé mis à jour.',
+    message: t('updated'),
   } satisfies EmployeeState;
 }
 

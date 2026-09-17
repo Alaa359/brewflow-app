@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function toDecimal(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -13,16 +14,20 @@ const decimalField = (message: string) =>
     .refine((v) => toDecimal(v) !== null, { message })
     .transform((v) => toDecimal(v) as number);
 
-export const ingredientSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, 'Le nom est obligatoire.')
-    .max(60, 'Maximum 60 caractères.'),
-  unit: z.enum(['KG', 'L', 'PIECE'], { message: 'Unité invalide.' }),
-  currentStock: decimalField('Stock invalide.'),
-  minThreshold: decimalField('Seuil invalide.'),
-  costPerUnit: decimalField('Coût invalide.'),
-});
+export function createIngredientSchema(t: MessageTranslator) {
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, t('ingredient.nameRequired'))
+      .max(60, t('ingredient.nameMax')),
+    unit: z.enum(['KG', 'L', 'PIECE'], { message: t('ingredient.invalidUnit') }),
+    currentStock: decimalField(t('ingredient.invalidStock')),
+    minThreshold: decimalField(t('ingredient.invalidThreshold')),
+    costPerUnit: decimalField(t('ingredient.invalidCost')),
+  });
+}
 
-export type IngredientFormData = z.infer<typeof ingredientSchema>;
+export type IngredientFormData = z.infer<
+  ReturnType<typeof createIngredientSchema>
+>;

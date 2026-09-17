@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function toInt(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -7,18 +8,22 @@ function toInt(value: unknown): number | null {
   return n;
 }
 
-const sortOrderField = z
-  .any()
-  .refine((v) => toInt(v) !== null, { message: 'Ordre invalide.' })
-  .transform((v) => toInt(v) as number);
+function sortOrderField(t: MessageTranslator) {
+  return z
+    .any()
+    .refine((v) => toInt(v) !== null, { message: t('category.invalidOrder') })
+    .transform((v) => toInt(v) as number);
+}
 
-export const categorySchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, 'Le nom est obligatoire.')
-    .max(40, 'Maximum 40 caractères.'),
-  sortOrder: sortOrderField,
-});
+export function createCategorySchema(t: MessageTranslator) {
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, t('category.nameRequired'))
+      .max(40, t('category.nameMax')),
+    sortOrder: sortOrderField(t),
+  });
+}
 
-export type CategoryFormData = z.infer<typeof categorySchema>;
+export type CategoryFormData = z.infer<ReturnType<typeof createCategorySchema>>;
