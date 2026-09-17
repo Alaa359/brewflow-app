@@ -14,8 +14,16 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.includes(pathname);
 }
 
+function isPublicOrderPath(pathname: string): boolean {
+  return pathname === '/m' || pathname.startsWith('/m/');
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Menu client (QR code de table) : accessible à tous, connecté ou non
+  if (isPublicOrderPath(pathname)) return NextResponse.next();
+
   const session = await decrypt(request.cookies.get(SESSION_COOKIE)?.value);
 
   // Non authentifié
