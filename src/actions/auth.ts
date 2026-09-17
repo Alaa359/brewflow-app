@@ -51,7 +51,21 @@ export async function login(
 
   const { email, password } = validated.data;
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      passwordHash: true,
+      memberships: {
+        select: { establishmentId: true },
+        orderBy: { establishment: { name: 'asc' } },
+        take: 1,
+      },
+    },
+  });
   if (!user) {
     return {
       errors: { form: ['Email ou mot de passe incorrect.'] },
@@ -65,10 +79,17 @@ export async function login(
     } satisfies AuthState;
   }
 
+  const establishmentId = user.memberships[0]?.establishmentId ?? '';
+  if (!establishmentId) {
+    return {
+      errors: { form: ['Aucun établissement rattaché à ce compte.'] },
+    } satisfies AuthState;
+  }
+
   const session = await encrypt({
     userId: user.id,
     role: user.role,
-    establishmentId: user.establishmentId,
+    establishmentId,
     name: user.name,
     email: user.email,
   });
@@ -110,22 +131,38 @@ export async function register(
 
   const passwordHash = await hash(password, 10);
 
-  let user;
+  let result: {
+    user: { id: string; name: string; role: string };
+    establishmentId: string;
+  };
   try {
-    user = await prisma.$transaction(async (tx) => {
+    result = await prisma.$transaction(async (tx) => {
       const establishment = await tx.establishment.create({
         data: { name: establishmentName, address, phone },
       });
 
-      return tx.user.create({
+      const createdUser = await tx.user.create({
         data: {
           name,
           email,
           passwordHash,
           role: 'ADMIN',
-          establishmentId: establishment.id,
+          memberships: {
+            create: {
+              establishmentId: establishment.id,
+            },
+          },
         },
       });
+
+      return {
+        user: {
+          id: createdUser.id,
+          name: createdUser.name,
+          role: createdUser.role,
+        },
+        establishmentId: establishment.id,
+      };
     });
   } catch (error) {
     if (
@@ -141,11 +178,11 @@ export async function register(
   }
 
   const session = await encrypt({
-    userId: user.id,
-    role: user.role,
-    establishmentId: user.establishmentId,
-    name: user.name,
-    email: user.email,
+    userId: result.user.id,
+    role: result.user.role,
+    establishmentId: result.establishmentId,
+    name: result.user.name,
+    email: validated.data.email,
   });
 
   const cookieStore = await cookies();
@@ -157,7 +194,7 @@ export async function register(
     maxAge: SESSION_MAX_AGE / 1000,
   });
 
-  redirectToRoleHome(user.role);
+  redirectToRoleHome(result.user.role);
 }
 
 export async function logout() {

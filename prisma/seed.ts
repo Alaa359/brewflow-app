@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { randomUUID } from 'node:crypto'
 import { PrismaClient } from '../src/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { hash } from 'bcryptjs'
@@ -9,6 +10,7 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   const passwordHash = await hash('password123', 10)
 
+  await prisma.membership.deleteMany()
   await prisma.payment.deleteMany()
   await prisma.orderItem.deleteMany()
   await prisma.order.deleteMany()
@@ -22,7 +24,7 @@ async function main() {
   await prisma.user.deleteMany()
   await prisma.establishment.deleteMany()
 
-  const [elFares] = await Promise.all([
+  const [elFares, petitBistrot] = await Promise.all([
     prisma.establishment.create({
       data: {
         name: 'El Farès Café',
@@ -48,7 +50,12 @@ async function main() {
         email: 'admin@brewflow.tn',
         passwordHash,
         role: 'ADMIN',
-        establishmentId: elFares.id,
+        memberships: {
+          create: [
+            { establishmentId: elFares.id },
+            { establishmentId: petitBistrot.id },
+          ],
+        },
       },
     }),
     prisma.user.create({
@@ -57,7 +64,11 @@ async function main() {
         email: 'serveur@brewflow.tn',
         passwordHash,
         role: 'SERVER',
-        establishmentId: elFares.id,
+        memberships: {
+          create: {
+            establishmentId: elFares.id,
+          },
+        },
       },
     }),
     prisma.user.create({
@@ -66,7 +77,11 @@ async function main() {
         email: 'cuisinier@brewflow.tn',
         passwordHash,
         role: 'KITCHEN',
-        establishmentId: elFares.id,
+        memberships: {
+          create: {
+            establishmentId: elFares.id,
+          },
+        },
       },
     }),
   ])
@@ -232,27 +247,28 @@ async function main() {
     })
   }
 
-  const petitBistrot = await prisma.establishment.findFirst({
-    where: { name: 'Le Petit Bistrot' },
-  })
+  const petitBistrotTables = [1, 2, 3, 4].map((n) => ({
+    number: n,
+    zone: 'Salle',
+    qrCode: randomUUID(),
+    establishmentId: petitBistrot.id,
+  }))
 
   await prisma.table.createMany({
     data: [
       ...[1, 2, 3, 4].map((n) => ({
         number: n,
         zone: 'Salle',
+        qrCode: randomUUID(),
         establishmentId: elFares.id,
       })),
       ...[5, 6, 7, 8].map((n) => ({
         number: n,
         zone: 'Terrasse',
+        qrCode: randomUUID(),
         establishmentId: elFares.id,
       })),
-      ...[1, 2, 3, 4].map((n) => ({
-        number: n,
-        zone: 'Salle',
-        establishmentId: petitBistrot!.id,
-      })),
+      ...petitBistrotTables,
     ],
   })
 

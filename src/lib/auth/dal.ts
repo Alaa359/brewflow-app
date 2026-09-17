@@ -18,6 +18,7 @@ export type CurrentUser = {
   role: Role;
   establishmentId: string;
   establishmentName: string;
+  establishments: { id: string; name: string }[];
 };
 
 export const getSession = cache(async (): Promise<SessionPayload | null> => {
@@ -38,20 +39,37 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
       name: true,
       email: true,
       role: true,
-      establishmentId: true,
-      establishment: { select: { name: true } },
+      memberships: {
+        select: {
+          establishmentId: true,
+          establishment: { select: { name: true } },
+        },
+      },
     },
   });
 
   if (!user) return null;
+  if (user.memberships.length === 0) return null;
+
+  const memberships = [...user.memberships].sort((a, b) =>
+    a.establishment.name.localeCompare(b.establishment.name)
+  );
+  const current =
+    memberships.find(
+      (membership) => membership.establishmentId === session.establishmentId
+    ) ?? memberships[0];
 
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
-    establishmentId: user.establishmentId,
-    establishmentName: user.establishment.name,
+    establishmentId: current.establishmentId,
+    establishmentName: current.establishment.name,
+    establishments: memberships.map((membership) => ({
+      id: membership.establishmentId,
+      name: membership.establishment.name,
+    })),
   };
 });
 
