@@ -1,0 +1,117 @@
+import { OrderStatus, PaymentMethod } from '@/generated/client';
+import { PrinterIcon } from 'lucide-react';
+import {
+  ORDER_STATUS_LABEL,
+  PAYMENT_METHOD_LABEL,
+  formatTime,
+} from '@/lib/sales';
+import { formatCost } from '@/lib/ingredients';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+export type TodayOrderItem = { dishName: string; quantity: number };
+
+export type TodayOrder = {
+  id: string;
+  createdAt: Date;
+  totalAmount: number;
+  status: OrderStatus;
+  paymentMethod: PaymentMethod | null;
+  items: TodayOrderItem[];
+};
+
+export function TodaySales({ orders }: { orders: TodayOrder[] }) {
+  const revenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
+
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-lg font-semibold tracking-tight">Ventes du jour</h2>
+        <p className="text-muted-foreground text-sm">
+          {orders.length} vente{orders.length > 1 ? 's' : ''} · CA{' '}
+          {formatCost(revenue)}
+        </p>
+      </div>
+
+      <div className="rounded-xl border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Heure</TableHead>
+              <TableHead>Détail</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead>Méthode</TableHead>
+              <TableHead className="w-16">Ticket</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground h-20 text-center"
+                >
+                  Aucune vente aujourd’hui.
+                </TableCell>
+              </TableRow>
+            ) : (
+              orders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell className="tabular-nums">
+                    {formatTime(order.createdAt)}
+                  </TableCell>
+                  <TableCell className="max-w-72">
+                    {order.items
+                      .map((item) => `${item.quantity} × ${item.dishName}`)
+                      .join(', ')}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {formatCost(order.totalAmount)}
+                  </TableCell>
+                  <TableCell>
+                    {ORDER_STATUS_LABEL[order.status] ?? order.status}
+                  </TableCell>
+                  <TableCell>
+                    {order.paymentMethod
+                      ? (PAYMENT_METHOD_LABEL[order.paymentMethod] ??
+                        order.paymentMethod)
+                      : '—'}
+                  </TableCell>
+                  <TableCell>
+                    {order.status === 'PAYEE' ? (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="size-8"
+                        asChild
+                      >
+                        <a
+                          href={`/api/orders/${order.id}/ticket`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Réimprimer le ticket"
+                        >
+                          <PrinterIcon className="size-4" />
+                        </a>
+                      </Button>
+                    ) : (
+                      '—'
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </section>
+  );
+}
