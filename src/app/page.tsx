@@ -1,9 +1,13 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
+    <main className="relative flex flex-1 flex-col items-center justify-center gap-6 p-6 text-center">
+      <div className="absolute end-4 top-4">
+        <LanguageSwitcher />
+      </div>
       <div className="space-y-2">
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           BrewFlow

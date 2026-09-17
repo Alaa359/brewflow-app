@@ -4,6 +4,7 @@ import { Role } from '@/generated/client';
 import { ROLE_HOME, ROLE_LABEL } from '@/lib/auth/roles';
 import { Button } from '@/components/ui/button';
 import { EstablishmentSwitcher } from '@/components/establishment-switcher';
+import { LanguageSwitcher } from '@/components/language-switcher';
 import type { CurrentUser } from '@/lib/auth/dal';
 
 export function AppHeader({ user }: { user: CurrentUser }) {
@@ -101,6 +102,7 @@ export function AppHeader({ user }: { user: CurrentUser }) {
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm">
+          <LanguageSwitcher />
           {user.establishments.length > 1 && (
             <EstablishmentSwitcher
               currentId={user.establishmentId}

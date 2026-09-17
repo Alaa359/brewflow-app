@@ -6,10 +6,33 @@
   "Common": {
     "appName": "BrewFlow",
     "language": "Langue",
+    "currency": "DT",
+    "loading": "Chargement…",
     "locale": {
       "fr": "Français",
       "en": "English",
       "ar": "العربية"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "create": "Créer",
+      "close": "Fermer",
+      "add": "Ajouter",
+      "remove": "Retirer",
+      "search": "Rechercher",
+      "back": "Retour",
+      "confirm": "Confirmer",
+      "download": "Télécharger",
+      "print": "Imprimer",
+      "refresh": "Actualiser",
+      "view": "Voir",
+      "apply": "Appliquer",
+      "reset": "Réinitialiser",
+      "yes": "Oui",
+      "no": "Non"
     }
   }
 }

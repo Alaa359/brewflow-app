@@ -6,10 +6,33 @@
   "Common": {
     "appName": "BrewFlow",
     "language": "Language",
+    "currency": "TND",
+    "loading": "Loading…",
     "locale": {
       "fr": "Français",
       "en": "English",
       "ar": "العربية"
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "close": "Close",
+      "add": "Add",
+      "remove": "Remove",
+      "search": "Search",
+      "back": "Back",
+      "confirm": "Confirm",
+      "download": "Download",
+      "print": "Print",
+      "refresh": "Refresh",
+      "view": "View",
+      "apply": "Apply",
+      "reset": "Reset",
+      "yes": "Yes",
+      "no": "No"
     }
   }
 }

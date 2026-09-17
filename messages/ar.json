@@ -1,15 +1,38 @@
 {
   "Metadata": {
     "title": "BrewFlow — إدارة المقهى والمطعم",
-    "description": "تطبيق إدارة للمقهى والمطعم: المبيعات والمخزون والوصفات والهوامش."
+    "description": "تطبيق إدارة للمقاهي والمطاعم: المبيعات، المخزون، الوصفات والهوامش."
   },
   "Common": {
     "appName": "BrewFlow",
     "language": "اللغة",
+    "currency": "د.ت",
+    "loading": "جارٍ التحميل…",
     "locale": {
       "fr": "Français",
       "en": "English",
       "ar": "العربية"
+    },
+    "actions": {
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "create": "إنشاء",
+      "close": "إغلاق",
+      "add": "إضافة",
+      "remove": "إزالة",
+      "search": "بحث",
+      "back": "رجوع",
+      "confirm": "تأكيد",
+      "download": "تنزيل",
+      "print": "طباعة",
+      "refresh": "تحديث",
+      "view": "عرض",
+      "apply": "تطبيق",
+      "reset": "إعادة تعيين",
+      "yes": "نعم",
+      "no": "لا"
     }
   }
 }
