@@ -33,6 +33,32 @@ function redirectToRoleHome(role: string) {
   redirect(ROLE_HOME[role as keyof typeof ROLE_HOME] ?? '/');
 }
 
+const ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+const MAX_ATTEMPTS = 5;
+
+const attempts = new Map<string, { count: number; lockedUntil: number }>();
+
+function registerFailure(key: string) {
+  const now = Date.now();
+  if (attempts.size > 10_000) attempts.clear();
+  const entry = attempts.get(key);
+  if (!entry || now > entry.lockedUntil) {
+    attempts.set(key, { count: 1, lockedUntil: now + ATTEMPT_WINDOW_MS });
+  } else {
+    entry.count += 1;
+  }
+}
+
+function isLocked(key: string): boolean {
+  const entry = attempts.get(key);
+  if (!entry) return false;
+  if (Date.now() > entry.lockedUntil) {
+    attempts.delete(key);
+    return false;
+  }
+  return entry.count >= MAX_ATTEMPTS;
+}
+
 export async function login(
   _prev: AuthState,
   formData: FormData
@@ -51,6 +77,15 @@ export async function login(
 
   const { email, password } = validated.data;
 
+  if (isLocked(email)) {
+    return {
+      errors: {
+        form: ['Trop de tentatives. Réessayez dans quelques minutes.'],
+      },
+      message: 'Connexion impossible.',
+    } satisfies AuthState;
+  }
+
   const user = await prisma.user.findUnique({
     where: { email },
     select: {
@@ -67,6 +102,7 @@ export async function login(
     },
   });
   if (!user) {
+    registerFailure(email);
     return {
       errors: { form: ['Email ou mot de passe incorrect.'] },
     } satisfies AuthState;
@@ -74,6 +110,7 @@ export async function login(
 
   const passwordOk = await compare(password, user.passwordHash);
   if (!passwordOk) {
+    registerFailure(email);
     return {
       errors: { form: ['Email ou mot de passe incorrect.'] },
     } satisfies AuthState;

@@ -17,6 +17,7 @@ export type KitchenOrder = {
   tableZone: string | null;
   status: OrderStatus;
   fromClient: boolean;
+  paidByCard: boolean;
   nextStatus: OrderStatus | null;
   items: { dishName: string; quantity: number }[];
 };
@@ -148,6 +149,9 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
                           {order.fromClient && (
                             <Badge variant="outline">Client</Badge>
                           )}
+                          {order.paidByCard && (
+                            <Badge variant="outline">Payée en ligne</Badge>
+                          )}
                         </div>
 
                         <ul className="text-sm">
@@ -172,7 +176,9 @@ export function KitchenBoard({ orders }: { orders: KitchenOrder[] }) {
                           </Button>
                         ) : (
                           <p className="text-muted-foreground text-xs">
-                            En attente de confirmation du serveur.
+                            {order.status === 'PRETE'
+                              ? "Prête — en attente d'encaissement."
+                              : 'En attente de confirmation du serveur.'}
                           </p>
                         )}
                       </li>

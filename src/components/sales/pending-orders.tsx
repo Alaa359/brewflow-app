@@ -92,7 +92,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
 
   function openSettle(order: PendingOrder) {
     setReflect(order);
-    setAmount(String(order.totalAmount));
+    setAmount(String(order.totalAmount).replace('.', ','));
     setError(null);
   }
 

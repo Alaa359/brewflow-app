@@ -7,6 +7,7 @@ import {
   encrypt,
 } from '@/lib/auth/session';
 import { roleHome } from '@/lib/auth/roles';
+import { prisma } from '@/lib/prisma';
 
 const PUBLIC_PATHS = ['/', '/login', '/register'];
 
@@ -42,12 +43,35 @@ export async function proxy(request: NextRequest) {
   // Session glissante : on prolonge le cookie si moins de 6 jours restants
   const remaining = (session.exp ?? 0) * 1000 - Date.now();
   if (remaining < SESSION_MAX_AGE - 24 * 60 * 60 * 1000) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: {
+        name: true,
+        email: true,
+        role: true,
+        memberships: {
+          select: {
+            establishmentId: true,
+            establishment: { select: { name: true } },
+          },
+        },
+      },
+    });
+    if (!user || user.memberships.length === 0) {
+      const expired = NextResponse.redirect(new URL('/login', request.nextUrl));
+      expired.cookies.delete(SESSION_COOKIE);
+      return expired;
+    }
+    const current =
+      user.memberships.find(
+        (membership) => membership.establishmentId === session.establishmentId
+      ) ?? user.memberships[0];
     const fresh = await encrypt({
       userId: session.userId,
-      role: session.role,
-      establishmentId: session.establishmentId,
-      name: session.name,
-      email: session.email,
+      role: user.role,
+      establishmentId: current.establishmentId,
+      name: user.name,
+      email: user.email,
     });
     const response = NextResponse.next();
     response.cookies.set(SESSION_COOKIE, fresh, {

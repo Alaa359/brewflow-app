@@ -5,6 +5,11 @@ export const SESSION_COOKIE = 'bf_session';
 export const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 jours
 
 const secretKey = process.env.SESSION_SECRET;
+if (!secretKey || secretKey.length < 32) {
+  throw new Error(
+    'SESSION_SECRET manquante ou trop courte (32 caractères minimum).'
+  );
+}
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export type SessionPayload = {

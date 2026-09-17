@@ -93,6 +93,7 @@ export function PosClient({
       toast.success(state.message ?? 'Vente enregistrée.');
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCart([]);
+      setAmountReceived('');
     }
   }, [state]);
 
@@ -324,7 +325,7 @@ export function PosClient({
               </ul>
             )}
 
-            {state?.success && state.orderId ? (
+            {state?.success && state.orderId && method === 'CASH' ? (
               <a
                 href={`/api/orders/${state.orderId}/ticket`}
                 target="_blank"
@@ -385,19 +386,21 @@ export function PosClient({
                         Montant invalide.
                       </p>
                     )}
-                  {receivedAmount !== null && !Number.isNaN(receivedAmount) && (
-                    <p
-                      className={
-                        changeAmount! >= 0
-                          ? 'text-xs font-medium text-emerald-600'
-                          : 'text-destructive text-xs font-medium'
-                      }
-                    >
-                      {changeAmount! >= 0
-                        ? `Monnaie à rendre : ${formatCost(changeAmount!)}`
-                        : 'Montant insuffisant.'}
-                    </p>
-                  )}
+                  {receivedAmount !== null &&
+                    !Number.isNaN(receivedAmount) &&
+                    changeAmount !== null && (
+                      <p
+                        className={
+                          changeAmount >= 0
+                            ? 'text-xs font-medium text-emerald-600'
+                            : 'text-destructive text-xs font-medium'
+                        }
+                      >
+                        {changeAmount >= 0
+                          ? `Monnaie à rendre : ${formatCost(changeAmount)}`
+                          : 'Montant insuffisant.'}
+                      </p>
+                    )}
                 </div>
               ) : (
                 <p className="text-muted-foreground text-xs">

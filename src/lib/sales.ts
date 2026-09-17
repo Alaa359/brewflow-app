@@ -27,6 +27,14 @@ export function startOfDayTunisia(date: Date): Date {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
+export function todayTunisia(date: Date = new Date()): Date {
+  return startOfDayTunisia(date);
+}
+
+export function toDateInputTunisia(date: Date = new Date()): string {
+  return dateFormatter.format(date);
+}
+
 const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
   timeZone: LOCAL_TIME_ZONE,
   hour: '2-digit',

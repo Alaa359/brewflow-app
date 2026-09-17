@@ -18,12 +18,14 @@ export function AppHeader({ user }: { user: CurrentUser }) {
             BrewFlow
           </Link>
           <nav className="text-muted-foreground flex items-center gap-1 text-sm">
-            <Link
-              href="/dashboard"
-              className="hover:text-foreground rounded px-2 py-1"
-            >
-              Tableau de bord
-            </Link>
+            {user.role === Role.ADMIN && (
+              <Link
+                href="/dashboard"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Tableau de bord
+              </Link>
+            )}
             {(user.role === Role.ADMIN || user.role === Role.SERVER) && (
               <Link
                 href="/caisse"
@@ -32,18 +34,22 @@ export function AppHeader({ user }: { user: CurrentUser }) {
                 Caisse
               </Link>
             )}
-            <Link
-              href="/ingredients"
-              className="hover:text-foreground rounded px-2 py-1"
-            >
-              Ingrédients
-            </Link>
-            <Link
-              href="/plats"
-              className="hover:text-foreground rounded px-2 py-1"
-            >
-              Plats
-            </Link>
+            {user.role === Role.ADMIN && (
+              <Link
+                href="/ingredients"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Ingrédients
+              </Link>
+            )}
+            {user.role === Role.ADMIN && (
+              <Link
+                href="/plats"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Plats
+              </Link>
+            )}
             {user.role === Role.ADMIN && (
               <Link
                 href="/tables"

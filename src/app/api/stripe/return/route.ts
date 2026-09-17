@@ -15,9 +15,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL(CAISSE_URL, request.nextUrl.origin));
   }
 
+  let orderId: string | undefined;
   try {
     const session = await getStripe().checkout.sessions.retrieve(sessionId);
-    const orderId = session.metadata?.orderId;
+    orderId = session.metadata?.orderId;
     if (orderId) {
       if (session.payment_status === 'paid') {
         await completePendingOrder(
@@ -34,7 +35,13 @@ export async function GET(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('stripe return failed', error);
+    console.error('stripe return failed', { error, sessionId, orderId });
+    if (orderId) {
+      await prisma.payment.updateMany({
+        where: { orderId, method: 'STRIPE', status: 'PENDING' },
+        data: { status: 'FAILED' },
+      });
+    }
   }
 
   return NextResponse.redirect(new URL(CAISSE_URL, request.nextUrl.origin));

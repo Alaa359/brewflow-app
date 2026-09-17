@@ -9,12 +9,7 @@ import {
   StockEntriesHistory,
   type StockEntryRow,
 } from '@/components/stock/stock-entries-history';
-
-function toDateInput(date: Date): string {
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}-${m}-${d}`;
-}
+import { toDateInputTunisia } from '@/lib/sales';
 
 function toDateLabel(date: Date): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -87,7 +82,7 @@ export default async function IngredientsPage({
     userName: entry.user.name,
   }));
 
-  const today = toDateInput(new Date());
+  const today = toDateInputTunisia();
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">

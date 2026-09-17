@@ -93,18 +93,14 @@ export async function createEstablishment(
     } satisfies EstablishmentState;
   }
 
-  try {
-    await prisma.establishment.create({
-      data: {
-        ...validated.data,
-        memberships: {
-          create: { userId: user.id },
-        },
+  await prisma.establishment.create({
+    data: {
+      ...validated.data,
+      memberships: {
+        create: { userId: user.id },
       },
-    });
-  } catch (error) {
-    throw error;
-  }
+    },
+  });
 
   revalidatePath('/', 'layout');
   return {

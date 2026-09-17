@@ -4,12 +4,23 @@ export const paymentMethodSchema = z.enum(['CASH', 'STRIPE'], {
   message: 'Méthode de paiement invalide.',
 });
 
-export const amountReceivedSchema = z.coerce
-  .number()
-  .min(0, 'Montant reçu invalide.')
-  .max(1_000_000, 'Montant reçu trop élevé.')
-  .multipleOf(0.001, 'Le montant accepte 3 décimales maximum.')
-  .refine((value) => !Number.isNaN(value), 'Montant reçu invalide.');
+export const amountReceivedSchema = z.preprocess(
+  (value) => {
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim().replace(',', '.');
+    if (trimmed === '') return NaN;
+    return Number(trimmed);
+  },
+  z
+    .number('Montant reçu invalide.')
+    .finite('Montant reçu invalide.')
+    .min(0, 'Montant reçu invalide.')
+    .max(1_000_000, 'Montant reçu trop élevé.')
+    .refine(
+      (value) => Math.abs(value * 1000 - Math.round(value * 1000)) < 1e-9,
+      'Le montant accepte 3 décimales maximum.'
+    )
+);
 
 export const saleItemSchema = z.object({
   dishId: z.string().min(1, 'Article invalide.'),

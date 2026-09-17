@@ -24,19 +24,23 @@ export default async function CuisinePage() {
     },
   });
 
-  const rows: KitchenOrder[] = orders.map((order) => ({
-    id: order.id,
-    createdAt: order.createdAt,
-    tableNumber: order.table.number,
-    tableZone: order.table.zone,
-    status: order.status,
-    fromClient: order.userId === null,
-    nextStatus: nextStatusFor(order.status, user.role),
-    items: order.orderItems.map((item) => ({
-      dishName: item.dish.name,
-      quantity: item.quantity,
-    })),
-  }));
+  const rows: KitchenOrder[] = orders.map((order) => {
+    const next = nextStatusFor(order.status, user.role);
+    return {
+      id: order.id,
+      createdAt: order.createdAt,
+      tableNumber: order.table.number,
+      tableZone: order.table.zone,
+      status: order.status,
+      fromClient: order.userId === null,
+      paidByCard: order.paymentMethod === 'STRIPE',
+      nextStatus: next === 'PAYEE' ? null : next,
+      items: order.orderItems.map((item) => ({
+        dishName: item.dish.name,
+        quantity: item.quantity,
+      })),
+    };
+  });
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">

@@ -1,4 +1,5 @@
 ﻿import { z } from 'zod';
+import { startOfDayTunisia, todayTunisia } from '@/lib/sales';
 
 function parseQuantity(value: unknown): number | null {
   const n = typeof value === 'number' ? value : Number(value);
@@ -16,9 +17,7 @@ const quantityField = z
 
 function toLocalDate(value: unknown): Date | null {
   if (value === '' || value === null || value === undefined) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+    return todayTunisia();
   }
   if (typeof value !== 'string') return null;
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -29,9 +28,7 @@ function toLocalDate(value: unknown): Date | null {
 }
 
 function isFuture(date: Date): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return date.getTime() > today.getTime();
+  return startOfDayTunisia(date).getTime() > todayTunisia().getTime();
 }
 
 const dateField = z

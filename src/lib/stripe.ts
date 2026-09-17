@@ -18,7 +18,7 @@ function tndPerUnit(): number {
 }
 
 export function tndToEuroCents(tnd: number): number {
-  return Math.round((tnd / tndPerUnit()) * 100);
+  return Math.max(1, Math.round((tnd / tndPerUnit()) * 100));
 }
 
 export function getStripe(): Stripe {

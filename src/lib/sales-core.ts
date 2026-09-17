@@ -51,13 +51,14 @@ export type SalePlan = {
 async function fetchSaleDishes(
   tx: Prisma.TransactionClient,
   establishmentId: string,
-  lines: SaleLine[]
+  lines: SaleLine[],
+  checkActive: boolean
 ): Promise<DishWithRecipe[]> {
   const dishes = await tx.dish.findMany({
     where: {
       id: { in: lines.map((l) => l.dishId) },
       establishmentId,
-      isActive: true,
+      ...(checkActive ? { isActive: true } : {}),
     },
     include: {
       recipeIngredients: {
@@ -73,12 +74,20 @@ async function fetchSaleDishes(
   return dishes;
 }
 
+export type SalePlanOptions = { checkActive?: boolean };
+
 export async function buildSalePlan(
   tx: Prisma.TransactionClient,
   establishmentId: string,
-  lines: SaleLine[]
+  lines: SaleLine[],
+  options: SalePlanOptions = {}
 ): Promise<SalePlan> {
-  const dishes = await fetchSaleDishes(tx, establishmentId, lines);
+  const dishes = await fetchSaleDishes(
+    tx,
+    establishmentId,
+    lines,
+    options.checkActive ?? true
+  );
   const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
 
   const ingredientIds = [
@@ -221,9 +230,11 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
   }));
 
   return prisma.$transaction(async (tx) => {
-    const plan = await buildSalePlan(tx, order.table.establishmentId, lines);
+    const plan = await buildSalePlan(tx, order.table.establishmentId, lines, {
+      checkActive: false,
+    });
 
-    if (input.amountReceived && input.amountReceived.lt(plan.totalAmount)) {
+    if (input.amountReceived && input.amountReceived.lt(order.totalAmount)) {
       throw new SaleValidationError(['Montant reçu insuffisant.']);
     }
 
@@ -251,20 +262,38 @@ export async function settleOrder(input: SettleOrderInput): Promise<string> {
       throw new SaleValidationError(['Commande déjà encaissée.']);
     }
 
+    const pendingStripe = await tx.payment.findFirst({
+      where: { orderId: order.id, method: 'STRIPE', status: 'PENDING' },
+      select: { id: true },
+    });
+
     if (input.method === 'STRIPE') {
-      await tx.payment.updateMany({
+      if (!pendingStripe) {
+        throw new SaleValidationError(['Paiement par carte introuvable.']);
+      }
+      const payUpdated = await tx.payment.updateMany({
         where: { orderId: order.id, method: 'STRIPE', status: 'PENDING' },
         data: {
           status: 'COMPLETED',
           transactionId: input.transactionId ?? null,
         },
       });
+      if (payUpdated.count !== 1) {
+        throw new SaleValidationError([
+          'Impossible de valider le paiement par carte.',
+        ]);
+      }
     } else {
+      if (pendingStripe) {
+        throw new SaleValidationError([
+          'Un paiement par carte est déjà en cours pour cette commande.',
+        ]);
+      }
       await tx.payment.create({
         data: {
           orderId: order.id,
           method: 'CASH',
-          amount: plan.totalAmount,
+          amount: order.totalAmount,
           status: 'COMPLETED',
         },
       });

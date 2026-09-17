@@ -23,42 +23,59 @@ import { stripeConfigured } from '@/lib/stripe';
 export default async function CaissePage() {
   const user = await requireRole(Role.SERVER, Role.ADMIN);
 
-  const [categories, dishes, tables, orders] = await Promise.all([
-    prisma.category.findMany({
-      where: { establishmentId: user.establishmentId },
-      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-      select: { id: true, name: true },
-    }),
-    prisma.dish.findMany({
-      where: { establishmentId: user.establishmentId, isActive: true },
-      orderBy: { name: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        categoryId: true,
-        imageUrl: true,
-      },
-    }),
-    prisma.table.findMany({
-      where: { establishmentId: user.establishmentId },
-      orderBy: { number: 'asc' },
-      select: { id: true, number: true, zone: true },
-    }),
-    prisma.order.findMany({
-      where: {
-        table: { establishmentId: user.establishmentId },
-        createdAt: { gte: startOfDayTunisia(new Date()) },
-      },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        table: { select: { number: true, zone: true } },
-        orderItems: {
-          include: { dish: { select: { name: true } } },
+  const [categories, dishes, tables, activeOrders, paidOrders] =
+    await Promise.all([
+      prisma.category.findMany({
+        where: { establishmentId: user.establishmentId },
+        orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+        select: { id: true, name: true },
+      }),
+      prisma.dish.findMany({
+        where: { establishmentId: user.establishmentId, isActive: true },
+        orderBy: { name: 'asc' },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          categoryId: true,
+          imageUrl: true,
         },
-      },
-    }),
-  ]);
+      }),
+      prisma.table.findMany({
+        where: { establishmentId: user.establishmentId },
+        orderBy: { number: 'asc' },
+        select: { id: true, number: true, zone: true },
+      }),
+      prisma.order.findMany({
+        where: {
+          table: { establishmentId: user.establishmentId },
+          status: { not: 'PAYEE' },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 200,
+        include: {
+          table: { select: { number: true, zone: true } },
+          orderItems: {
+            include: { dish: { select: { name: true } } },
+          },
+        },
+      }),
+      prisma.order.findMany({
+        where: {
+          table: { establishmentId: user.establishmentId },
+          status: 'PAYEE',
+          createdAt: { gte: startOfDayTunisia(new Date()) },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 200,
+        include: {
+          table: { select: { number: true, zone: true } },
+          orderItems: {
+            include: { dish: { select: { name: true } } },
+          },
+        },
+      }),
+    ]);
 
   const categoryRows: PosCategory[] = categories.map((cat) => ({
     id: cat.id,
@@ -79,7 +96,7 @@ export default async function CaissePage() {
     zone: table.zone,
   }));
 
-  const todayRows: TodayOrder[] = orders.map((order) => {
+  const todayRows: TodayOrder[] = paidOrders.map((order) => {
     const items: TodayOrderItem[] = order.orderItems.map((item) => ({
       dishName: item.dish.name,
       quantity: item.quantity,
@@ -94,23 +111,21 @@ export default async function CaissePage() {
     };
   });
 
-  const pendingRows: PendingOrder[] = orders
-    .filter((order) => order.status !== 'PAYEE')
-    .map((order) => ({
-      id: order.id,
-      createdAt: order.createdAt,
-      tableNumber: order.table.number,
-      tableZone: order.table.zone,
-      totalAmount: order.totalAmount.toNumber(),
-      status: order.status,
-      paymentMethod: order.paymentMethod,
-      fromClient: order.userId === null,
-      nextStatus: nextStatusFor(order.status, user.role),
-      items: order.orderItems.map((item) => ({
-        dishName: item.dish.name,
-        quantity: item.quantity,
-      })),
-    }));
+  const pendingRows: PendingOrder[] = activeOrders.map((order) => ({
+    id: order.id,
+    createdAt: order.createdAt,
+    tableNumber: order.table.number,
+    tableZone: order.table.zone,
+    totalAmount: order.totalAmount.toNumber(),
+    status: order.status,
+    paymentMethod: order.paymentMethod,
+    fromClient: order.userId === null,
+    nextStatus: nextStatusFor(order.status, user.role),
+    items: order.orderItems.map((item) => ({
+      dishName: item.dish.name,
+      quantity: item.quantity,
+    })),
+  }));
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
