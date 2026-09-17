@@ -354,6 +354,8 @@ async function main() {
       [cuisinier.id, 2, '14:00', '22:00'],
       [serveur.id, 5, '08:00', '14:00'],
       [cuisinier.id, 5, '08:00', '14:00'],
+      [serveur.id, 4, '18:00', '22:00'],
+      [cuisinier.id, 4, '18:00', '22:00'],
     ].map(([userId, dayOfWeek, startTime, endTime]) => ({
       userId: userId as string,
       dayOfWeek: dayOfWeek as number,

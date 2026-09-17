@@ -68,6 +68,22 @@ export function AppHeader({ user }: { user: CurrentUser }) {
             )}
             {user.role === Role.ADMIN && (
               <Link
+                href="/planning"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Planning
+              </Link>
+            )}
+            {user.role === Role.ADMIN && (
+              <Link
+                href="/employes"
+                className="hover:text-foreground rounded px-2 py-1"
+              >
+                Employés
+              </Link>
+            )}
+            {user.role === Role.ADMIN && (
+              <Link
                 href="/etablissements"
                 className="hover:text-foreground rounded px-2 py-1"
               >
