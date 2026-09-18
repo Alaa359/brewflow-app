@@ -6,10 +6,9 @@ export function createOrderIdSchema(t: MessageTranslator) {
 }
 
 export function createOrderTargetStatusSchema(t: MessageTranslator) {
-  return z.enum(
-    ['CONFIRMEE', 'EN_PREPARATION', 'PRETE'],
-    { message: t('order.invalidStatus') }
-  );
+  return z.enum(['CONFIRMEE', 'EN_PREPARATION', 'PRETE'], {
+    message: t('order.invalidStatus'),
+  });
 }
 
 export type OrderTargetStatus = z.infer<

@@ -30,7 +30,7 @@ export async function TopDishes({ dishes }: { dishes: TopDish[] }) {
         ) : (
           dishes.map((dish, index) => (
             <div key={dish.name} className="flex items-center gap-3">
-              <span className="text-muted-foreground w-5 shrink-0 text-right text-sm tabular-nums">
+              <span className="text-muted-foreground w-5 shrink-0 text-end text-sm tabular-nums">
                 {index + 1}
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">

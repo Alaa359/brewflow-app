@@ -112,12 +112,12 @@ export function EstablishmentsTable({
       </div>
 
       {errorMessage && (
-        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pr-10 text-sm">
+        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pe-10 text-sm">
           {errorMessage}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 right-1 -translate-y-1/2"
+            className="absolute end-1 top-1/2 -translate-y-1/2"
             onClick={() => router.replace('/etablissements')}
           >
             <XIcon />
@@ -134,13 +134,9 @@ export function EstablishmentsTable({
               <TableHead>{t('columns.address')}</TableHead>
               <TableHead>{t('columns.phone')}</TableHead>
               <TableHead>{t('columns.timezone')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.members')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.members')}</TableHead>
               <TableHead>{t('columns.status')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.actions')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -171,7 +167,7 @@ export function EstablishmentsTable({
                       {est.phone || '—'}
                     </TableCell>
                     <TableCell>{TIMEZONE_LABEL(est.timezone)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {est.memberCount}
                     </TableCell>
                     <TableCell>
@@ -183,7 +179,7 @@ export function EstablishmentsTable({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       <div className="flex items-center justify-end gap-1">
                         <Button
                           variant="ghost"

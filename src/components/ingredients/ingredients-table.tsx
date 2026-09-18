@@ -132,12 +132,12 @@ export function IngredientsTable({
       </div>
 
       {errorMessage && (
-        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pr-10 text-sm">
+        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pe-10 text-sm">
           {errorMessage}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 right-1 -translate-y-1/2"
+            className="absolute end-1 top-1/2 -translate-y-1/2"
             onClick={() => router.replace('/ingredients')}
           >
             <XIcon />
@@ -153,13 +153,13 @@ export function IngredientsTable({
               <TableHead>{t('table.photo')}</TableHead>
               <TableHead>{t('table.name')}</TableHead>
               <TableHead>{t('table.unit')}</TableHead>
-              <TableHead className="text-right">{t('table.stock')}</TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">{t('table.stock')}</TableHead>
+              <TableHead className="text-end">
                 {t('table.minThreshold')}
               </TableHead>
-              <TableHead className="text-right">{t('table.cost')}</TableHead>
+              <TableHead className="text-end">{t('table.cost')}</TableHead>
               <TableHead>{t('table.status')}</TableHead>
-              <TableHead className="text-right">{t('table.actions')}</TableHead>
+              <TableHead className="text-end">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -192,8 +192,8 @@ export function IngredientsTable({
                     <TableCell
                       className={
                         low
-                          ? 'text-destructive text-right font-medium'
-                          : 'text-right'
+                          ? 'text-destructive text-end font-medium'
+                          : 'text-end'
                       }
                     >
                       {formatQuantity(
@@ -203,7 +203,7 @@ export function IngredientsTable({
                         tUnits(ingredient.unit)
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatQuantity(
                         ingredient.minThreshold,
                         ingredient.unit,
@@ -211,7 +211,7 @@ export function IngredientsTable({
                         tUnits(ingredient.unit)
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       {formatCost(
                         ingredient.costPerUnit,
                         locale,
@@ -227,7 +227,7 @@ export function IngredientsTable({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       <div className="flex items-center justify-end gap-1">
                         <Button
                           variant="ghost"

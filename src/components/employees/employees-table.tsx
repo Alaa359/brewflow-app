@@ -124,9 +124,7 @@ export function EmployeesTable({
               <TableHead>{t('columns.email')}</TableHead>
               <TableHead>{t('columns.role')}</TableHead>
               <TableHead>{t('columns.establishments')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.actions')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -166,7 +164,7 @@ export function EmployeesTable({
                       ))}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"

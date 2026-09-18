@@ -21,7 +21,9 @@ export function createIngredientSchema(t: MessageTranslator) {
       .trim()
       .min(1, t('ingredient.nameRequired'))
       .max(60, t('ingredient.nameMax')),
-    unit: z.enum(['KG', 'L', 'PIECE'], { message: t('ingredient.invalidUnit') }),
+    unit: z.enum(['KG', 'L', 'PIECE'], {
+      message: t('ingredient.invalidUnit'),
+    }),
     currentStock: decimalField(t('ingredient.invalidStock')),
     minThreshold: decimalField(t('ingredient.invalidThreshold')),
     costPerUnit: decimalField(t('ingredient.invalidCost')),

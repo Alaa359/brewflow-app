@@ -84,13 +84,13 @@ export async function ReportsView({
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('columns.category')}</TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('columns.quantity')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('columns.revenue')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('columns.share')}
                   </TableHead>
                 </TableRow>
@@ -111,17 +111,17 @@ export async function ReportsView({
                       <TableCell className="font-medium">
                         {category.categoryName}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="text-end tabular-nums">
                         {formatNumber(category.quantity, locale)}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="text-end tabular-nums">
                         {formatCurrency(
                           category.revenue,
                           locale,
                           tCommon('currency')
                         )}
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-right tabular-nums">
+                      <TableCell className="text-muted-foreground text-end tabular-nums">
                         {formatPercent(category.sharePercent, locale)}
                       </TableCell>
                     </TableRow>
@@ -144,10 +144,10 @@ export async function ReportsView({
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('columns.ingredient')}</TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('columns.fullQuantity')}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-end">
                     {t('columns.entries')}
                   </TableHead>
                   <TableHead>{t('columns.suppliers')}</TableHead>
@@ -169,7 +169,7 @@ export async function ReportsView({
                       <TableCell className="font-medium">
                         {line.ingredientName}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="text-end tabular-nums">
                         {formatQuantity(
                           line.quantityAdded,
                           line.unit,
@@ -177,7 +177,7 @@ export async function ReportsView({
                           tUnits(line.unit)
                         )}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="text-end tabular-nums">
                         {formatNumber(line.entryCount, locale)}
                       </TableCell>
                       <TableCell className="text-muted-foreground">
@@ -205,19 +205,17 @@ export async function ReportsView({
               <TableRow>
                 <TableHead>{t('columns.dish')}</TableHead>
                 <TableHead>{t('columns.category')}</TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('columns.quantity')}
                 </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('columns.revenue')}
                 </TableHead>
-                <TableHead className="text-right">
-                  {t('columns.cost')}
-                </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">{t('columns.cost')}</TableHead>
+                <TableHead className="text-end">
                   {t('columns.margin')}
                 </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('columns.marginPercent')}
                 </TableHead>
               </TableRow>
@@ -241,24 +239,24 @@ export async function ReportsView({
                     <TableCell className="text-muted-foreground">
                       {dish.categoryName}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatNumber(dish.quantity, locale)}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatCurrency(
                         dish.revenue,
                         locale,
                         tCommon('currency')
                       )}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatCurrency(dish.cost, locale, tCommon('currency'))}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatCurrency(dish.margin, locale, tCommon('currency'))}
                     </TableCell>
                     <TableCell
-                      className={`text-right tabular-nums ${marginColorClass(
+                      className={`text-end tabular-nums ${marginColorClass(
                         dish.marginPercent
                       )}`}
                     >
@@ -294,7 +292,7 @@ export async function ReportsView({
               <TableRow>
                 <TableHead>{t('columns.date')}</TableHead>
                 <TableHead>{t('columns.ingredient')}</TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">
                   {t('columns.fullQuantity')}
                 </TableHead>
                 <TableHead>{t('columns.supplier')}</TableHead>
@@ -320,7 +318,7 @@ export async function ReportsView({
                     <TableCell className="font-medium">
                       {entry.ingredientName}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatQuantity(
                         entry.quantityAdded,
                         entry.unit,

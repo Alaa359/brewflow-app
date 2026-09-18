@@ -375,9 +375,9 @@
       "invalidFields": "بعض الحقول غير صالحة.",
       "assignmentFailed": "تعذر الإسناد.",
       "employeeNotInActiveEstablishment": "هذا الموظف لا ينتمي إلى المنشأة النشطة.",
-      "overlapWithExisting": "تتداخل هذه الفتحة مع وردية مجدولة بالفعل لهذا الموظف في ذلك اليوم.",
-      "slotRejected": "تم رفض الفتحة.",
-      "slotAdded": "تمت إضافة الفتحة."
+      "overlapWithExisting": "تتداخل هذه الفترة مع فترة أخرى مجدولة بالفعل لهذا الموظف في ذلك اليوم.",
+      "slotRejected": "تم رفض الفترة.",
+      "slotAdded": "تمت إضافة الفترة."
     },
     "stock": {
       "invalidFields": "بعض الحقول غير صالحة.",
@@ -630,9 +630,9 @@
     "prevWeek": "الأسبوع السابق",
     "nextWeek": "الأسبوع القادم",
     "free": "متاح",
-    "addSlot": "أضف فتحة {day}",
+    "addSlot": "أضف فترة {day}",
     "removeSlot": "أزل {name} ({times})",
-    "removeSlotTitle": "إزالة هذه الفتحة؟",
+    "removeSlotTitle": "إزالة هذه الفترة؟",
     "removeSlotConfirm": "لن يتم جدولة {name}، {day} {times} بعد الآن.",
     "noEmployees": "لا يوجد موظفون في هذا الفرع:",
     "noEmployeesLink": "أنشئ موظفا",
@@ -661,16 +661,16 @@
       "SOIR": "مساء"
     },
     "shiftDialog": {
-      "title": "إضافة فتحة",
+      "title": "إضافة فترة",
       "description": "خصص موظفا لنطاق زمني.",
       "employee": "الموظف",
       "employeePlaceholder": "اختر موظفا",
       "day": "اليوم",
-      "preset": "الفتحة النموذجية",
+      "preset": "الفترة النموذجية",
       "start": "البداية",
       "end": "النهاية",
       "submitting": "يتم الحفظ…",
-      "submit": "إضافة الفتحة"
+      "submit": "إضافة الفترة"
     }
   },
   "Pos": {

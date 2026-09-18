@@ -58,7 +58,7 @@ export function StockEntriesHistory({
             <TableRow>
               <TableHead>{t('entries.table.date')}</TableHead>
               <TableHead>{t('entries.table.ingredient')}</TableHead>
-              <TableHead className="text-right">
+              <TableHead className="text-end">
                 {t('entries.table.quantityAdded')}
               </TableHead>
               <TableHead>{t('entries.table.supplier')}</TableHead>
@@ -77,7 +77,7 @@ export function StockEntriesHistory({
                     ({tUnits(entry.unit) ?? entry.unit})
                   </span>
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-end font-medium">
                   +
                   {formatQuantity(
                     entry.quantityAdded,

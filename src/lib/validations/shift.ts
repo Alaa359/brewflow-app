@@ -11,16 +11,6 @@ export const DAY_NAMES = [
   'Dimanche',
 ];
 
-export const DAY_SHORT = [
-  'lun.',
-  'mar.',
-  'mer.',
-  'jeu.',
-  'ven.',
-  'sam.',
-  'dim.',
-];
-
 export const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const shiftPresets = [
@@ -47,11 +37,7 @@ export function createShiftSchema(t: MessageTranslator) {
   return z
     .object({
       employeeId: z.string().min(1, t('shift.employeeRequired')),
-      dayOfWeek: z.coerce
-        .number()
-        .int()
-        .min(0)
-        .max(6, t('shift.invalidDay')),
+      dayOfWeek: z.coerce.number().int().min(0).max(6, t('shift.invalidDay')),
       startTime: z.string().regex(TIME_RE, t('shift.invalidStartTime')),
       endTime: z.string().regex(TIME_RE, t('shift.invalidEndTime')),
     })

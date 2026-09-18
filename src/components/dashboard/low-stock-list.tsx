@@ -44,10 +44,8 @@ export async function LowStockList({
             <TableHeader>
               <TableRow>
                 <TableHead>{t('columns.ingredient')}</TableHead>
-                <TableHead className="text-right">
-                  {t('columns.stock')}
-                </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="text-end">{t('columns.stock')}</TableHead>
+                <TableHead className="text-end">
                   {t('columns.threshold')}
                 </TableHead>
                 <TableHead>{t('columns.status')}</TableHead>
@@ -59,7 +57,7 @@ export async function LowStockList({
                   <TableCell className="font-medium">
                     {ingredient.name}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-end tabular-nums">
                     {formatQuantity(
                       ingredient.currentStock,
                       ingredient.unit,
@@ -67,7 +65,7 @@ export async function LowStockList({
                       tUnits(ingredient.unit)
                     )}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-end tabular-nums">
                     {formatQuantity(
                       ingredient.minThreshold,
                       ingredient.unit,

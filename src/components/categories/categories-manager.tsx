@@ -143,7 +143,7 @@ export function CategoriesManager({
           <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex max-h-80 flex-col gap-2 overflow-y-auto pr-1">
+        <div className="flex max-h-80 flex-col gap-2 overflow-y-auto pe-1">
           {list.length === 0 && !adding && (
             <p className="text-muted-foreground py-4 text-center text-sm">
               {t('empty')}

@@ -52,7 +52,7 @@ export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
             <TableRow>
               <TableHead>{t('columns.time')}</TableHead>
               <TableHead>{t('columns.detail')}</TableHead>
-              <TableHead className="text-right">{t('columns.total')}</TableHead>
+              <TableHead className="text-end">{t('columns.total')}</TableHead>
               <TableHead>{t('columns.status')}</TableHead>
               <TableHead>{t('columns.method')}</TableHead>
               <TableHead className="w-16">{t('columns.ticket')}</TableHead>
@@ -79,7 +79,7 @@ export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
                       .map((item) => `${item.quantity} × ${item.dishName}`)
                       .join(', ')}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-end tabular-nums">
                     {formatCost(order.totalAmount, locale, tCommon('currency'))}
                   </TableCell>
                   <TableCell>{tStatus(order.status)}</TableCell>

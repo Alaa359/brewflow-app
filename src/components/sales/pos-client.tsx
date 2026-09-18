@@ -205,7 +205,7 @@ export function PosClient({
                     key={dish.id}
                     type="button"
                     onClick={() => addDish(dish)}
-                    className="bg-background hover:bg-muted/60 flex cursor-pointer flex-col overflow-hidden rounded-xl border text-left transition-colors"
+                    className="bg-background hover:bg-muted/60 flex cursor-pointer flex-col overflow-hidden rounded-xl border text-start transition-colors"
                   >
                     <DishThumb src={dish.imageUrl} alt={dish.name} />
                     <div className="flex flex-col gap-0.5 p-3">

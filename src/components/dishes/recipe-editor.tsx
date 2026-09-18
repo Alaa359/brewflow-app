@@ -143,7 +143,7 @@ export function RecipeEditor({
     <form action={formAction} className="flex flex-col gap-4">
       <input type="hidden" name="lines" value={JSON.stringify(validLines)} />
 
-      <div className="flex max-h-72 flex-col gap-2 overflow-y-auto pr-1">
+      <div className="flex max-h-72 flex-col gap-2 overflow-y-auto pe-1">
         {rows.length === 0 && (
           <p className="text-muted-foreground py-4 text-center text-sm">
             {t('emptyIngredients')}
@@ -187,7 +187,7 @@ export function RecipeEditor({
                 value={row.quantity}
                 onChange={(e) => setRow(index, { quantity: e.target.value })}
               />
-              <span className="text-muted-foreground text-right text-xs">
+              <span className="text-muted-foreground text-end text-xs">
                 {cost !== null
                   ? formatCost(cost, locale, tCommon('currency'))
                   : '—'}

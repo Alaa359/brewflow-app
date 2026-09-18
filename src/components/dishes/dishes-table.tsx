@@ -154,12 +154,12 @@ export function DishesTable({
       </div>
 
       {errorMessage && (
-        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pr-10 text-sm">
+        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pe-10 text-sm">
           {errorMessage}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 right-1 -translate-y-1/2"
+            className="absolute end-1 top-1/2 -translate-y-1/2"
             onClick={() => router.replace('/plats')}
           >
             <XIcon />
@@ -180,15 +180,11 @@ export function DishesTable({
             <TableRow>
               <TableHead>{t('columns.photo')}</TableHead>
               <TableHead>{t('columns.dish')}</TableHead>
-              <TableHead className="text-right">{t('columns.price')}</TableHead>
-              <TableHead className="text-right">{t('columns.cost')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.margin')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.price')}</TableHead>
+              <TableHead className="text-end">{t('columns.cost')}</TableHead>
+              <TableHead className="text-end">{t('columns.margin')}</TableHead>
               <TableHead>{t('columns.status')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.actions')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -212,7 +208,7 @@ export function DishesTable({
                         className="text-muted-foreground font-medium"
                       >
                         {cat.name}
-                        <span className="ml-2 text-xs font-normal">
+                        <span className="ms-2 text-xs font-normal">
                           {t('categoryExtra', { count: catDishes.length })}
                         </span>
                       </TableCell>
@@ -243,14 +239,14 @@ export function DishesTable({
                                 </div>
                               )}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-end">
                               {formatCost(
                                 dish.price,
                                 locale,
                                 tCommon('currency')
                               )}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-end">
                               {dish.recipeCount > 0
                                 ? formatCost(
                                     dish.cost,
@@ -259,7 +255,7 @@ export function DishesTable({
                                   )
                                 : '—'}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-end">
                               {dish.recipeCount > 0 ? (
                                 <span
                                   className={marginColorClass(
@@ -290,7 +286,7 @@ export function DishesTable({
                                 </span>
                               )}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-end">
                               <div className="flex items-center justify-end gap-1">
                                 <Button
                                   variant="ghost"

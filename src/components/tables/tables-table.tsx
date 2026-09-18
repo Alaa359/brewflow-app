@@ -112,12 +112,12 @@ export function TablesTable({
       </div>
 
       {errorMessage && (
-        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pr-10 text-sm">
+        <div className="bg-destructive/10 text-destructive relative rounded-md border px-3 py-2.5 pe-10 text-sm">
           {errorMessage}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 right-1 -translate-y-1/2"
+            className="absolute end-1 top-1/2 -translate-y-1/2"
             onClick={() => router.replace('/tables')}
           >
             <XIcon />
@@ -132,13 +132,9 @@ export function TablesTable({
             <TableRow>
               <TableHead>{t('columns.table')}</TableHead>
               <TableHead>{t('columns.zone')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.orders')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.orders')}</TableHead>
               <TableHead>{t('columns.qrCode')}</TableHead>
-              <TableHead className="text-right">
-                {t('columns.actions')}
-              </TableHead>
+              <TableHead className="text-end">{t('columns.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -163,7 +159,7 @@ export function TablesTable({
                   <TableCell className="text-muted-foreground">
                     {table.zone || '—'}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-end tabular-nums">
                     {table.orderCount}
                   </TableCell>
                   <TableCell>
@@ -185,7 +181,7 @@ export function TablesTable({
                       </form>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-end">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"

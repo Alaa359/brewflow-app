@@ -37,7 +37,9 @@ function isFuture(date: Date): boolean {
 function dateField(t: MessageTranslator) {
   return z
     .any()
-    .refine((v) => toLocalDate(v) !== null, { message: t('stockEntry.invalidDate') })
+    .refine((v) => toLocalDate(v) !== null, {
+      message: t('stockEntry.invalidDate'),
+    })
     .refine(
       (v) => !(toLocalDate(v) !== null && isFuture(toLocalDate(v) as Date)),
       {

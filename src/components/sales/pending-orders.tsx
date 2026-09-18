@@ -152,7 +152,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
               <TableHead>{t('columns.time')}</TableHead>
               <TableHead>{t('columns.table')}</TableHead>
               <TableHead>{t('columns.detail')}</TableHead>
-              <TableHead className="text-right">{t('columns.total')}</TableHead>
+              <TableHead className="text-end">{t('columns.total')}</TableHead>
               <TableHead>{t('columns.status')}</TableHead>
               <TableHead className="w-40">{t('columns.action')}</TableHead>
             </TableRow>
@@ -182,7 +182,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                       })}
                       {order.tableZone ? ` — ${order.tableZone}` : ''}
                       {order.fromClient && (
-                        <Badge variant="secondary" className="ml-2">
+                        <Badge variant="secondary" className="ms-2">
                           {t('pending.clientBadge')}
                         </Badge>
                       )}
@@ -192,7 +192,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                         .map((item) => `${item.quantity} × ${item.dishName}`)
                         .join(', ')}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       {formatCost(
                         order.totalAmount,
                         locale,

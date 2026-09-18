@@ -1,18 +1,4 @@
-import type { OrderStatus, PaymentMethod } from '@/generated/client';
 import { createDateFormatter } from '@/lib/i18n/format';
-
-export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
-  EN_ATTENTE: 'En attente',
-  CONFIRMEE: 'Confirmée',
-  EN_PREPARATION: 'En préparation',
-  PRETE: 'Prête',
-  PAYEE: 'Payée',
-};
-
-export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
-  CASH: 'Espèces',
-  STRIPE: 'Carte',
-};
 
 const LOCAL_TIME_ZONE = 'Africa/Tunis';
 
@@ -58,12 +44,6 @@ export function formatDateTime(date: Date, locale = 'fr'): string {
 }
 
 export type Period = 'jour' | 'semaine' | 'mois';
-
-export const PERIOD_LABEL: Record<Period, string> = {
-  jour: 'Aujourd’hui',
-  semaine: 'Cette semaine',
-  mois: 'Ce mois',
-};
 
 const DAY_MS = 86_400_000;
 
