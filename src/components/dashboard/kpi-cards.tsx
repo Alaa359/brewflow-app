@@ -8,7 +8,6 @@ import { formatCurrency, formatNumber } from '@/lib/i18n/format';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
 } from '@/components/ui/card';
 
@@ -33,30 +32,40 @@ export async function KpiCards({
       value: formatCurrency(revenue, locale, tCommon('currency')),
       description: t('revenue.description'),
       Icon: BanknoteIcon,
+      chip: 'bg-chart-1/15 text-chart-1',
+      ring: 'group-hover/card:border-chart-1/40',
     },
     {
       label: t('orders.label'),
       value: formatNumber(orderCount, locale),
       description: t('orders.description', { count: orderCount }),
       Icon: ReceiptTextIcon,
+      chip: 'bg-chart-3/15 text-chart-5',
+      ring: 'group-hover/card:border-chart-3/40',
     },
     {
       label: t('averageBasket.label'),
       value: formatCurrency(averageBasket, locale, tCommon('currency')),
       description: t('averageBasket.description'),
       Icon: ShoppingBasketIcon,
+      chip: 'bg-chart-5/15 text-chart-5',
+      ring: 'group-hover/card:border-chart-5/40',
     },
   ] as const;
 
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {items.map((item) => (
-        <Card key={item.label}>
-          <CardHeader>
-            <CardDescription className="flex items-center gap-2">
-              <item.Icon className="size-4" />
+        <Card key={item.label} className={`kpi-card ${item.ring}`}>
+          <CardHeader className="flex-row items-center justify-between gap-2">
+            <p className="text-sm font-medium text-muted-foreground">
               {item.label}
-            </CardDescription>
+            </p>
+            <span
+              className={`grid size-9 shrink-0 place-items-center rounded-xl ${item.chip}`}
+            >
+              <item.Icon className="size-4" />
+            </span>
           </CardHeader>
           <CardContent>
             <p className="font-heading text-2xl font-semibold tracking-tight tabular-nums">

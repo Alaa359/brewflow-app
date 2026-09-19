@@ -1,4 +1,4 @@
-import { OrderStatus, PaymentMethod } from '@/generated/client';
+import type { OrderStatus, PaymentMethod } from '@/generated/client';
 import { PrinterIcon } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { formatTime } from '@/lib/sales';
