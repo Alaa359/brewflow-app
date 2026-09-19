@@ -76,8 +76,9 @@ function Scene() {
       gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
       onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
     >
-      <ambientLight intensity={1.4} />
-      <directionalLight position={[4, 6, 5]} intensity={1.8} />
+      <ambientLight intensity={1.2} color="#E8F0EB" />
+      <directionalLight position={[4, 6, 5]} intensity={1.6} color="#34D399" />
+      <pointLight position={[-3, 2, 2]} intensity={0.4} color="#6EE7B7" />
       <FloatingObject
         position={[3, -0.9, -0.4]}
         scale={1.15}
