@@ -6,7 +6,6 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import {
   ChevronsUpDownIcon,
-  CheckIcon,
   LanguagesIcon,
   LogOutIcon,
   StoreIcon,
