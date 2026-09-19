@@ -243,7 +243,7 @@ export function RecipeEditor({
       ))}
 
       {state?.success && (
-        <p className="rounded-md px-3 py-2 text-xs text-emerald-600">
+        <p className="text-success rounded-md px-3 py-2 text-xs">
           {t('saved')}
         </p>
       )}

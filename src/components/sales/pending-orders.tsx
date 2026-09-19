@@ -283,7 +283,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
               <p
                 className={
                   change >= 0
-                    ? 'text-xs font-medium text-emerald-600'
+                    ? 'text-success text-xs font-medium'
                     : 'text-destructive text-xs font-medium'
                 }
               >

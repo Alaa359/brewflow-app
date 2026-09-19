@@ -48,10 +48,7 @@ function roleBadge(role: EmployeeRole, tRoles: (key: string) => string) {
       return <Badge>{tRoles(role)}</Badge>;
     case 'KITCHEN':
       return (
-        <Badge
-          variant="outline"
-          className="border-emerald-400 text-emerald-700"
-        >
+        <Badge variant="outline" className="border-success text-success">
           {tRoles(role)}
         </Badge>
       );

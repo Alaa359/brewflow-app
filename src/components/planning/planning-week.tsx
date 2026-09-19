@@ -38,7 +38,7 @@ export type PlanningShiftRow = {
 const ROLE_COLOR: Record<EmployeeRole, string> = {
   ADMIN: 'bg-amber-100 text-amber-800',
   SERVER: 'bg-sky-100 text-sky-800',
-  KITCHEN: 'bg-emerald-100 text-emerald-800',
+  KITCHEN: 'bg-success/20 text-success',
 };
 
 export function PlanningWeek({

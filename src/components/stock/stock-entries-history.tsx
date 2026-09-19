@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { PackageOpenIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
   Table,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { EmptyState } from '@/components/ui/empty-state';
 import { formatQuantity } from '@/lib/ingredients';
 import type { Unit } from '@/generated/client';
 
@@ -49,9 +51,7 @@ export function StockEntriesHistory({
       </div>
 
       {entries.length === 0 ? (
-        <p className="text-muted-foreground h-20 px-4 py-6 text-sm">
-          {t('entries.empty')}
-        </p>
+        <EmptyState icon={PackageOpenIcon} title={t('entries.empty')} />
       ) : (
         <Table>
           <TableHeader>

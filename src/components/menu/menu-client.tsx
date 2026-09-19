@@ -152,7 +152,7 @@ export function MenuClient({
         </div>
 
         {confirmed && (
-          <div className="flex items-start gap-3 rounded-lg border border-emerald-600/30 bg-emerald-600/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
+          <div className="border-success/30 bg-success/10 text-success flex items-start gap-3 rounded-lg border px-4 py-3 text-sm">
             <CircleCheckIcon className="mt-0.5 size-4 shrink-0" />
             <div className="flex flex-col gap-0.5">
               <span className="font-medium">{t('confirmed.title')}</span>

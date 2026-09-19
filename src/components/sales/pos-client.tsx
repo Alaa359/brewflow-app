@@ -99,6 +99,13 @@ export function PosClient({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCart([]);
       setAmountReceived('');
+    } else if (state && !state.success) {
+      const message =
+        state.errors?.form?.[0] ??
+        state.errors?.items?.[0] ??
+        state.errors?.tableId?.[0] ??
+        state.errors?.amountReceived?.[0];
+      if (message) toast.error(message);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
@@ -255,7 +262,10 @@ export function PosClient({
             <div className="flex flex-col gap-2">
               <Label>{t('table.label')}</Label>
               <Select value={tableId} onValueChange={setTableId}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger
+                  className="w-full"
+                  aria-label={t('table.label')}
+                >
                   <SelectValue placeholder={t('table.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -403,7 +413,7 @@ export function PosClient({
                       <p
                         className={
                           changeAmount >= 0
-                            ? 'text-xs font-medium text-emerald-600'
+                            ? 'text-success text-xs font-medium'
                             : 'text-destructive text-xs font-medium'
                         }
                       >
