@@ -40,6 +40,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local dev server logs
+dev-server*.log
+
 # uploaded images (local storage)
 /public/uploads/
 
