@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { useTransition } from 'react';
 import {
   ChevronsUpDownIcon,
+  CheckIcon,
   LanguagesIcon,
   LogOutIcon,
   StoreIcon,
@@ -11,6 +14,8 @@ import {
 } from 'lucide-react';
 import { logout } from '@/actions/auth';
 import { ROLE_HOME } from '@/lib/auth/roles';
+import { locales, type Locale } from '@/i18n/config';
+import { setUserLocale } from '@/i18n/locale';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -19,7 +24,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { CurrentUser } from '@/lib/auth/dal';
@@ -28,6 +38,18 @@ export function UserMenu({ user }: { user: CurrentUser }) {
   const t = useTranslations('Nav');
   const tCommon = useTranslations('Common');
   const tRoles = useTranslations('Roles');
+  const tLanguages = useTranslations('Languages');
+  const activeLocale = useLocale();
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
+  function handleSelectLocale(locale: Locale) {
+    if (locale === activeLocale) return;
+    startTransition(async () => {
+      await setUserLocale(locale);
+      router.refresh();
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -69,10 +91,28 @@ export function UserMenu({ user }: { user: CurrentUser }) {
             <StoreIcon className="h-4 w-4" />
             {t('siteSettings')}
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <LanguagesIcon className="h-4 w-4" />
-            {t('language')}
-          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <LanguagesIcon className="h-4 w-4" />
+              {t('language')}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                value={activeLocale}
+                onValueChange={(value) => handleSelectLocale(value as Locale)}
+              >
+                {locales.map((locale) => (
+                  <DropdownMenuRadioItem
+                    key={locale}
+                    value={locale}
+                    disabled={pending}
+                  >
+                    {tLanguages(`locale.${locale}`)}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <form action={logout}>
