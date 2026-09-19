@@ -51,6 +51,7 @@
   },
   "Common": {
     "appName": "BrewFlow",
+    "role": "Rôle",
     "language": "Langue",
     "currency": "DT",
     "loading": "Chargement…",
@@ -513,7 +514,19 @@
     "planning": "Planning",
     "employees": "Employés",
     "establishments": "Établissements",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "profile": "Mon profil",
+    "sections": {
+      "operations": "Opérations",
+      "management": "Gestion"
+    },
+    "siteSettings": "Paramètres du site",
+    "profileMenu": {
+      "siteSettings": "Paramètres du site",
+      "logout": "Se déconnecter"
+    }
   },
   "Orders": {
     "columns": {

@@ -51,6 +51,7 @@
   },
   "Common": {
     "appName": "BrewFlow",
+    "role": "الدور",
     "language": "اللغة",
     "currency": "د.ت",
     "loading": "جارٍ التحميل…",
@@ -513,7 +514,15 @@
     "planning": "جدول العمل",
     "employees": "الموظفون",
     "establishments": "الفروع",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "profile": "ملفي الشخصي",
+    "sections": {
+      "operations": "العمليات",
+      "management": "الإدارة"
+    },
+    "siteSettings": "إعدادات الموقع"
   },
   "Orders": {
     "columns": {
