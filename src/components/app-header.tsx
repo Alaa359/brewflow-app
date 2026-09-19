@@ -27,22 +27,27 @@ export async function AppHeader({ user }: { user: CurrentUser }) {
   const tRoles = await getTranslations('Roles');
 
   return (
-    <header className="bg-background/80 border-b backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-border/40 bg-background/60 backdrop-blur-xl">
       <div className="flex h-14 items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-6">
           <Link
             href={ROLE_HOME[user.role] ?? '/'}
-            className="font-semibold tracking-tight"
+            className="flex items-center gap-2"
           >
-            {tCommon('appName')}
+            <span className="grid h-8 w-8 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[#a3641f] text-sm font-bold text-primary-foreground shadow-sm">
+              &#9749;
+            </span>
+            <span className="text-lg font-bold tracking-tight">
+              {tCommon('appName')}
+            </span>
           </Link>
-          <nav className="text-muted-foreground flex items-center gap-1 text-sm">
+          <nav className="hidden items-center gap-1 text-sm md:flex">
             {NAV_ITEMS.filter((item) => item.roles.includes(user.role)).map(
               (item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="hover:text-foreground rounded px-2 py-1"
+                  className="rounded-lg px-3 py-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
                 >
                   {t(item.key)}
                 </Link>
@@ -58,11 +63,11 @@ export async function AppHeader({ user }: { user: CurrentUser }) {
               establishments={user.establishments}
             />
           )}
-          <span className="text-muted-foreground hidden sm:inline">
+          <span className="hidden text-muted-foreground sm:inline">
             {user.establishmentName}
           </span>
-          <span className="text-muted-foreground">
-            {user.name} · {tRoles(user.role)}
+          <span className="hidden text-muted-foreground md:inline">
+            {user.name} &middot; {tRoles(user.role)}
           </span>
           <form action={logout}>
             <Button variant="ghost" size="sm" type="submit">
