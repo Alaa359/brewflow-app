@@ -14,8 +14,14 @@ export default async function AuthLayout({
       <div className="absolute end-4 top-4">
         <LanguageSwitcher />
       </div>
-      <Link href="/" className="text-xl font-semibold tracking-tight">
-        {t('appName')}
+      <Link
+        href="/"
+        className="flex items-center gap-3 text-xl font-semibold tracking-tight"
+      >
+        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[#a3641f] text-lg font-bold text-primary-foreground shadow-sm">
+          &#9749;
+        </span>
+        <span>{t('appName')}</span>
       </Link>
       {children}
     </div>

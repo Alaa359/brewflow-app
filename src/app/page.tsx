@@ -12,7 +12,10 @@ export default async function Home() {
       <div className="absolute end-4 top-4">
         <LanguageSwitcher />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[#a3641f] text-xl font-bold text-primary-foreground shadow-sm">
+          &#9749;
+        </span>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           {tCommon('appName')}
         </h1>
