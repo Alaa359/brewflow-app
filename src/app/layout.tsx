@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Noto_Sans_Arabic } from 'next/font/google';
+import { Sora, Space_Grotesk, Noto_Sans_Arabic } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import { DirectionProvider } from 'radix-ui/direction';
@@ -8,14 +8,16 @@ import { SpatialBackground } from '@/components/three/spatial-background';
 import { localeDirection } from '@/i18n/config';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const sora = Sora({
+  variable: '--font-sora',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-space',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 const notoArabic = Noto_Sans_Arabic({
@@ -40,9 +42,9 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
     <html
       lang={locale}
       dir={dir}
-      className={`${geistSans.variable} ${geistMono.variable} ${notoArabic.variable} h-full antialiased`}
+      className={`${sora.variable} ${spaceGrotesk.variable} ${notoArabic.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="grain flex min-h-full flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <DirectionProvider dir={dir}>
             <SpatialBackground />
