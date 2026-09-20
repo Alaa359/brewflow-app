@@ -83,8 +83,8 @@
     }
   },
   "Dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Sales — {period} · {establishmentName}",
+    "title": "Tableau de Bord & Margins",
+    "subtitle": "Sales for {period} • {establishmentName}",
     "kpi": {
       "revenue": {
         "label": "Revenue",
@@ -97,6 +97,22 @@
       "averageBasket": {
         "label": "Average basket",
         "description": "Per order"
+      },
+      "grossMargin": {
+        "label": "Gross margin",
+        "description": "Sale price minus ingredient cost"
+      },
+      "marginRate": {
+        "label": "Margin rate",
+        "description": "Gross margin as share of revenue"
+      },
+      "lowMarginDishes": {
+        "label": "Dishes below target margin",
+        "description": "Dishes whose margin rate is below target"
+      },
+      "materialCost": {
+        "label": "Ingredient cost",
+        "description": "Raw materials consumed"
       }
     },
     "topDishes": {
@@ -116,7 +132,10 @@
         "outOfStock": "Out of stock",
         "belowThreshold": "Below threshold"
       }
-    }
+    },
+    "topDishesMargin": "Top dishes by margin",
+    "marginPer": "Per dish sold",
+    "empty": "No sales during this period."
   },
   "Dishes": {
     "title": "Dishes",

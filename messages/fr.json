@@ -83,8 +83,8 @@
     }
   },
   "Dashboard": {
-    "title": "Tableau de bord",
-    "subtitle": "Ventes — {period} · {establishmentName}",
+    "title": "Tableau de Bord & Marges",
+    "subtitle": "Ventes pour la période {period} • {establishmentName}",
     "kpi": {
       "revenue": {
         "label": "Chiffre d’affaires",
@@ -97,6 +97,22 @@
       "averageBasket": {
         "label": "Panier moyen",
         "description": "Par commande"
+      },
+      "grossMargin": {
+        "label": "Marge brute",
+        "description": "Prix de vente moins coût des ingrédients"
+      },
+      "marginRate": {
+        "label": "Taux de marge",
+        "description": "Marge brute rapportée au chiffre d'affaires"
+      },
+      "lowMarginDishes": {
+        "label": "Plats sous la marge cible",
+        "description": "Plats dont le taux de marge est sous la cible"
+      },
+      "materialCost": {
+        "label": "Coût des ingrédients",
+        "description": "Matières premières consommées"
       }
     },
     "topDishes": {
@@ -116,7 +132,10 @@
         "outOfStock": "Rupture",
         "belowThreshold": "Sous le seuil"
       }
-    }
+    },
+    "topDishesMargin": "Top plats par marge",
+    "marginPer": "Par plat vendu",
+    "empty": "Aucune vente sur cette période."
   },
   "Dishes": {
     "title": "Plats",

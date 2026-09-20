@@ -83,8 +83,8 @@
     }
   },
   "Dashboard": {
-    "title": "لوحة التحكم",
-    "subtitle": "المبيعات — {period} · {establishmentName}",
+    "title": "لوحة القيادة والهوامش",
+    "subtitle": "مبيعات {period} • {establishmentName}",
     "kpi": {
       "revenue": {
         "label": "رقم المعاملات",
@@ -97,6 +97,22 @@
       "averageBasket": {
         "label": "متوسط السلة",
         "description": "لكل طلب"
+      },
+      "grossMargin": {
+        "label": "الهامش الإجمالي",
+        "description": "سعر البيع ناقص تكلفة المكونات"
+      },
+      "marginRate": {
+        "label": "نسبة الهامش",
+        "description": "الهامش الإجمالي كنسبة من الإيرادات"
+      },
+      "lowMarginDishes": {
+        "label": "أطباق دون هامش الهدف",
+        "description": "أطباق نسبتها الهامشية دون الهدف"
+      },
+      "materialCost": {
+        "label": "تكلفة المكونات",
+        "description": "المواد الخام المستهلكة"
       }
     },
     "topDishes": {
@@ -116,7 +132,10 @@
         "outOfStock": "نفد المخزون",
         "belowThreshold": "تحت الحد الأدنى"
       }
-    }
+    },
+    "topDishesMargin": "أفضل الأطباق حسب الهامش",
+    "marginPer": "لكل طبق مباع",
+    "empty": "لا مبيعات خلال هذه الفترة."
   },
   "Dishes": {
     "title": "الأطباق",

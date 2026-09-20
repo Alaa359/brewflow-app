@@ -11,6 +11,11 @@ import {
   LowStockList,
   type LowStockIngredient,
 } from '@/components/dashboard/low-stock-list';
+import {
+  MarginsPanel,
+  type DishMargin,
+} from '@/components/dashboard/margins-panel';
+import { roundMoney } from '@/lib/margins';
 
 const periodSchema = z.enum(['jour', 'semaine', 'mois']).catch('jour');
 
@@ -35,11 +40,24 @@ export default async function DashboardPage({
         createdAt: { gte: start },
       },
       orderBy: { createdAt: 'asc' },
-      include: {
-        orderItems: {
-          include: { dish: { select: { name: true } } },
-        },
-      },
+          include: {
+            orderItems: {
+              include: {
+                dish: {
+                  select: {
+                    name: true,
+                    price: true,
+                    recipeIngredients: {
+                      select: {
+                        quantityNeeded: true,
+                        ingredient: { select: { costPerUnit: true } },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
     }),
     prisma.ingredient.findMany({
       where: { establishmentId: user.establishmentId },
@@ -63,7 +81,7 @@ export default async function DashboardPage({
 
   const dishMap = new Map<
     string,
-    { name: string; quantity: number; revenue: number }
+    { name: string; quantity: number; revenue: number; cost: number }
   >();
   for (const order of orders) {
     for (const item of order.orderItems) {
@@ -71,15 +89,57 @@ export default async function DashboardPage({
         name: item.dish.name,
         quantity: 0,
         revenue: 0,
+        cost: 0,
       };
+      const unitCost = item.dish.recipeIngredients.reduce(
+        (sum, ri) =>
+          sum + ri.quantityNeeded.toNumber() * ri.ingredient.costPerUnit.toNumber(),
+        0
+      );
       entry.quantity += item.quantity;
       entry.revenue += item.quantity * item.unitPrice.toNumber();
+      entry.cost += item.quantity * unitCost;
       dishMap.set(item.dishId, entry);
     }
   }
   const topDishes: TopDish[] = [...dishMap.values()]
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 5);
+
+  const marginDishes: DishMargin[] =
+    orders.length > 0
+      ? [...dishMap.values()].map(
+          ({ name, quantity, revenue, cost }) => {
+            const unitPrice =
+              quantity > 0 ? Math.round((revenue / quantity) * 100) / 100 : 0;
+            const unitCost =
+              quantity > 0 ? Math.round((cost / quantity) * 100) / 100 : 0;
+            const margin = Math.round((unitPrice - unitCost) * 100) / 100;
+            const marginRate =
+              unitPrice > 0 ? Math.round((margin / unitPrice) * 100) : 0;
+            return {
+              name,
+              price: unitPrice,
+              cost: unitCost,
+              margin,
+              marginRate,
+              quantity,
+            };
+          }
+        )
+      : [];
+  const totalRevenue = marginDishes.reduce(
+    (sum, d) => sum + d.marginRate * 0 * d.price * d.quantity,
+    0
+  );
+  const totalRevenueClean = orders.reduce(
+    (sum, order) => sum + order.totalAmount.toNumber(),
+    0
+  );
+  const totalCostClean = marginDishes.reduce(
+    (sum, d) => sum + d.cost * d.quantity,
+    0
+  );
 
   const lowStock: LowStockIngredient[] = ingredients
     .filter((ingredient) =>
@@ -118,6 +178,12 @@ export default async function DashboardPage({
         revenue={revenue}
         orderCount={orderCount}
         averageBasket={averageBasket}
+      />
+
+      <MarginsPanel
+        dishes={marginDishes}
+        totalRevenue={totalRevenueClean}
+        totalCost={totalCostClean}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
