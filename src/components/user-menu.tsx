@@ -37,7 +37,7 @@ export function UserMenu({ user }: { user: CurrentUser }) {
   const t = useTranslations('Nav');
   const tCommon = useTranslations('Common');
   const tRoles = useTranslations('Roles');
-  const tLanguages = useTranslations('Languages');
+  const tLanguages = useTranslations('Common');
   const activeLocale = useLocale();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
