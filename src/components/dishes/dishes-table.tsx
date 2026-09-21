@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DishThumb } from '@/components/ui/dish-thumb';
 import {
   Dialog,
   DialogContent,
@@ -52,23 +53,6 @@ export type DishRow = DishFormDefaults & {
   marginPercent: number | null;
   recipe: RecipeLineRow[];
 };
-
-function DishThumb({ src, alt }: { src: string | null; alt: string }) {
-  if (!src) {
-    return (
-      <div className="bg-muted flex size-12 shrink-0 items-center justify-center rounded-md" />
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className="bg-muted size-12 shrink-0 rounded-md object-cover"
-    />
-  );
-}
 
 export function DishesTable({
   categories,
@@ -229,7 +213,7 @@ export function DishesTable({
                         return (
                           <TableRow key={dish.id}>
                             <TableCell>
-                              <DishThumb src={dish.imageUrl} alt={dish.name} />
+                              <DishThumb src={dish.imageUrl} alt={dish.name} categoryName={cat.name} />
                             </TableCell>
                             <TableCell className="max-w-64">
                               <div className="font-medium">{dish.name}</div>

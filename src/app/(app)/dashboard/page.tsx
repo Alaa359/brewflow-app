@@ -47,6 +47,7 @@ export default async function DashboardPage({
                   select: {
                     name: true,
                     price: true,
+                    imageUrl: true,
                     recipeIngredients: {
                       select: {
                         quantityNeeded: true,
@@ -81,7 +82,7 @@ export default async function DashboardPage({
 
   const dishMap = new Map<
     string,
-    { name: string; quantity: number; revenue: number; cost: number }
+    { name: string; quantity: number; revenue: number; cost: number; imageUrl: string | null }
   >();
   for (const order of orders) {
     for (const item of order.orderItems) {
@@ -90,6 +91,7 @@ export default async function DashboardPage({
         quantity: 0,
         revenue: 0,
         cost: 0,
+        imageUrl: item.dish.imageUrl,
       };
       const unitCost = item.dish.recipeIngredients.reduce(
         (sum, ri) =>

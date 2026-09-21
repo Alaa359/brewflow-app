@@ -2,11 +2,13 @@ import { TrophyIcon } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { formatCurrency, formatNumber } from '@/lib/i18n/format';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DishThumb } from '@/components/ui/dish-thumb';
 
 export type TopDish = {
   name: string;
   quantity: number;
   revenue: number;
+  imageUrl?: string | null;
 };
 
 export async function TopDishes({ dishes }: { dishes: TopDish[] }) {
@@ -33,6 +35,7 @@ export async function TopDishes({ dishes }: { dishes: TopDish[] }) {
               <span className="text-muted-foreground w-5 shrink-0 text-end text-sm tabular-nums">
                 {index + 1}
               </span>
+              <DishThumb src={dish.imageUrl ?? null} alt={dish.name} size="xs" />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-baseline justify-between gap-2 text-sm">
                   <span className="truncate font-medium">{dish.name}</span>

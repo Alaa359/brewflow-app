@@ -10,9 +10,9 @@ import {
   ReceiptTextIcon,
   ShoppingCartIcon,
   Trash2Icon,
-  UtensilsCrossedIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DishThumb } from '@/components/ui/dish-thumb';
 import {
   Card,
   CardContent,
@@ -45,25 +45,6 @@ export type PosCategory = { id: string; name: string };
 export type PosTable = { id: string; number: number; zone: string | null };
 
 type CartLine = { dish: PosDish; quantity: number };
-
-function DishThumb({ src, alt }: { src: string | null; alt: string }) {
-  if (!src) {
-    return (
-      <div className="bg-muted flex h-20 w-full items-center justify-center">
-        <UtensilsCrossedIcon className="text-muted-foreground size-5" />
-      </div>
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className="bg-muted h-20 w-full object-cover"
-    />
-  );
-}
 
 export function PosClient({
   categories,
@@ -214,7 +195,7 @@ export function PosClient({
                     onClick={() => addDish(dish)}
                     className="bg-background hover:bg-muted/60 flex cursor-pointer flex-col overflow-hidden rounded-xl border text-start transition-colors"
                   >
-                    <DishThumb src={dish.imageUrl} alt={dish.name} />
+                    <DishThumb src={dish.imageUrl} alt={dish.name} size="lg" categoryName={categories.find(c => c.id === dish.categoryId)?.name} />
                     <div className="flex flex-col gap-0.5 p-3">
                       <span className="text-sm font-medium">{dish.name}</span>
                       <span className="text-muted-foreground text-xs">
