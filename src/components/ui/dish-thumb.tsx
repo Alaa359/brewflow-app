@@ -34,6 +34,7 @@ type DishThumbProps = {
   alt: string;
   size?: keyof typeof SIZE_CLASSES;
   categoryName?: string | null;
+  variant?: 'default' | 'poster';
 };
 
 function CategoryIcon({
@@ -78,7 +79,26 @@ function CategoryIcon({
   }
 }
 
-export function DishThumb({ src, alt, size = 'md', categoryName }: DishThumbProps) {
+export function DishThumb({ src, alt, size = 'md', categoryName, variant = 'default' }: DishThumbProps) {
+  if (variant === 'poster') {
+    if (!src) {
+      return (
+        <div className="bg-muted flex h-44 w-full shrink-0 items-center justify-center rounded-t-2xl">
+          <CategoryIcon categoryName={categoryName} className="size-10 text-muted-foreground" />
+        </div>
+      );
+    }
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className="menu-poster-img h-44 w-full shrink-0 rounded-t-2xl object-cover"
+      />
+    );
+  }
+
   if (!src) {
     return (
       <div

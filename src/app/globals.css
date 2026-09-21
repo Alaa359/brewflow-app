@@ -446,6 +446,30 @@
   background-size: 128px;
 }
 
+/* ===== MENU POSTER ===== */
+.menu-hero {
+  background: linear-gradient(180deg, rgba(124,74,28,0.06) 0%, transparent 100%);
+}
+.menu-poster-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-poster-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.15);
+}
+.menu-poster-img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.menu-poster-card:hover .menu-poster-img {
+  transform: scale(1.05);
+}
+.menu-poster-overlay {
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.65) 100%);
+}
+.menu-cart-float {
+  box-shadow: 0 -4px 24px -4px rgba(0, 0, 0, 0.15);
+}
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
