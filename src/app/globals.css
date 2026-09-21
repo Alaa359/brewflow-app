@@ -571,6 +571,80 @@ button:active, a:active {
   pointer-events: none;
 }
 
+/* ===== AUTH GLASS PANEL ===== */
+.glass-panel {
+  background: rgba(255, 252, 244, 0.82);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+}
+.dark .glass-panel {
+  background: rgba(43, 30, 24, 0.72);
+}
+
+/* ===== MATERIAL DESIGN 3 TOKENS (Auth) ===== */
+:root {
+  --surface: #fff8f1;
+  --surface-dim: #f5ece3;
+  --surface-container: #fffcf4;
+  --surface-container-low: #fffcf4;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #f5ece3;
+  --surface-container-highest: #ecdccb;
+  --on-surface: #2B1E18;
+  --on-surface-variant: #5a3e20;
+  --on-primary: #ffffff;
+  --primary-container: #f7e3cd;
+  --primary-fixed: #f7e3cd;
+  --primary-fixed-dim: #e8c9a0;
+  --on-primary-fixed: #2c1700;
+  --on-primary-fixed-variant: #5a3e20;
+  --secondary-container: #f5e3d2;
+  --tertiary-fixed: #c4e8c4;
+  --tertiary-fixed-dim: #a3cfa3;
+  --on-tertiary-fixed: #0a3d1a;
+  --inverse-surface: #37302a;
+  --inverse-on-surface: #fdefe5;
+  --outline: #8C7A6B;
+  --outline-variant: #ecdccb;
+}
+.dark {
+  --surface: #1a120b;
+  --surface-dim: #140e09;
+  --surface-container: #211709;
+  --surface-container-low: #1c130c;
+  --surface-container-lowest: #0f0a06;
+  --surface-container-high: #2b2014;
+  --surface-container-highest: #362a1d;
+  --on-surface: #F5ECE3;
+  --on-surface-variant: #d4bf9e;
+  --on-primary: #ffffff;
+  --primary-container: #5a3520;
+  --primary-fixed: #5a3520;
+  --primary-fixed-dim: #7a5533;
+  --on-primary-fixed: #fde6c8;
+  --on-primary-fixed-variant: #e8c9a0;
+  --secondary-container: #3a2a18;
+  --tertiary-fixed: #2a5a2a;
+  --tertiary-fixed-dim: #3a7a3a;
+  --on-tertiary-fixed: #c4e8c4;
+  --inverse-surface: #ede3d0;
+  --inverse-on-surface: #37302a;
+  --outline: #a8916f;
+  --outline-variant: rgba(220, 185, 130, 0.14);
+}
+
+/* ===== AUTH TOAST ===== */
+@keyframes auth-toast-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes auth-toast-out {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(24px); opacity: 0; }
+}
+.auth-toast-enter { animation: auth-toast-in 0.3s ease-out forwards; }
+.auth-toast-exit { animation: auth-toast-out 0.3s ease-in forwards; }
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
