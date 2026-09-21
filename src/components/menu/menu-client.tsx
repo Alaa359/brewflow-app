@@ -155,12 +155,12 @@ export function MenuClient({
 
   return (
     <>
-      {/* Mobile Container Shell */}
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[420px] flex-col border-x border-[#ecdccb] bg-warmCream pb-44 shadow-2xl">
+      {/* Full-Screen Container */}
+      <div className="relative flex min-h-screen w-full flex-col bg-warmCream pb-28">
 
         {/* 1. Header Éditorial */}
         <header
-          className="sticky top-0 z-30 border-b border-[#eedecf] bg-warmCream/95 px-4 pb-2.5 pt-3 shadow-[0_2px_12px_rgba(43,30,24,0.03)] backdrop-blur-md"
+          className="sticky top-0 z-30 border-b border-[#eedecf] bg-warmCream/95 px-4 pb-2.5 pt-3 shadow-[0_2px_12px_rgba(43,30,24,0.03)] backdrop-blur-md sm:px-6 lg:px-8"
         >
           {/* Top branding & Language */}
           <div className="flex items-center justify-between gap-3">
@@ -214,7 +214,7 @@ export function MenuClient({
 
         <main className="flex flex-1 flex-col">
           {/* Editorial Hero Poster Section */}
-          <section className="px-4 pb-2 pt-4">
+          <section className="px-4 pb-2 pt-4 sm:px-6 lg:px-8">
             <div className="relative overflow-hidden rounded-2xl border border-[#e8d5c3] bg-gradient-to-br from-[#f8ebe0] via-[#f5e3d2] to-[#ecdcce] p-4 shadow-poster">
               <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-caramel/10 blur-2xl" />
               <div className="mb-1.5 flex items-center justify-between text-[10px] font-mono font-bold uppercase tracking-wider text-caramelDark">
@@ -252,7 +252,7 @@ export function MenuClient({
               aria-label="Catégories du menu"
               className="sticky top-[108px] z-20 border-y border-[#ebd8c7] bg-warmCream/95 py-2 backdrop-blur-md"
             >
-              <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 scroll-smooth">
+              <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 scroll-smooth sm:px-6 lg:px-8">
                 {categories.map((cat) => (
                   <button
                     key={cat.id}
@@ -273,7 +273,7 @@ export function MenuClient({
           )}
 
           {/* 3. Product Catalog */}
-          <section aria-label="Sélection Signature" className="space-y-4 px-4 py-3.5">
+          <section aria-label="Sélection Signature" className="space-y-4 px-4 py-3.5 sm:px-6 lg:px-8">
             {/* Confirmed banner */}
             {confirmed && (
               <div className="flex items-start gap-3 rounded-xl border border-tertiary/30 bg-tertiary/10 px-4 py-3 text-sm text-tertiary anim-fade-up">
@@ -323,6 +323,7 @@ export function MenuClient({
             )}
 
             {/* Product cards */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeDishes.map((dish, i) => {
               const priceParts = formatPrice(dish.price);
               const hasImage = !!dish.imageUrl;
@@ -435,13 +436,14 @@ export function MenuClient({
                 </article>
               );
             })}
+            </div>
           </section>
         </main>
 
         {/* 5. Panier flottant — Sticky Bottom Bar */}
         {cartCount > 0 && (
           <footer className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 flex justify-center px-3 pb-4 pt-2">
-            <div className="pointer-events-auto flex w-full max-w-[420px] flex-col gap-2.5 rounded-3xl border border-[#3e2c24] bg-espresso p-3.5 text-warmCream shadow-float-dock">
+            <div className="pointer-events-auto mx-auto flex w-full max-w-2xl flex-col gap-2.5 rounded-3xl border border-[#3e2c24] bg-espresso p-3.5 text-warmCream shadow-float-dock">
               <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-caramel" />
@@ -554,7 +556,7 @@ export function MenuClient({
           sheetOpen ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
-        <div className="no-scrollbar flex max-h-[88vh] w-full max-w-[420px] flex-col justify-between overflow-y-auto rounded-t-[28px] border-t border-[#eedecf] bg-warmCream p-5 shadow-2xl pointer-events-auto">
+        <div className="no-scrollbar flex max-h-[88vh] w-full max-w-2xl flex-col justify-between overflow-y-auto rounded-t-[28px] border-t border-[#eedecf] bg-warmCream p-5 shadow-2xl pointer-events-auto">
           {/* Sheet Handle */}
           <div>
             <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[#dfcfc1]" />
