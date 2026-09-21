@@ -132,40 +132,41 @@ export function MenuClient({
       )}
 
       {/* ─── SECTIONS PAR CATEGORIE ─── */}
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-12 px-4 py-10 sm:px-6 sm:py-14">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-6 sm:px-6 sm:py-10">
         {categories.length === 0 ? (
           <p className="text-muted-foreground rounded-2xl border px-3 py-10 text-center text-sm">
             {t('unavailable')}
           </p>
         ) : (
-          categories.map((category, catIndex) => {
+          categories.map((category) => {
             const catDishes = dishes.filter(
               (d) => d.categoryId === category.id
             );
             if (catDishes.length === 0) return null;
 
             return (
-              <section
-                key={category.id}
-                className="flex flex-col gap-5 anim-fade-up"
-                style={{ animationDelay: `${catIndex * 0.08}s` }}
-              >
+              <section key={category.id} className="flex flex-col gap-4">
                 {/* Category header */}
-                <div className="menu-section-divider">
-                  <h2 className="shrink-0 text-lg font-semibold tracking-widest uppercase text-foreground/80">
-                    {category.name}
-                  </h2>
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/8 flex items-center justify-center rounded-lg px-3 py-1.5">
+                    <h2 className="text-sm font-bold tracking-widest uppercase text-primary">
+                      {category.name}
+                    </h2>
+                  </div>
+                  <div className="bg-border h-px flex-1" />
+                  <span className="text-muted-foreground text-xs">
+                    {catDishes.length}
+                  </span>
                 </div>
 
                 {/* Dishes grid */}
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {catDishes.map((dish, i) => (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {catDishes.map((dish) => (
                     <button
                       key={dish.id}
                       type="button"
                       onClick={() => addDish(dish)}
                       className="menu-poster-card bg-card/80 flex cursor-pointer flex-col overflow-hidden rounded-2xl text-start backdrop-blur-sm"
-                      style={{ animationDelay: `${(catIndex * catDishes.length + i) * 0.03}s` }}
                     >
                       <div className="relative overflow-hidden rounded-t-2xl">
                         <DishThumb
@@ -201,7 +202,7 @@ export function MenuClient({
                           }}
                         >
                           <PlusIcon className="size-3.5" />
-                          Ajouter
+                          {t('cart.addToCart')}
                         </Button>
                       </div>
                     </button>

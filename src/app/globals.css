@@ -458,38 +458,25 @@
   background: linear-gradient(180deg, rgba(124,74,28,0.04) 0%, transparent 100%);
   border-bottom: 1px solid rgba(124,74,28,0.08);
 }
-.menu-section-divider {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.menu-section-divider::before,
-.menu-section-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(124,74,28,0.15), transparent);
-}
 .menu-poster-card {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(124,74,28,0.08);
 }
 .menu-poster-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   box-shadow:
-    0 20px 40px -12px rgba(124,74,28,0.12),
-    0 8px 16px -4px rgba(0,0,0,0.06);
-  border-color: rgba(124,74,28,0.18);
+    0 12px 24px -8px rgba(124,74,28,0.1),
+    0 4px 8px -2px rgba(0,0,0,0.04);
+  border-color: rgba(124,74,28,0.15);
 }
 .menu-poster-img {
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .menu-poster-card:hover .menu-poster-img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 .menu-poster-overlay {
-  background: linear-gradient(180deg, transparent 30%, rgba(22,16,10,0.75) 100%);
+  background: linear-gradient(180deg, transparent 30%, rgba(22,16,10,0.7) 100%);
 }
 .menu-cart-section {
   background: linear-gradient(180deg, transparent 0%, rgba(124,74,28,0.03) 100%);

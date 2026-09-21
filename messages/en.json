@@ -504,6 +504,7 @@
     "cart": {
       "title": "Your order",
       "empty": "Your cart is empty.",
+      "addToCart": "Add",
       "perUnit": "/ unit",
       "decrement": "Remove one",
       "increment": "Add one",

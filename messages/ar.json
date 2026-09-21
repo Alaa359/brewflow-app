@@ -504,6 +504,7 @@
     "cart": {
       "title": "طلبك",
       "empty": "سلة طلبك فارغة.",
+      "addToCart": "إضافة",
       "perUnit": "/ للوحدة",
       "decrement": "إنقاص واحد",
       "increment": "زيادة واحد",

@@ -504,6 +504,7 @@
     "cart": {
       "title": "Votre commande",
       "empty": "Votre panier est vide.",
+      "addToCart": "Ajouter",
       "perUnit": "/ unité",
       "decrement": "Retirer un",
       "increment": "Ajouter un",
