@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useActionState } from 'react';
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/actions/auth';
@@ -57,38 +56,35 @@ export function LoginForm() {
 
   return (
     <>
-      <div className="w-full max-w-5xl rounded-[32px] p-3 sm:p-4 border border-white/30 shadow-2xl shadow-primary/10 grid grid-cols-1 md:grid-cols-12 gap-0 my-auto overflow-hidden">
+      <div className="w-full max-w-[1080px] rounded-3xl overflow-hidden my-auto shadow-2xl shadow-black/20 grid grid-cols-1 md:grid-cols-2">
 
         {/* LEFT PANEL — Image */}
-        <div
-          className="relative overflow-hidden min-h-[380px] md:min-h-[640px] flex flex-col justify-between p-6 sm:p-7 text-white group select-none md:col-span-6"
-          style={{ clipPath: 'polygon(0px 0px, 100% 0px, 88% 100%, 0px 100%)' }}
-        >
+        <div className="relative min-h-[420px] md:min-h-[680px] flex flex-col justify-between p-6 sm:p-8 text-white select-none">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="BrewFlow Atelier"
-            className="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover object-center"
             src="/login-atelier.jpg"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/50 z-10" />
 
           {/* Top badges */}
-          <div className="relative z-20 flex items-center justify-between gap-2">
-            <span className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-wider text-white/90 font-semibold">
+          <div className="relative z-20 flex items-center justify-between">
+            <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-wider text-white font-semibold">
               Selected Roasts
             </span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 className="text-white/80 hover:text-white text-xs transition-colors"
-                onClick={() => showToast("Authentification requise pour cette action", "info")}
+                onClick={() => showToast("Authentification requise", "info")}
               >
                 Atelier
               </button>
               <button
                 type="button"
                 className="px-3 py-1 rounded-full border border-white/40 hover:bg-white/20 text-white text-xs transition-all"
-                onClick={() => showToast("Connexion à la station BrewFlow", "login")}
+                onClick={() => showToast("Connexion à la station", "login")}
               >
                 Réserve
               </button>
@@ -96,31 +92,31 @@ export function LoginForm() {
           </div>
 
           {/* Center text */}
-          <div className="relative z-20 my-auto text-left py-6">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/40 backdrop-blur-md border border-primary-fixed/30 text-[10px] text-primary-fixed uppercase tracking-wider mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-ping" />
+          <div className="relative z-20 my-auto py-8">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/30 backdrop-blur-md border border-amber-400/30 text-[10px] text-amber-200 uppercase tracking-wider mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-300 animate-ping" />
               Extraction d&apos;Origine
             </span>
-            <h2 className="text-2xl sm:text-3xl text-white font-bold tracking-tight drop-shadow-md leading-tight">
-              L&apos;Artisanat du Café de Spécialité
+            <h2 className="text-3xl sm:text-4xl text-white font-bold tracking-tight leading-tight drop-shadow-lg">
+              L&apos;Artisanat du<br />Café de Spécialité
             </h2>
-            <p className="text-white/75 text-xs sm:text-sm mt-2 line-clamp-2 max-w-xs drop-shadow-sm">
+            <p className="text-white/80 text-sm mt-3 line-clamp-2 max-w-sm drop-shadow-md leading-relaxed">
               Traçabilité des grains, profilage d&apos;extraction et gestion de
               caisse unifiée en temps réel.
             </p>
           </div>
 
           {/* Bottom profile */}
-          <div className="relative z-20 flex items-end justify-between pt-4 border-t border-white/15">
+          <div className="relative z-20 flex items-center justify-between pt-4 border-t border-white/20">
             <div className="flex items-center gap-3">
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   alt="Ziyad Ben Amor"
-                  className="w-11 h-11 rounded-full object-cover border-2 border-primary-fixed/70 shadow-md"
+                  className="w-11 h-11 rounded-full object-cover border-2 border-white/40 shadow-lg"
                   src="/logo-brewflow.svg"
                 />
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-tertiary-container border-2 border-surface rounded-full" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-surface rounded-full" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-white tracking-tight">
@@ -153,30 +149,34 @@ export function LoginForm() {
         </div>
 
         {/* RIGHT PANEL — Form */}
-        <div className="flex flex-col justify-between p-4 sm:p-8 lg:p-10 backdrop-blur-xl bg-white/40 md:col-span-6">
+        <div className="relative flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100">
+          {/* Decorative corner glow */}
+          <div className="absolute top-0 right-0 w-40 h-40 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-300/10 rounded-full blur-2xl pointer-events-none" />
+
           {/* Logo + language pills */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
+          <div className="relative z-10 flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt="BrewFlow"
                 className="h-9 w-9 object-contain drop-shadow-sm"
                 src="/logo-brewflow.svg"
               />
-              <span className="text-lg font-bold tracking-tight text-on-surface uppercase">
+              <span className="text-lg font-bold tracking-tight text-stone-800 uppercase">
                 BREWFLOW
               </span>
             </div>
-            <div className="flex items-center bg-surface-container-low/90 rounded-full px-1.5 py-1 border border-outline-variant/40 shadow-sm">
+            <div className="flex items-center bg-stone-200/60 rounded-full px-1.5 py-1 border border-stone-300/50">
               {locales.map((loc) => (
                 <button
                   key={loc}
                   type="button"
                   onClick={() => handleLocale(loc)}
-                  className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold transition-colors ${
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold transition-all ${
                     loc === active
-                      ? 'bg-surface-container-highest text-on-surface shadow-xs'
-                      : 'text-on-surface-variant hover:text-on-surface'
+                      ? 'bg-stone-800 text-white shadow-sm'
+                      : 'text-stone-500 hover:text-stone-800 hover:bg-stone-200/50'
                   }`}
                 >
                   {localeLabels[loc]}
@@ -186,20 +186,23 @@ export function LoginForm() {
           </div>
 
           {/* Heading + form */}
-          <div className="text-center my-auto py-2">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-on-surface">
+          <div className="relative z-10 text-center my-auto py-2">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-stone-800">
               {t('title')}
             </h1>
-            <p className="text-secondary text-sm sm:text-base mt-1">
+            <p className="text-stone-500 text-sm sm:text-base mt-1.5">
               {t('description')}
             </p>
 
-            <form action={action} className="space-y-4 max-w-sm mx-auto text-left mt-6">
+            <form action={action} className="space-y-3.5 max-w-sm mx-auto text-left mt-7">
               {/* Email */}
               <div>
-                <div className="relative rounded-xl shadow-xs">
+                <label className="block text-[11px] uppercase text-stone-500 font-semibold mb-1.5 tracking-wider" htmlFor="email">
+                  Email
+                </label>
+                <div className="relative rounded-xl shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center">
-                    <span className="material-symbols-outlined text-outline text-[18px]">
+                    <span className="material-symbols-outlined text-stone-400 text-[18px]">
                       alternate_email
                     </span>
                   </div>
@@ -209,23 +212,31 @@ export function LoginForm() {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="Email ou matricule barista"
+                    placeholder="admin@brewflow.tn"
                     required
                     aria-invalid={!!state?.errors?.email}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-sm placeholder-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
                     defaultValue="ziyad@brewflow.tn"
                   />
                 </div>
                 {state?.errors?.email?.map((e) => (
-                  <p key={e} className="text-destructive text-xs mt-1">{e}</p>
+                  <p key={e} className="text-red-500 text-xs mt-1">{e}</p>
                 ))}
               </div>
 
               {/* Password */}
               <div>
-                <div className="relative rounded-xl shadow-xs">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] uppercase text-stone-500 font-semibold tracking-wider" htmlFor="password">
+                    Mot de passe
+                  </label>
+                  <span className="text-[11px] text-amber-600 hover:text-amber-700 font-medium hover:underline transition-colors cursor-pointer">
+                    Mot de passe oublié ?
+                  </span>
+                </div>
+                <div className="relative rounded-xl shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center">
-                    <span className="material-symbols-outlined text-outline text-[18px]">
+                    <span className="material-symbols-outlined text-stone-400 text-[18px]">
                       lock
                     </span>
                   </div>
@@ -235,15 +246,15 @@ export function LoginForm() {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder="Mot de passe"
+                    placeholder="••••••••"
                     required
                     aria-invalid={!!state?.errors?.password}
-                    className="w-full h-11 pl-10 pr-10 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-sm placeholder-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full h-11 pl-10 pr-10 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-stone-600 transition-colors"
                   >
                     <span className="material-symbols-outlined text-[18px]">
                       {showPassword ? 'visibility_off' : 'visibility'}
@@ -251,39 +262,33 @@ export function LoginForm() {
                   </button>
                 </div>
                 {state?.errors?.password?.map((e) => (
-                  <p key={e} className="text-destructive text-xs mt-1">{e}</p>
+                  <p key={e} className="text-red-500 text-xs mt-1">{e}</p>
                 ))}
-                <div className="text-right mt-1.5">
-                  <span className="text-[11px] text-primary hover:text-caramel-dark font-medium hover:underline transition-colors cursor-pointer">
-                    Mot de passe oublié ?
-                  </span>
-                </div>
               </div>
 
               {/* Form errors */}
               {state?.errors?.form?.map((e) => (
-                <p key={e} className="bg-destructive/10 text-destructive rounded-xl px-3 py-2 text-xs">
+                <p key={e} className="bg-red-50 text-red-600 rounded-xl px-3 py-2 text-xs border border-red-100">
                   {e}
                 </p>
               ))}
 
-              {/* Remember */}
-              <div className="flex items-center gap-2 select-none">
+              {/* Remember + Submit */}
+              <div className="flex items-center gap-2 pt-1 select-none">
                 <input
                   type="checkbox"
                   defaultChecked
-                  className="w-4 h-4 rounded border-outline-variant/80 text-primary focus:ring-primary focus:ring-offset-0 transition-colors"
+                  className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500 focus:ring-offset-0 transition-colors"
                 />
-                <label className="text-xs text-on-surface-variant font-medium cursor-pointer">
-                  Mémoriser cette station de caisse
+                <label className="text-xs text-stone-500 font-medium cursor-pointer">
+                  Mémoriser cette station
                 </label>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={pending}
-                className="w-full h-11 rounded-xl bg-primary hover:bg-caramel-dark active:bg-caramel-dark text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 transition-all duration-150 active:scale-[0.985] cursor-pointer"
+                className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 active:from-amber-800 active:to-amber-900 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-amber-600/25 transition-all duration-150 active:scale-[0.985] cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[18px]">
                   login
@@ -293,12 +298,12 @@ export function LoginForm() {
             </form>
 
             {/* Divider */}
-            <div className="relative my-4 max-w-sm mx-auto">
+            <div className="relative my-5 max-w-sm mx-auto">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-outline-variant/40" />
+                <div className="w-full border-t border-stone-200" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-white/50 backdrop-blur-sm px-3 text-[11px] text-secondary">
+                <span className="bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100 px-3 text-[11px] text-stone-400 uppercase tracking-wider">
                   ou
                 </span>
               </div>
@@ -309,20 +314,20 @@ export function LoginForm() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  className="h-9 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/40 text-on-surface flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
-                  onClick={() => showToast("Badge #RFID-4091 scanné", "contactless", "text-primary")}
+                  className="h-9 px-2.5 rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
+                  onClick={() => showToast("Badge #RFID-4091 scanné", "contactless", "text-amber-600")}
                 >
-                  <span className="material-symbols-outlined text-[16px] text-primary">
+                  <span className="material-symbols-outlined text-[16px] text-amber-600">
                     contactless
                   </span>
                   <span>Badge RFID / NFC</span>
                 </button>
                 <button
                   type="button"
-                  className="h-9 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/40 text-on-surface flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
-                  onClick={() => showToast("Attente Touch ID / FIDO2...", "fingerprint", "text-tertiary")}
+                  className="h-9 px-2.5 rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
+                  onClick={() => showToast("Attente Touch ID / FIDO2...", "fingerprint", "text-emerald-600")}
                 >
-                  <span className="material-symbols-outlined text-[16px] text-tertiary">
+                  <span className="material-symbols-outlined text-[16px] text-emerald-600">
                     fingerprint
                   </span>
                   <span>Passkey / PIN</span>
@@ -332,20 +337,20 @@ export function LoginForm() {
           </div>
 
           {/* Footer */}
-          <div className="pt-4 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-            <p className="text-[12px] text-secondary">
+          <div className="relative z-10 pt-5 border-t border-stone-200/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+            <p className="text-[12px] text-stone-400">
               Besoin d&apos;un compte ?{' '}
               <span
-                className="text-primary font-semibold hover:underline cursor-pointer"
-                onClick={() => showToast("Contacter le gérant de succursale", "admin_panel_settings")}
+                className="text-amber-600 font-semibold hover:text-amber-700 hover:underline cursor-pointer transition-colors"
+                onClick={() => showToast("Contacter le gérant", "admin_panel_settings")}
               >
                 Contacter l&apos;administrateur
               </span>
             </p>
-            <div className="flex items-center gap-3 text-secondary/70">
+            <div className="flex items-center gap-3 text-stone-300">
               <button
                 type="button"
-                className="hover:text-primary transition-colors"
+                className="hover:text-amber-600 transition-colors"
                 onClick={() => showToast("Certifié Décret 2018-56", "verified_user")}
                 title="Sécurité"
               >
@@ -353,15 +358,15 @@ export function LoginForm() {
               </button>
               <button
                 type="button"
-                className="hover:text-primary transition-colors"
-                onClick={() => showToast("Support BrewFlow : 71 000 888", "support")}
+                className="hover:text-amber-600 transition-colors"
+                onClick={() => showToast("Support: 71 000 888", "support")}
                 title="Support"
               >
                 <span className="material-symbols-outlined text-[17px]">headset_mic</span>
               </button>
               <button
                 type="button"
-                className="hover:text-primary transition-colors"
+                className="hover:text-amber-600 transition-colors"
                 onClick={() => showToast("Succursale La Marsa", "storefront")}
                 title="Succursale"
               >
@@ -375,11 +380,11 @@ export function LoginForm() {
       {/* Toast */}
       <div
         ref={toastRef}
-        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 bg-inverse-surface text-inverse-on-surface"
+        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 bg-stone-800 text-white"
       >
         <span
           ref={toastIconRef}
-          className="material-symbols-outlined text-tertiary text-[22px]"
+          className="material-symbols-outlined text-amber-400 text-[22px]"
         >
           check_circle
         </span>
