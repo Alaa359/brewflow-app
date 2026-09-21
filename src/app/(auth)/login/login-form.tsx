@@ -57,11 +57,11 @@ export function LoginForm() {
 
   return (
     <>
-      <div className="w-full max-w-5xl rounded-[32px] p-3 sm:p-4 glass-panel border border-outline-variant/40 shadow-2xl shadow-primary/10 grid grid-cols-1 md:grid-cols-12 gap-4 my-auto">
+      <div className="w-full max-w-5xl rounded-[32px] p-3 sm:p-4 border border-white/30 shadow-2xl shadow-primary/10 grid grid-cols-1 md:grid-cols-12 gap-0 my-auto overflow-hidden">
 
         {/* LEFT PANEL — Image */}
         <div
-          className="relative rounded-[26px] overflow-hidden min-h-[380px] md:min-h-[640px] flex flex-col justify-between p-6 sm:p-7 text-white shadow-xl group select-none md:col-span-6"
+          className="relative overflow-hidden min-h-[380px] md:min-h-[640px] flex flex-col justify-between p-6 sm:p-7 text-white group select-none md:col-span-6"
           style={{ clipPath: 'polygon(0px 0px, 100% 0px, 88% 100%, 0px 100%)' }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,7 +70,7 @@ export function LoginForm() {
             className="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-105"
             src="/login-atelier.jpg"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/90 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60 z-10" />
 
           {/* Top badges */}
           <div className="relative z-20 flex items-center justify-between gap-2">
@@ -153,7 +153,7 @@ export function LoginForm() {
         </div>
 
         {/* RIGHT PANEL — Form */}
-        <div className="flex flex-col justify-between p-4 sm:p-8 lg:p-10 bg-white/70 rounded-[26px] md:col-span-6">
+        <div className="flex flex-col justify-between p-4 sm:p-8 lg:p-10 backdrop-blur-xl bg-white/40 md:col-span-6">
           {/* Logo + language pills */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -298,7 +298,7 @@ export function LoginForm() {
                 <div className="w-full border-t border-outline-variant/40" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-white px-3 text-[11px] text-secondary">
+                <span className="bg-white/50 backdrop-blur-sm px-3 text-[11px] text-secondary">
                   ou
                 </span>
               </div>
