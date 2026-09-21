@@ -506,6 +506,11 @@
   50% { transform: rotate(0deg); }
   100% { transform: rotate(0deg); }
 }
+@keyframes qty-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
 
 .cart-btn-float { animation: cart-float 3s ease-in-out infinite; }
 .cart-btn-glow { animation: cart-glow-pulse 2.5s ease-in-out infinite; }
@@ -513,6 +518,12 @@
 .cart-btn-shake { animation: cart-shake 0.6s ease-in-out; }
 .cart-btn-ring { animation: cart-ring 0.8s ease-in-out; }
 .cart-badge-pop { animation: cart-badge-pop 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+.qty-pulse { animation: qty-pulse 0.25s ease-out; }
+
+/* Fix active state black flash on all buttons */
+button:active, a:active {
+  -webkit-tap-highlight-color: transparent;
+}
 
 /* ===== MENU POSTER ===== */
 .menu-hero {

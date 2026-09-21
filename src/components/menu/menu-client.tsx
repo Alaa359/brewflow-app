@@ -82,6 +82,7 @@ export function MenuClient({
   const [cartOpen, setCartOpen] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
   const [cartShake, setCartShake] = useState(false);
+  const [qtyPulse, setQtyPulse] = useState<Record<string, boolean>>({});
   const prevCartCountRef = useRef(0);
   const t = useTranslations('Menu');
   const tCommon = useTranslations('Common');
@@ -121,6 +122,11 @@ export function MenuClient({
   }, []);
 
   const bump = useCallback((index: number, delta: number) => {
+    // Trigger pulse animation
+    const key = `${index}-${delta > 0 ? 'plus' : 'minus'}`;
+    setQtyPulse((p) => ({ ...p, [key]: true }));
+    setTimeout(() => setQtyPulse((p) => ({ ...p, [key]: false })), 250);
+
     setCart((cur) =>
       cur.map((l, i) => (i === index ? { ...l, quantity: Math.min(Math.max(l.quantity + delta, 0), 99) } : l))
         .filter((l) => l.quantity > 0)
@@ -179,10 +185,10 @@ export function MenuClient({
                 <button
                   key={lang}
                   type="button"
-                  className={`px-2.5 py-0.5 rounded-full transition ${
+                  className={`px-2.5 py-0.5 rounded-full transition-all duration-200 ${
                     locale.toUpperCase().startsWith(lang)
                       ? 'bg-espresso text-warmCream shadow-sm'
-                      : 'text-espresso/70 hover:text-espresso'
+                      : 'text-espresso/70 hover:bg-[#e8d5c3] hover:text-espresso active:bg-[#dfcfc1]'
                   }`}
                 >
                   {lang}
@@ -243,10 +249,10 @@ export function MenuClient({
                     key={cat.id}
                     type="button"
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-sm transition ${
+                    className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 ${
                       cat.id === activeCategory
                         ? 'bg-espresso text-warmCream'
-                        : 'border border-[#ebd8c7] bg-white text-espresso hover:bg-softSand'
+                        : 'border border-[#ebd8c7] bg-white text-espresso hover:bg-softSand active:bg-[#ebd8c7] active:scale-95'
                     }`}
                   >
                     {getCategoryIcon(cat.name)}
@@ -340,7 +346,7 @@ export function MenuClient({
                         <button
                           type="button"
                           onClick={() => addDish(dish)}
-                          className="active:scale-95 inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-caramelDark"
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-caramelDark hover:shadow-lg active:bg-caramelDark active:scale-95 active:shadow-sm"
                         >
                           <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
                           <PlusIcon className="size-3.5" />
@@ -379,7 +385,7 @@ export function MenuClient({
                       <button
                         type="button"
                         onClick={() => addDish(dish)}
-                        className="active:scale-95 inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-caramelDark"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-caramelDark hover:shadow-md active:bg-caramelDark active:scale-95"
                       >
                         <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
                         <PlusIcon className="size-3" />
@@ -479,7 +485,7 @@ export function MenuClient({
             <button
               type="button"
               onClick={closeCart}
-              className="flex size-9 items-center justify-center rounded-full bg-softSand text-espresso/60 transition hover:bg-[#ebd8c7] hover:text-espresso"
+              className="flex size-9 items-center justify-center rounded-full bg-softSand text-espresso/60 transition-all duration-200 hover:bg-[#ebd8c7] hover:text-espresso active:bg-[#dfcfc1] active:scale-90"
             >
               <XIcon className="size-5" />
             </button>
@@ -532,19 +538,21 @@ export function MenuClient({
                       </div>
 
                       {/* Quantity controls */}
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => bump(idx, -1)}
-                          className="flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition hover:bg-softSand"
+                          className={`flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition-all duration-200 hover:border-caramel/40 hover:bg-[#fcf5ed] active:bg-caramel active:text-white active:scale-90 ${qtyPulse[`${idx}-minus`] ? 'qty-pulse' : ''}`}
                         >
                           <MinusIcon className="size-3.5" />
                         </button>
-                        <span className="w-8 text-center text-sm font-bold tabular-nums text-espresso">{line.quantity}</span>
+                        <span className={`w-8 text-center text-sm font-bold tabular-nums text-espresso ${qtyPulse[`${idx}-plus`] || qtyPulse[`${idx}-minus`] ? 'qty-pulse' : ''}`}>
+                          {line.quantity}
+                        </span>
                         <button
                           type="button"
                           onClick={() => bump(idx, 1)}
-                          className="flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition hover:bg-softSand"
+                          className={`flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition-all duration-200 hover:border-caramel/40 hover:bg-[#fcf5ed] active:bg-caramel active:text-white active:scale-90 ${qtyPulse[`${idx}-plus`] ? 'qty-pulse' : ''}`}
                         >
                           <PlusIcon className="size-3.5" />
                         </button>
@@ -558,7 +566,7 @@ export function MenuClient({
                         <button
                           type="button"
                           onClick={() => removeLine(idx)}
-                          className="flex items-center gap-0.5 text-[10px] text-espresso/40 transition hover:text-red-500"
+                          className="flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] text-espresso/40 transition-all duration-200 hover:bg-red-50 hover:text-red-500 active:bg-red-100 active:text-red-600"
                         >
                           <Trash2Icon className="size-3" />
                           Retirer
@@ -593,7 +601,7 @@ export function MenuClient({
                 <button
                   type="submit"
                   disabled={pending}
-                  className="flex w-full items-center justify-between rounded-2xl bg-caramel py-4 px-5 text-sm font-bold text-white shadow-lg transition duration-200 hover:bg-caramelDark active:scale-[0.98] disabled:opacity-50"
+                  className="flex w-full items-center justify-between rounded-2xl bg-caramel py-4 px-5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-caramelDark hover:shadow-xl active:bg-caramelDark active:scale-[0.98] disabled:opacity-50"
                 >
                   <span className="flex items-center gap-2.5">
                     <ShoppingBagIcon className="size-5" />
