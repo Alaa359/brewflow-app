@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Outer gold ring -->
+  <circle cx="100" cy="100" r="96" fill="url(#gold-gradient)" stroke="#8B6914" stroke-width="2"/>
+  <circle cx="100" cy="100" r="88" fill="url(#wood-bg)" stroke="#A07828" stroke-width="1"/>
+  
+  <!-- Inner decorative ring -->
+  <circle cx="100" cy="100" r="72" fill="none" stroke="url(#gold-light)" stroke-width="2.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="68" fill="none" stroke="url(#gold-light)" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Globe / Coffee bean pattern -->
+  <g transform="translate(100,100)" opacity="0.85">
+    <!-- Vertical ellipse -->
+    <ellipse cx="0" cy="0" rx="28" ry="42" fill="none" stroke="url(#gold-light)" stroke-width="2.2"/>
+    <!-- Horizontal ellipse -->
+    <ellipse cx="0" cy="0" rx="42" ry="28" fill="none" stroke="url(#gold-light)" stroke-width="2.2" transform="rotate(0)"/>
+    <!-- Diagonal ellipses -->
+    <ellipse cx="0" cy="0" rx="28" ry="42" fill="none" stroke="url(#gold-light)" stroke-width="1.8" transform="rotate(45)"/>
+    <ellipse cx="0" cy="0" rx="28" ry="42" fill="none" stroke="url(#gold-light)" stroke-width="1.8" transform="rotate(-45)"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="4" fill="url(#gold-gradient)"/>
+  </g>
+  
+  <!-- BREW text (top arc) -->
+  <path id="top-arc" d="M 30,100 A 70,70 0 0,1 170,100" fill="none"/>
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="18" fill="#3D2B1A" letter-spacing="4">
+    <textPath href="#top-arc" startOffset="50%" text-anchor="middle">BREW</textPath>
+  </text>
+  
+  <!-- FLOW text (bottom arc) -->
+  <path id="bottom-arc" d="M 30,100 A 70,70 0 0,0 170,100" fill="none"/>
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="18" fill="#3D2B1A" letter-spacing="4">
+    <textPath href="#bottom-arc" startOffset="50%" text-anchor="middle">FLOW</textPath>
+  </text>
+  
+  <!-- Decorative dashes -->
+  <line x1="18" y1="100" x2="28" y2="100" stroke="#5C4020" stroke-width="2" stroke-linecap="round"/>
+  <line x1="172" y1="100" x2="182" y2="100" stroke="#5C4020" stroke-width="2" stroke-linecap="round"/>
+
+  <defs>
+    <radialGradient id="gold-gradient" cx="40%" cy="35%">
+      <stop offset="0%" stop-color="#E8D48B"/>
+      <stop offset="40%" stop-color="#C8A84E"/>
+      <stop offset="70%" stop-color="#A07828"/>
+      <stop offset="100%" stop-color="#7A5A18"/>
+    </radialGradient>
+    <linearGradient id="gold-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8D48B"/>
+      <stop offset="50%" stop-color="#C8A84E"/>
+      <stop offset="100%" stop-color="#A07828"/>
+    </linearGradient>
+    <radialGradient id="wood-bg" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#3D2B1A"/>
+      <stop offset="60%" stop-color="#2B1E12"/>
+      <stop offset="100%" stop-color="#1A110A"/>
+    </radialGradient>
+  </defs>
+</svg>

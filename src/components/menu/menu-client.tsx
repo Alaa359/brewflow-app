@@ -183,9 +183,9 @@ export function MenuClient({
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt="BrewFlow Emblem"
+                alt="BrewFlow Logo"
                 className="size-9 rounded-full object-cover shadow-sm ring-1 ring-caramel/30"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1UB1L_KtYEgfMPK2xSptkNV8ETj4eodJEH-esOkEZI1ls11GDbqdZ0Fcf9FwaAzrUF4VbQLBx4oiksZ6pDYsA2XhZrkbuhcP_382-smzqDEu97vsw6zC__yuED9DkYuEq1Lve8Ygz-tC9-rnofRWNjGfW6RtaT3fpukQzoS-OgbJb8oK8UT-d6c9GrMSLUTs0CbuvECiavlKn8lksG76sXyx93ypktpV6vvLRte54-eKG6Vvp3TgmPvhQ"
+                src="/logo-brewflow.svg"
               />
               <div className="flex flex-col leading-none">
                 <span className="font-sans text-[17px] font-extrabold tracking-tight text-espresso">
@@ -221,9 +221,9 @@ export function MenuClient({
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt="BrewFlow Emblem"
+                alt="BrewFlow Logo"
                 className="size-8 rounded-full object-cover shadow-sm ring-1 ring-caramel/20"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1UB1L_KtYEgfMPK2xSptkNV8ETj4eodJEH-esOkEZI1ls11GDbqdZ0Fcf9FwaAzrUF4VbQLBx4oiksZ6pDYsA2XhZrkbuhcP_382-smzqDEu97vsw6zC__yuED9DkYuEq1Lve8Ygz-tC9-rnofRWNjGfW6RtaT3fpukQzoS-OgbJb8oK8UT-d6c9GrMSLUTs0CbuvECiavlKn8lksG76sXyx93ypktpV6vvLRte54-eKG6Vvp3TgmPvhQ"
+                src="/logo-brewflow.svg"
               />
               <div className="flex flex-col leading-none">
                 <span className="font-sans text-[13px] font-extrabold tracking-tight text-espresso">
