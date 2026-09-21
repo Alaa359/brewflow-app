@@ -11,10 +11,12 @@ import {
   PlusIcon,
   Sandwich,
   SearchIcon,
+  ShoppingBagIcon,
   Soup,
   Trash2Icon,
   UtensilsCrossed,
   Wine,
+  XIcon,
 } from 'lucide-react';
 import { DishThumb } from '@/components/ui/dish-thumb';
 import { submitTableOrder } from '@/actions/client-orders';
@@ -77,7 +79,7 @@ export function MenuClient({
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? '');
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmed, setConfirmed] = useState(false);
-  const [cartExpanded, setCartExpanded] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const t = useTranslations('Menu');
   const tCommon = useTranslations('Common');
   const locale = useLocale();
@@ -88,7 +90,7 @@ export function MenuClient({
     if (state?.success) {
       setCart([]);
       setConfirmed(true);
-      setCartExpanded(false);
+      setCartOpen(false);
     }
   }, [state]);
 
@@ -126,10 +128,20 @@ export function MenuClient({
     setCart((cur) => cur.filter((_, i) => i !== index));
   }, []);
 
+  const openCart = useCallback(() => {
+    setCartOpen(true);
+    document.body.classList.add('overflow-hidden');
+  }, []);
+
+  const closeCart = useCallback(() => {
+    setCartOpen(false);
+    document.body.classList.remove('overflow-hidden');
+  }, []);
+
   return (
     <>
       {/* Full-Screen Container */}
-      <div className="relative flex min-h-screen w-full flex-col bg-warmCream pb-28">
+      <div className="relative flex min-h-screen w-full flex-col bg-warmCream">
 
         {/* 1. Header Éditorial */}
         <header className="sticky top-0 z-30 border-b border-[#eedecf] bg-warmCream/95 px-4 pb-2.5 pt-3 shadow-[0_2px_12px_rgba(43,30,24,0.03)] backdrop-blur-md sm:px-6 lg:px-8">
@@ -316,7 +328,7 @@ export function MenuClient({
                           className="active:scale-95 inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-caramelDark"
                         >
                           <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
-                          <span className="font-mono text-sm leading-none">+</span>
+                          <PlusIcon className="size-3.5" />
                         </button>
                       </div>
                     </article>
@@ -355,7 +367,7 @@ export function MenuClient({
                         className="active:scale-95 inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-caramelDark"
                       >
                         <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
-                        <span className="font-mono text-xs leading-none">+</span>
+                        <PlusIcon className="size-3" />
                       </button>
                     </div>
                   </article>
@@ -364,156 +376,206 @@ export function MenuClient({
             </div>
           </section>
         </main>
+      </div>
 
-        {/* ═══ PANIER AVANCÉ — Sticky Bottom Bar ═══ */}
-        {cartCount > 0 && (
-          <footer className="pointer-events-none fixed bottom-0 left-0 right-0 z-40 flex justify-center px-3 pb-4 pt-2">
-            <div className="pointer-events-auto mx-auto flex w-full max-w-2xl flex-col rounded-3xl border border-[#3e2c24] bg-espresso text-warmCream shadow-float-dock">
+      {/* ═══ FLOATING CART BUTTON ═══ */}
+      {cartCount > 0 && (
+        <button
+          type="button"
+          onClick={openCart}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full border border-caramel/30 bg-white/80 px-4 py-3 shadow-lg backdrop-blur-md transition hover:bg-white hover:shadow-xl active:scale-95 sm:bottom-8 sm:right-8"
+        >
+          <ShoppingBagIcon className="size-5 text-caramel" />
+          <span className="font-mono text-sm font-bold text-espresso tabular-nums">{cartCount}</span>
+          <span className="h-4 w-px bg-[#ecdccb]" />
+          <span className="font-mono text-sm font-bold text-caramel tabular-nums">
+            {formatCost(cartTotal, locale, tCommon('currency'))}
+          </span>
+        </button>
+      )}
 
-              {/* ── Header panier ── */}
-              <div className="flex items-center justify-between px-4 pb-3 pt-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <span className="flex size-9 items-center justify-center rounded-full bg-caramel/20">
-                      <span className="text-base">🛒</span>
-                    </span>
-                    <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-caramel text-[10px] font-bold text-white shadow">
-                      {cartCount}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-warmCream/60">
-                      {t('cart.title')}
-                    </div>
-                    <div className="text-sm font-bold text-white">
-                      {cartCount} {cartCount === 1 ? 'article' : 'articles'}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-right font-mono text-lg font-bold text-caramel">
-                    {formatCost(cartTotal, locale, tCommon('currency'))}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setCartExpanded(!cartExpanded)}
-                    className="flex size-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                  >
-                    <span className="text-sm">{cartExpanded ? '▾' : '▴'}</span>
-                  </button>
-                </div>
+      {/* ═══ CART MODAL ═══ */}
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-espresso/40 backdrop-blur-sm transition-opacity duration-300 ${
+          cartOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={closeCart}
+      />
+
+      {/* Sheet */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={`fixed bottom-0 left-0 right-0 z-50 flex justify-center transition-transform duration-[350ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          cartOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+      >
+        <div className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-[#ebd8c7] bg-white/90 shadow-2xl backdrop-blur-xl">
+
+          {/* Handle */}
+          <div className="flex items-center justify-center pt-3">
+            <div className="h-1.5 w-12 rounded-full bg-[#dfcfc1]" />
+          </div>
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pb-3 pt-2">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <span className="flex size-10 items-center justify-center rounded-full bg-caramel/15">
+                  <ShoppingBagIcon className="size-5 text-caramel" />
+                </span>
+                <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-caramel text-[10px] font-bold text-white shadow">
+                  {cartCount}
+                </span>
               </div>
+              <div>
+                <h2 className="font-sans text-base font-bold text-espresso">{t('cart.title')}</h2>
+                <p className="font-mono text-[11px] text-espresso/60">
+                  {cartCount} {cartCount === 1 ? 'article' : 'articles'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={closeCart}
+              className="flex size-9 items-center justify-center rounded-full bg-softSand text-espresso/60 transition hover:bg-[#ebd8c7] hover:text-espresso"
+            >
+              <XIcon className="size-5" />
+            </button>
+          </div>
 
-              {/* ── Lignes du panier (expandable) ── */}
-              {cartExpanded && (
-                <div className="border-t border-white/10 px-4 pt-3 pb-2">
-                  <div className="flex max-h-56 flex-col gap-2.5 overflow-y-auto">
-                    {cart.map((line, idx) => (
-                      <div key={line.dish.id} className="flex items-center gap-3">
-                        {/* Mini thumbnail */}
-                        <div className="size-10 shrink-0 overflow-hidden rounded-lg bg-white/10">
-                          {line.dish.imageUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={line.dish.imageUrl} alt={line.dish.name} className="size-full object-cover" />
-                          ) : (
-                            <div className="flex size-full items-center justify-center text-[10px] text-white/40">🍽️</div>
-                          )}
-                        </div>
-                        {/* Name & price */}
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-semibold text-white">{line.dish.name}</p>
-                          <p className="font-mono text-[10px] text-caramel">
-                            {formatCost(line.dish.price, locale, tCommon('currency'))} × {line.quantity}
-                          </p>
-                        </div>
-                        {/* Subtotal */}
-                        <span className="font-mono text-xs font-bold text-white tabular-nums">
-                          {formatCost(line.dish.price * line.quantity, locale, tCommon('currency'))}
-                        </span>
-                        {/* Controls */}
-                        <div className="flex items-center gap-0.5">
-                          <button
-                            type="button"
-                            onClick={() => bump(idx, -1)}
-                            className="flex size-7 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                          >
-                            <MinusIcon className="size-3" />
-                          </button>
-                          <span className="w-7 text-center text-xs font-bold tabular-nums">{line.quantity}</span>
-                          <button
-                            type="button"
-                            onClick={() => bump(idx, 1)}
-                            className="flex size-7 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                          >
-                            <PlusIcon className="size-3" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeLine(idx)}
-                            className="ml-1 flex size-7 items-center justify-center rounded-full text-white/40 transition hover:bg-red-500/20 hover:text-red-400"
-                          >
-                            <Trash2Icon className="size-3.5" />
-                          </button>
+          {/* Separator */}
+          <div className="mx-5 border-t border-[#ebd8c7]" />
+
+          {/* Cart lines */}
+          <div className="flex-1 overflow-y-auto px-5 py-4">
+            {cart.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <span className="flex size-14 items-center justify-center rounded-full bg-softSand">
+                  <ShoppingBagIcon className="size-6 text-espresso/30" />
+                </span>
+                <p className="mt-3 text-sm font-medium text-espresso/60">{t('cart.empty')}</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {cart.map((line, idx) => {
+                  const catName = categories.find((c) => c.id === line.dish.categoryId)?.name ?? '';
+                  return (
+                    <div
+                      key={line.dish.id}
+                      className="flex items-center gap-3 rounded-2xl border border-[#f0e1d2] bg-[#faf6f0] p-3 transition hover:border-caramel/30"
+                    >
+                      {/* Thumbnail or icon */}
+                      <div className="size-12 shrink-0 overflow-hidden rounded-xl bg-softSand">
+                        {line.dish.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={line.dish.imageUrl} alt={line.dish.name} className="size-full object-cover" />
+                        ) : (
+                          <div className="flex size-full items-center justify-center">
+                            {getCategoryIcon(catName)}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-espresso">{line.dish.name}</p>
+                        <div className="mt-0.5 flex items-center gap-1.5">
+                          <span className="rounded bg-caramel/10 px-1.5 py-0.5 text-[9px] font-mono font-bold text-caramelDark">
+                            {catName}
+                          </span>
+                          <span className="font-mono text-[11px] text-espresso/50">
+                            {formatCost(line.dish.price, locale, tCommon('currency'))}
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              {/* ── Submit ── */}
-              <div className={`border-t border-white/10 px-4 ${cartExpanded ? 'py-3' : 'py-0'}`}>
-                {!cartExpanded && (
-                  <div className="no-scrollbar flex gap-2 overflow-x-auto py-2.5">
-                    {cart.map((line) => (
-                      <div key={line.dish.id} className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px]">
-                        <span className="font-semibold text-white">{line.quantity}×</span>
-                        <span className="text-warmCream/70">{line.dish.name}</span>
+                      {/* Quantity controls */}
+                      <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => removeLine(cart.indexOf(line))}
-                          className="ml-0.5 text-white/40 hover:text-red-400"
+                          onClick={() => bump(idx, -1)}
+                          className="flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition hover:bg-softSand"
                         >
-                          ×
+                          <MinusIcon className="size-3.5" />
+                        </button>
+                        <span className="w-8 text-center text-sm font-bold tabular-nums text-espresso">{line.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => bump(idx, 1)}
+                          className="flex size-8 items-center justify-center rounded-full border border-[#ebd8c7] bg-white text-espresso transition hover:bg-softSand"
+                        >
+                          <PlusIcon className="size-3.5" />
                         </button>
                       </div>
-                    ))}
-                  </div>
-                )}
-                <form action={formAction}>
-                  <input type="hidden" name="token" value={token} />
-                  <input
-                    type="hidden"
-                    name="items"
-                    value={JSON.stringify(cart.map((l) => ({ dishId: l.dish.id, quantity: l.quantity })))}
-                  />
-                  <button
-                    type="submit"
-                    disabled={pending}
-                    className="flex w-full items-center justify-between rounded-2xl bg-caramel py-3.5 px-4 text-xs font-bold text-white shadow-lg transition duration-200 hover:bg-caramelDark active:scale-[0.98] disabled:opacity-50"
-                  >
-                    <span className="flex items-center gap-2 font-sans text-sm tracking-wide">
-                      <span className="text-base">🫗</span>
-                      {t('cart.submit')} (Table {tableNumber})
-                    </span>
-                    <span className="text-lg">→</span>
-                  </button>
-                  <div className="flex items-center justify-center gap-1.5 pt-1.5 text-[10px] text-warmCream/60">
-                    <span className="text-emerald-400">⚡</span>
-                    <span>{t('cart.instant', { defaultValue: 'Transmis instantanément au barista' })}</span>
-                  </div>
-                </form>
+
+                      {/* Subtotal & remove */}
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="font-mono text-sm font-bold text-espresso tabular-nums">
+                          {formatCost(line.dish.price * line.quantity, locale, tCommon('currency'))}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeLine(idx)}
+                          className="flex items-center gap-0.5 text-[10px] text-espresso/40 transition hover:text-red-500"
+                        >
+                          <Trash2Icon className="size-3" />
+                          Retirer
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          {cart.length > 0 && (
+            <div className="border-t border-[#ebd8c7] px-5 pb-5 pt-4">
+              {/* Total */}
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-espresso">Total</span>
+                <span className="font-mono text-xl font-bold text-espresso tabular-nums">
+                  {formatCost(cartTotal, locale, tCommon('currency'))}
+                </span>
               </div>
 
+              {/* Submit */}
+              <form action={formAction}>
+                <input type="hidden" name="token" value={token} />
+                <input
+                  type="hidden"
+                  name="items"
+                  value={JSON.stringify(cart.map((l) => ({ dishId: l.dish.id, quantity: l.quantity })))}
+                />
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className="flex w-full items-center justify-between rounded-2xl bg-caramel py-4 px-5 text-sm font-bold text-white shadow-lg transition duration-200 hover:bg-caramelDark active:scale-[0.98] disabled:opacity-50"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <ShoppingBagIcon className="size-5" />
+                    {t('cart.submit')} (Table {tableNumber})
+                  </span>
+                  <span className="text-lg">→</span>
+                </button>
+                <div className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-espresso/50">
+                  <CheckCircleIcon className="size-3.5 text-tertiary" />
+                  <span>{t('cart.instant', { defaultValue: 'Transmis instantanément au barista' })}</span>
+                </div>
+              </form>
+
               {state?.errors?.form?.map((e) => (
-                <p key={e} className="mx-4 mb-2 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-400">{e}</p>
+                <p key={e} className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-500">{e}</p>
               ))}
               {state?.errors?.items?.map((e) => (
-                <p key={e} className="mx-4 mb-2 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-400">{e}</p>
+                <p key={e} className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-500">{e}</p>
               ))}
             </div>
-          </footer>
-        )}
+          )}
+        </div>
       </div>
     </>
   );
