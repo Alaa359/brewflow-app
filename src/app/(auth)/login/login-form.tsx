@@ -212,11 +212,10 @@ export function LoginForm() {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="admin@brewflow.tn"
+                    placeholder="Entrez votre adresse mail"
                     required
                     aria-invalid={!!state?.errors?.email}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
-                    defaultValue="ziyad@brewflow.tn"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
                   />
                 </div>
                 {state?.errors?.email?.map((e) => (
@@ -246,17 +245,17 @@ export function LoginForm() {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder="••••••••"
+                    placeholder="••••••••••"
                     required
                     aria-invalid={!!state?.errors?.password}
-                    className="w-full h-11 pl-10 pr-10 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
+                    className="w-full h-11 pl-10 pr-10 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm placeholder-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all tracking-widest"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-stone-600 transition-colors"
                   >
-                    <span className="material-symbols-outlined text-[18px]">
+                    <span className="material-symbols-outlined text-[20px]">
                       {showPassword ? 'visibility_off' : 'visibility'}
                     </span>
                   </button>
@@ -273,16 +272,19 @@ export function LoginForm() {
                 </p>
               ))}
 
-              {/* Remember + Submit */}
-              <div className="flex items-center gap-2 pt-1 select-none">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500 focus:ring-offset-0 transition-colors"
-                />
+              {/* Toggle remember */}
+              <div className="flex items-center justify-between pt-1 select-none">
                 <label className="text-xs text-stone-500 font-medium cursor-pointer">
                   Mémoriser cette station
                 </label>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-500 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 focus:ring-offset-white"
+                >
+                  <span className="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out translate-x-4" />
+                </button>
               </div>
 
               <button
@@ -337,42 +339,16 @@ export function LoginForm() {
           </div>
 
           {/* Footer */}
-          <div className="relative z-10 pt-5 border-t border-stone-200/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div className="relative z-10 pt-5 border-t border-stone-200/60 text-center">
             <p className="text-[12px] text-stone-400">
               Besoin d&apos;un compte ?{' '}
               <span
                 className="text-amber-600 font-semibold hover:text-amber-700 hover:underline cursor-pointer transition-colors"
-                onClick={() => showToast("Contacter le gérant", "admin_panel_settings")}
+                onClick={() => showToast("Contacter le gérant de succursale", "admin_panel_settings")}
               >
                 Contacter l&apos;administrateur
               </span>
             </p>
-            <div className="flex items-center gap-3 text-stone-300">
-              <button
-                type="button"
-                className="hover:text-amber-600 transition-colors"
-                onClick={() => showToast("Certifié Décret 2018-56", "verified_user")}
-                title="Sécurité"
-              >
-                <span className="material-symbols-outlined text-[17px]">verified_user</span>
-              </button>
-              <button
-                type="button"
-                className="hover:text-amber-600 transition-colors"
-                onClick={() => showToast("Support: 71 000 888", "support")}
-                title="Support"
-              >
-                <span className="material-symbols-outlined text-[17px]">headset_mic</span>
-              </button>
-              <button
-                type="button"
-                className="hover:text-amber-600 transition-colors"
-                onClick={() => showToast("Succursale La Marsa", "storefront")}
-                title="Succursale"
-              >
-                <span className="material-symbols-outlined text-[17px]">storefront</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
