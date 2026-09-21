@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useActionState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
@@ -80,6 +80,9 @@ export function MenuClient({
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [cartBounce, setCartBounce] = useState(false);
+  const [cartShake, setCartShake] = useState(false);
+  const prevCartCountRef = useRef(0);
   const t = useTranslations('Menu');
   const tCommon = useTranslations('Common');
   const locale = useLocale();
@@ -127,6 +130,18 @@ export function MenuClient({
   const removeLine = useCallback((index: number) => {
     setCart((cur) => cur.filter((_, i) => i !== index));
   }, []);
+
+  // Trigger animations when cart count changes
+  useEffect(() => {
+    if (cartCount > prevCartCountRef.current) {
+      setCartBounce(true);
+      setCartShake(true);
+      const t1 = setTimeout(() => setCartBounce(false), 500);
+      const t2 = setTimeout(() => setCartShake(false), 600);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
+    }
+    prevCartCountRef.current = cartCount;
+  }, [cartCount]);
 
   const openCart = useCallback(() => {
     setCartOpen(true);
@@ -383,14 +398,39 @@ export function MenuClient({
         <button
           type="button"
           onClick={openCart}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full border border-caramel/30 bg-white/80 px-4 py-3 shadow-lg backdrop-blur-md transition hover:bg-white hover:shadow-xl active:scale-95 sm:bottom-8 sm:right-8"
+          className={`fixed bottom-6 right-6 z-40 sm:bottom-8 sm:right-8 group
+            ${cartOpen ? '' : 'cart-btn-float cart-btn-glow'}
+            ${cartBounce ? 'cart-btn-bounce' : ''}
+          `}
         >
-          <ShoppingBagIcon className="size-5 text-caramel" />
-          <span className="font-mono text-sm font-bold text-espresso tabular-nums">{cartCount}</span>
-          <span className="h-4 w-px bg-[#ecdccb]" />
-          <span className="font-mono text-sm font-bold text-caramel tabular-nums">
-            {formatCost(cartTotal, locale, tCommon('currency'))}
-          </span>
+          {/* Outer glow ring */}
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-caramel/40 via-caramelDark/30 to-caramel/40 opacity-60 blur-sm transition group-hover:opacity-100 group-hover:blur-md" />
+
+          {/* Main button */}
+          <div className="relative flex items-center gap-2.5 rounded-full border border-caramel/20 bg-white/90 px-5 py-3 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:border-caramel/40 group-hover:bg-white group-hover:shadow-xl group-hover:scale-105 active:scale-95">
+            {/* Icon with shake */}
+            <span className={`relative ${cartShake ? 'cart-btn-ring' : ''}`}>
+              <ShoppingBagIcon className="size-5 text-caramel transition group-hover:text-caramelDark" />
+            </span>
+
+            {/* Count badge with pop */}
+            <span className="cart-badge-pop absolute -left-2 -top-2 flex size-6 items-center justify-center rounded-full bg-caramel text-[11px] font-bold text-white shadow-md">
+              {cartCount}
+            </span>
+
+            {/* Separator */}
+            <span className="h-5 w-px bg-[#ecdccb] transition group-hover:bg-caramel/30" />
+
+            {/* Total */}
+            <span className="font-mono text-sm font-bold text-espresso tabular-nums transition group-hover:text-caramelDark">
+              {formatCost(cartTotal, locale, tCommon('currency'))}
+            </span>
+
+            {/* Arrow indicator */}
+            <span className="ml-0.5 text-xs text-espresso/30 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-caramel">
+              →
+            </span>
+          </div>
         </button>
       )}
 
