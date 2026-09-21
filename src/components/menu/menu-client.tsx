@@ -249,10 +249,10 @@ export function MenuClient({
                     key={cat.id}
                     type="button"
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-200 ${
+                    className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md ${
                       cat.id === activeCategory
-                        ? 'bg-espresso text-warmCream'
-                        : 'border border-[#ebd8c7] bg-white text-espresso hover:bg-softSand active:bg-[#ebd8c7] active:scale-95'
+                        ? 'bg-caramel text-white shadow-caramel/30'
+                        : 'border border-[#ebd8c7] bg-white text-espresso hover:border-caramel/40 hover:bg-[#fcf5ed] hover:text-caramelDark active:bg-[#ebd8c7] active:scale-95'
                     }`}
                   >
                     {getCategoryIcon(cat.name)}
@@ -317,12 +317,12 @@ export function MenuClient({
                   return (
                     <article
                       key={dish.id}
-                      className="overflow-hidden rounded-2xl border border-[#ecdccb] bg-cardBg shadow-poster transition hover:border-caramel/50 anim-fade-up"
+                      className="group overflow-hidden rounded-2xl border border-[#ecdccb] bg-cardBg shadow-poster transition-all duration-300 hover:-translate-y-1 hover:border-caramel/40 hover:shadow-xl anim-fade-up"
                       style={{ animationDelay: `${i * 0.05}s` }}
                     >
                       <div className="relative h-44 w-full overflow-hidden bg-[#efe5d9]">
                         <DishThumb src={dish.imageUrl} alt={dish.name} variant="poster" categoryName={categoryName} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 group-hover:opacity-90" />
                         <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
                           <span className="rounded-md bg-espresso/90 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-warmCream shadow-sm backdrop-blur-sm">
                             {categoryName}
@@ -333,7 +333,7 @@ export function MenuClient({
                             <h2 className="text-base font-bold tracking-tight text-white drop-shadow-sm">{dish.name}</h2>
                             {dish.description && <p className="line-clamp-1 text-[11px] text-white/80">{dish.description}</p>}
                           </div>
-                          <div className="shadow font-mono text-base font-bold bg-caramel/90 rounded-lg px-2.5 py-1 text-white backdrop-blur-sm">
+                          <div className="shadow font-mono text-base font-bold bg-caramel/90 rounded-lg px-2.5 py-1 text-white backdrop-blur-sm transition-all duration-300 group-hover:bg-caramel group-hover:shadow-lg group-hover:scale-105">
                             {priceFormatted}
                           </div>
                         </div>
@@ -346,7 +346,7 @@ export function MenuClient({
                         <button
                           type="button"
                           onClick={() => addDish(dish)}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-caramelDark hover:shadow-lg active:bg-caramelDark active:scale-95 active:shadow-sm"
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-300 hover:bg-caramelDark hover:shadow-lg hover:scale-105 active:bg-caramelDark active:scale-95 active:shadow-sm"
                         >
                           <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
                           <PlusIcon className="size-3.5" />
@@ -359,7 +359,7 @@ export function MenuClient({
                 return (
                   <article
                     key={dish.id}
-                    className="flex flex-col gap-2.5 rounded-2xl border border-[#ecdccb] bg-cardBg p-3.5 shadow-poster transition hover:border-caramel/50 anim-fade-up"
+                    className="group flex flex-col gap-2.5 rounded-2xl border border-[#ecdccb] bg-cardBg p-3.5 shadow-poster transition-all duration-300 hover:-translate-y-1 hover:border-caramel/40 hover:shadow-xl anim-fade-up"
                     style={{ animationDelay: `${i * 0.05}s` }}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -385,7 +385,7 @@ export function MenuClient({
                       <button
                         type="button"
                         onClick={() => addDish(dish)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-caramelDark hover:shadow-md active:bg-caramelDark active:scale-95"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all duration-300 hover:bg-caramelDark hover:shadow-md hover:scale-105 active:bg-caramelDark active:scale-95"
                       >
                         <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
                         <PlusIcon className="size-3" />
