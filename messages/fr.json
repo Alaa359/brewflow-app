@@ -504,14 +504,17 @@
     "cart": {
       "title": "Votre commande",
       "empty": "Votre panier est vide.",
-      "addToCart": "Ajouter",
       "perUnit": "/ unité",
       "decrement": "Retirer un",
       "increment": "Ajouter un",
       "removeLine": "Supprimer la ligne",
       "total": "Total",
       "submit": "Envoyer la commande",
-      "submitting": "Envoi…"
+      "submitting": "Envoi…",
+      "add": "Ajouter au panier",
+      "customize": "Disponible",
+      "addToOrder": "Ajouter à la commande",
+      "quantity": "Quantité"
     },
     "notFound": {
       "title": "QR code invalide",

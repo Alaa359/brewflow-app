@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useActionState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import {
   CheckCircleIcon,
   Coffee,
@@ -21,6 +22,8 @@ import {
 import { DishThumb } from '@/components/ui/dish-thumb';
 import { submitTableOrder } from '@/actions/client-orders';
 import { formatCost } from '@/lib/ingredients';
+import { setUserLocale } from '@/i18n/locale';
+import type { Locale } from '@/i18n/config';
 
 export type MenuDish = {
   id: string;
@@ -84,14 +87,16 @@ export function MenuClient({
   const [cartShake, setCartShake] = useState(false);
   const [qtyPulse, setQtyPulse] = useState<Record<string, boolean>>({});
   const prevCartCountRef = useRef(0);
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
   const t = useTranslations('Menu');
   const tCommon = useTranslations('Common');
   const locale = useLocale();
-  const [state, formAction, pending] = useActionState(submitTableOrder, undefined);
+  const [state, formAction, formPending] = useActionState(submitTableOrder, undefined);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
     if (state?.success) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- state.success est un signal externe (useActionState)
       setCart([]);
       setConfirmed(true);
       setCartOpen(false);
@@ -159,6 +164,14 @@ export function MenuClient({
     document.body.classList.remove('overflow-hidden');
   }, []);
 
+  const switchLocale = useCallback((newLocale: Locale) => {
+    if (newLocale === locale) return;
+    startTransition(async () => {
+      await setUserLocale(newLocale);
+      router.refresh();
+    });
+  }, [locale, router, startTransition]);
+
   return (
     <>
       {/* Full-Screen Container */}
@@ -168,9 +181,12 @@ export function MenuClient({
         <header className="sticky top-0 z-30 border-b border-[#eedecf] bg-warmCream/95 px-4 pb-2.5 pt-3 shadow-[0_2px_12px_rgba(43,30,24,0.03)] backdrop-blur-md sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-caramel to-caramelDark text-xs font-bold text-white shadow-sm ring-1 ring-caramel/30">
-                {establishmentName.charAt(0)}
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="BrewFlow Emblem"
+                className="size-9 rounded-full object-cover shadow-sm ring-1 ring-caramel/30"
+                src="https://lh3.googleusercontent.com/aida/AEtjO1UB1L_KtYEgfMPK2xSptkNV8ETj4eodJEH-esOkEZI1ls11GDbqdZ0Fcf9FwaAzrUF4VbQLBx4oiksZ6pDYsA2XhZrkbuhcP_382-smzqDEu97vsw6zC__yuED9DkYuEq1Lve8Ygz-tC9-rnofRWNjGfW6RtaT3fpukQzoS-OgbJb8oK8UT-d6c9GrMSLUTs0CbuvECiavlKn8lksG76sXyx93ypktpV6vvLRte54-eKG6Vvp3TgmPvhQ"
+              />
               <div className="flex flex-col leading-none">
                 <span className="font-sans text-[17px] font-extrabold tracking-tight text-espresso">
                   Brew<span className="text-caramel">Flow</span>
@@ -181,26 +197,41 @@ export function MenuClient({
               </div>
             </div>
             <nav aria-label="Langues" className="flex items-center rounded-full bg-[#f0e2d5] p-0.5 text-[11px] font-mono font-semibold">
-              {(['FR', 'EN', 'AR'] as const).map((lang) => (
-                <button
-                  key={lang}
-                  type="button"
-                  className={`px-2.5 py-0.5 rounded-full transition-all duration-200 ${
-                    locale.toUpperCase().startsWith(lang)
-                      ? 'bg-espresso text-warmCream shadow-sm'
-                      : 'text-espresso/70 hover:bg-[#e8d5c3] hover:text-espresso active:bg-[#dfcfc1]'
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
+              {(['FR', 'EN', 'AR'] as const).map((lang) => {
+                const isActive = locale.toUpperCase().startsWith(lang);
+                return (
+                  <button
+                    key={lang}
+                    type="button"
+                  disabled={formPending}
+                    onClick={() => switchLocale(lang.toLowerCase() as Locale)}
+                    className={`px-2.5 py-0.5 rounded-full transition-all duration-200 ${
+                      isActive
+                        ? 'bg-caramel text-white shadow-sm'
+                        : 'text-espresso/60 hover:bg-[#e8d5c3] hover:text-espresso active:bg-[#dfcfc1]'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                );
+              })}
             </nav>
           </div>
           <div className="mt-2.5 flex items-center justify-between rounded-xl border border-[#ebd6c3] bg-softSand/90 px-3 py-1.5">
-            <span className="text-xs font-medium text-espresso">
-              {t('table', { number: tableNumber })}
-              {tableZone ? ` · ${tableZone}` : ''}
-            </span>
+            <div className="flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="BrewFlow Emblem"
+                className="size-8 rounded-full object-cover shadow-sm ring-1 ring-caramel/20"
+                src="https://lh3.googleusercontent.com/aida/AEtjO1UB1L_KtYEgfMPK2xSptkNV8ETj4eodJEH-esOkEZI1ls11GDbqdZ0Fcf9FwaAzrUF4VbQLBx4oiksZ6pDYsA2XhZrkbuhcP_382-smzqDEu97vsw6zC__yuED9DkYuEq1Lve8Ygz-tC9-rnofRWNjGfW6RtaT3fpukQzoS-OgbJb8oK8UT-d6c9GrMSLUTs0CbuvECiavlKn8lksG76sXyx93ypktpV6vvLRte54-eKG6Vvp3TgmPvhQ"
+              />
+              <div className="flex flex-col leading-none">
+                <span className="font-sans text-[13px] font-extrabold tracking-tight text-espresso">
+                  Table {tableNumber}
+                </span>
+                {tableZone && <span className="font-mono text-[9px] text-espresso/50">{tableZone}</span>}
+              </div>
+            </div>
             <div className="flex items-center gap-1.5 text-[11px] font-mono font-semibold text-tertiary">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75" />
@@ -348,7 +379,7 @@ export function MenuClient({
                           onClick={() => addDish(dish)}
                           className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-4 py-2 text-xs font-bold text-white shadow-md transition-all duration-300 hover:bg-caramelDark hover:shadow-lg hover:scale-105 active:bg-caramelDark active:scale-95 active:shadow-sm"
                         >
-                          <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
+                          <span>{t('cart.add', { defaultValue: 'Ajouter au panier' })}</span>
                           <PlusIcon className="size-3.5" />
                         </button>
                       </div>
@@ -387,7 +418,7 @@ export function MenuClient({
                         onClick={() => addDish(dish)}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-caramel px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all duration-300 hover:bg-caramelDark hover:shadow-md hover:scale-105 active:bg-caramelDark active:scale-95"
                       >
-                        <span>{t('cart.add', { defaultValue: 'Ajouter' })}</span>
+                        <span>{t('cart.add', { defaultValue: 'Ajouter au panier' })}</span>
                         <PlusIcon className="size-3" />
                       </button>
                     </div>

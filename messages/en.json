@@ -504,14 +504,17 @@
     "cart": {
       "title": "Your order",
       "empty": "Your cart is empty.",
-      "addToCart": "Add",
       "perUnit": "/ unit",
       "decrement": "Remove one",
       "increment": "Add one",
       "removeLine": "Remove line",
       "total": "Total",
       "submit": "Send order",
-      "submitting": "Sending…"
+      "submitting": "Sending…",
+      "add": "Add to cart",
+      "customize": "Available",
+      "addToOrder": "Add to order",
+      "quantity": "Quantity"
     },
     "notFound": {
       "title": "Invalid QR code",
