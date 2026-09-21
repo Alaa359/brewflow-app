@@ -29,31 +29,6 @@ export type MenuCategory = { id: string; name: string };
 
 type CartLine = { dish: MenuDish; quantity: number };
 
-function getCategoryIcon(categoryName?: string | null) {
-  const map: Record<string, string> = {
-    boissons: '☕',
-    drinks: '☕',
-    beverages: '☕',
-    'boissons chaudes': '☕',
-    'boissons froides': '🧊',
-    dessertes: '🍰',
-    desserts: '🍰',
-    'pâtisserie': '🍰',
-    patisserie: '🍰',
-    'entrées': '🍽️',
-    entrees: '🍽️',
-    plats: '🍲',
-    dishes: '🍲',
-    'apéritifs': '🍷',
-    aperitifs: '🍷',
-    viennoiseries: '🥐',
-    glaces: '🍦',
-    salades: '🥗',
-    sandwichs: '🥪',
-  };
-  return map[categoryName?.toLowerCase().trim() ?? ''] ?? '🍽️';
-}
-
 export function MenuClient({
   token,
   establishmentName,
@@ -121,23 +96,22 @@ export function MenuClient({
     setCart((current) => current.filter((_, i) => i !== index));
   }
 
-  const dishCountByCategory = (catId: string) =>
-    dishes.filter((d) => d.categoryId === catId).length;
-
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="menu-page flex flex-1 flex-col">
       {/* ─── HERO ─── */}
-      <header className="menu-hero border-b">
-        <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-2 px-4 py-10 text-center">
-          <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <StoreIcon className="size-4" />
+      <header className="menu-hero">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-3 px-4 py-12 text-center sm:py-16">
+          <span className="flex items-center gap-2 text-xs font-medium tracking-widest uppercase text-muted-foreground">
+            <StoreIcon className="size-3.5" />
             {establishmentName}
           </span>
-          <h1 className="font-[family-name:var(--font-sora)] text-4xl font-bold tracking-tight">
+          <h1 className="font-[family-name:var(--font-sora)] text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
             {t('title')}
           </h1>
-          <p className="text-muted-foreground max-w-md text-sm">{t('subtitle')}</p>
-          <span className="bg-muted mt-1 rounded-full px-4 py-1.5 text-xs font-medium">
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+            {t('subtitle')}
+          </p>
+          <span className="bg-primary/10 text-primary mt-2 rounded-full px-5 py-2 text-xs font-semibold tracking-wide">
             {t('table', { number: tableNumber })}
             {tableZone ? ` · ${tableZone}` : ''}
           </span>
@@ -147,7 +121,7 @@ export function MenuClient({
       {/* ─── CONFIRMED ─── */}
       {confirmed && (
         <div className="mx-auto w-full max-w-3xl px-4 pt-4">
-          <div className="border-success/30 bg-success/10 text-success flex items-start gap-3 rounded-xl border px-4 py-3 text-sm anim-fade-up">
+          <div className="border-success/30 bg-success/10 text-success flex items-start gap-3 rounded-2xl border px-5 py-4 text-sm anim-fade-up">
             <CircleCheckIcon className="mt-0.5 size-4 shrink-0" />
             <div className="flex flex-col gap-0.5">
               <span className="font-medium">{t('confirmed.title')}</span>
@@ -158,9 +132,9 @@ export function MenuClient({
       )}
 
       {/* ─── SECTIONS PAR CATEGORIE ─── */}
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-8 sm:px-6">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-12 px-4 py-10 sm:px-6 sm:py-14">
         {categories.length === 0 ? (
-          <p className="text-muted-foreground rounded-xl border px-3 py-8 text-center text-sm">
+          <p className="text-muted-foreground rounded-2xl border px-3 py-10 text-center text-sm">
             {t('unavailable')}
           </p>
         ) : (
@@ -173,31 +147,24 @@ export function MenuClient({
             return (
               <section
                 key={category.id}
-                className="flex flex-col gap-4 anim-fade-up"
-                style={{ animationDelay: `${catIndex * 0.1}s` }}
+                className="flex flex-col gap-5 anim-fade-up"
+                style={{ animationDelay: `${catIndex * 0.08}s` }}
               >
                 {/* Category header */}
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{getCategoryIcon(category.name)}</span>
-                  <div className="flex flex-col">
-                    <h2 className="text-xl font-semibold tracking-wide uppercase">
-                      {category.name}
-                    </h2>
-                    <span className="text-muted-foreground text-xs">
-                      {dishCountByCategory(category.id)} {dishCountByCategory(category.id) > 1 ? 'plats' : 'plat'}
-                    </span>
-                  </div>
-                  <div className="bg-border ml-2 h-px flex-1" />
+                <div className="menu-section-divider">
+                  <h2 className="shrink-0 text-lg font-semibold tracking-widest uppercase text-foreground/80">
+                    {category.name}
+                  </h2>
                 </div>
 
-                {/* Dishes grid for this category */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {/* Dishes grid */}
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                   {catDishes.map((dish, i) => (
                     <button
                       key={dish.id}
                       type="button"
                       onClick={() => addDish(dish)}
-                      className="menu-poster-card bg-background flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-start"
+                      className="menu-poster-card bg-card/80 flex cursor-pointer flex-col overflow-hidden rounded-2xl text-start backdrop-blur-sm"
                       style={{ animationDelay: `${(catIndex * catDishes.length + i) * 0.03}s` }}
                     >
                       <div className="relative overflow-hidden rounded-t-2xl">
@@ -208,36 +175,34 @@ export function MenuClient({
                           categoryName={category.name}
                         />
                         <div className="menu-poster-overlay absolute inset-0 flex flex-col justify-end p-3">
-                          <span className="text-white text-sm font-semibold leading-tight">
+                          <span className="text-white text-sm font-semibold leading-tight drop-shadow-md">
                             {dish.name}
                           </span>
-                          <span className="text-white/80 text-xs font-medium">
-                            {formatCost(dish.price, locale, tCommon('currency'))}
-                          </span>
                         </div>
+                        {/* Price badge */}
+                        <span className="bg-primary/90 text-primary-foreground absolute top-2 right-2 rounded-full px-2.5 py-1 text-xs font-bold backdrop-blur-sm">
+                          {formatCost(dish.price, locale, tCommon('currency'))}
+                        </span>
                       </div>
-                      <div className="flex flex-col gap-1 p-3">
+                      <div className="flex flex-col gap-1.5 p-3">
                         {dish.description ? (
-                          <span className="text-muted-foreground line-clamp-2 text-xs">
+                          <span className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
                             {dish.description}
                           </span>
                         ) : null}
-                        <div className="mt-1 flex items-center justify-between">
-                          <span className="text-primary text-sm font-semibold">
-                            {formatCost(dish.price, locale, tCommon('currency'))}
-                          </span>
-                          <Button
-                            type="button"
-                            size="icon"
-                            className="size-8 shrink-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addDish(dish);
-                            }}
-                          >
-                            <PlusIcon className="size-4" />
-                          </Button>
-                        </div>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          className="mt-1 w-full gap-1.5"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addDish(dish);
+                          }}
+                        >
+                          <PlusIcon className="size-3.5" />
+                          Ajouter
+                        </Button>
                       </div>
                     </button>
                   ))}
@@ -249,28 +214,37 @@ export function MenuClient({
       </main>
 
       {/* ─── PANIER EN BAS DE PAGE ─── */}
-      <section className="border-t bg-background">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6">
+      <section className="menu-cart-section">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-10 sm:px-6">
+          {/* Cart header */}
           <div className="flex items-center gap-3">
-            <ShoppingBasketIcon className="text-primary size-5" />
-            <h2 className="text-xl font-semibold">{t('cart.title')}</h2>
-            {cartCount > 0 && (
-              <span className="bg-primary text-primary-foreground rounded-full px-2.5 py-0.5 text-xs font-bold">
-                {cartCount}
-              </span>
-            )}
+            <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
+              <ShoppingBasketIcon className="text-primary size-5" />
+            </div>
+            <div className="flex flex-col">
+              <h2 className="text-lg font-semibold">{t('cart.title')}</h2>
+              {cartCount > 0 && (
+                <span className="text-muted-foreground text-xs">
+                  {cartCount} {cartCount > 1 ? 'articles' : 'article'}
+                </span>
+              )}
+            </div>
           </div>
 
+          {/* Cart items */}
           {cart.length === 0 ? (
-            <p className="text-muted-foreground rounded-xl border px-3 py-6 text-center text-sm">
-              {t('cart.empty')}
-            </p>
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-3 py-10">
+              <ShoppingBasketIcon className="text-muted-foreground/40 size-10" />
+              <p className="text-muted-foreground text-sm">
+                {t('cart.empty')}
+              </p>
+            </div>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {cart.map((line, index) => (
                 <div
                   key={line.dish.id}
-                  className="flex items-center justify-between gap-3 rounded-xl border px-4 py-3"
+                  className="menu-cart-item flex items-center gap-3 rounded-xl border px-4 py-3"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
@@ -281,25 +255,25 @@ export function MenuClient({
                       {t('cart.perUnit')}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <Button
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="size-8"
+                      className="size-8 rounded-lg"
                       onClick={() => bump(index, -1)}
                     >
                       <MinusIcon />
                       <span className="sr-only">{t('cart.decrement')}</span>
                     </Button>
-                    <span className="w-8 text-center text-sm font-semibold tabular-nums">
+                    <span className="w-8 text-center text-sm font-bold tabular-nums">
                       {line.quantity}
                     </span>
                     <Button
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="size-8"
+                      className="size-8 rounded-lg"
                       onClick={() => bump(index, 1)}
                     >
                       <PlusIcon />
@@ -309,7 +283,7 @@ export function MenuClient({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="text-destructive size-8"
+                      className="text-destructive size-8 rounded-lg"
                       onClick={() => removeLine(index)}
                     >
                       <Trash2Icon />
@@ -322,53 +296,55 @@ export function MenuClient({
           )}
 
           {/* Total + Submit */}
-          <div className="flex flex-col gap-4 border-t pt-4">
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-medium">{t('cart.total')}</span>
-              <span className="text-2xl font-bold tabular-nums">
-                {formatCost(cartTotal, locale, tCommon('currency'))}
-              </span>
+          {cart.length > 0 && (
+            <div className="flex flex-col gap-4 rounded-2xl border bg-card/60 p-5 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-base font-medium">{t('cart.total')}</span>
+                <span className="text-2xl font-bold tabular-nums text-foreground">
+                  {formatCost(cartTotal, locale, tCommon('currency'))}
+                </span>
+              </div>
+
+              {state?.errors?.form?.map((e) => (
+                <p
+                  key={e}
+                  className="bg-destructive/10 text-destructive rounded-xl px-4 py-2.5 text-xs"
+                >
+                  {e}
+                </p>
+              ))}
+              {state?.errors?.items?.map((e) => (
+                <p
+                  key={e}
+                  className="bg-destructive/10 text-destructive rounded-xl px-4 py-2.5 text-xs"
+                >
+                  {e}
+                </p>
+              ))}
+
+              <form action={formAction}>
+                <input type="hidden" name="token" value={token} />
+                <input
+                  type="hidden"
+                  name="items"
+                  value={JSON.stringify(
+                    cart.map((line) => ({
+                      dishId: line.dish.id,
+                      quantity: line.quantity,
+                    }))
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full py-6 text-base font-semibold"
+                  size="lg"
+                  disabled={cart.length === 0 || pending}
+                >
+                  {pending ? t('cart.submitting') : t('cart.submit')}
+                </Button>
+              </form>
             </div>
-
-            {state?.errors?.form?.map((e) => (
-              <p
-                key={e}
-                className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-xs"
-              >
-                {e}
-              </p>
-            ))}
-            {state?.errors?.items?.map((e) => (
-              <p
-                key={e}
-                className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-xs"
-              >
-                {e}
-              </p>
-            ))}
-
-            <form action={formAction}>
-              <input type="hidden" name="token" value={token} />
-              <input
-                type="hidden"
-                name="items"
-                value={JSON.stringify(
-                  cart.map((line) => ({
-                    dishId: line.dish.id,
-                    quantity: line.quantity,
-                  }))
-                )}
-              />
-              <Button
-                type="submit"
-                className="w-full py-6 text-base"
-                size="lg"
-                disabled={cart.length === 0 || pending}
-              >
-                {pending ? t('cart.submitting') : t('cart.submit')}
-              </Button>
-            </form>
-          </div>
+          )}
         </div>
       </section>
     </div>
