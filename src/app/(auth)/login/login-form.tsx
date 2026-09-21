@@ -8,6 +8,96 @@ import { login } from '@/actions/auth';
 import { locales, type Locale } from '@/i18n/config';
 import { setUserLocale } from '@/i18n/locale';
 
+function IconMail({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+  );
+}
+
+function IconLock({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function IconEyeOpen({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function IconEyeClosed({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+      <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+      <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+      <path d="m2 2 20 20" />
+    </svg>
+  );
+}
+
+function IconNfc({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M6 8.5a6.5 6.5 0 1 1 13 0" />
+      <path d="M6 8.5a6.5 6.5 0 1 0 13 0" />
+      <path d="M6 8.5a6.5 6.5 0 0 1 0 -7" />
+    </svg>
+  );
+}
+
+function IconFingerprint({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+      <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+      <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+      <path d="M2 12a10 10 0 0 1 18-6" />
+      <path d="M2 16h.01" />
+      <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+      <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+      <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+      <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+    </svg>
+  );
+}
+
+function IconChevronLeft({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  );
+}
+
+function IconChevronRight({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+function IconLogin({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <polyline points="10 17 15 12 10 7" />
+      <line x1="15" x2="3" y1="12" y2="12" />
+    </svg>
+  );
+}
+
 export function LoginForm() {
   const [state, action, pending] = useActionState(login, undefined);
   const t = useTranslations('Auth.login');
@@ -59,14 +149,14 @@ export function LoginForm() {
       <div className="w-full max-w-[1080px] rounded-3xl overflow-hidden my-auto shadow-2xl shadow-black/20 grid grid-cols-1 md:grid-cols-2">
 
         {/* LEFT PANEL — Image */}
-        <div className="relative min-h-[420px] md:min-h-[680px] flex flex-col justify-between p-6 sm:p-8 text-white select-none">
+        <div className="relative min-h-[420px] md:min-h-[680px] flex flex-col justify-between p-6 sm:p-8 text-white select-none overflow-hidden group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="BrewFlow Atelier"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-110 group-hover:brightness-110"
             src="/login-atelier.jpg"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/50 z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/50 z-10 transition-opacity duration-700 group-hover:opacity-70" />
 
           {/* Top badges */}
           <div className="relative z-20 flex items-center justify-between">
@@ -112,15 +202,15 @@ export function LoginForm() {
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  alt="Ziyad Ben Amor"
-                  className="w-11 h-11 rounded-full object-cover border-2 border-white/40 shadow-lg"
+                  alt="Alaa Ameur"
+                  className="w-11 h-11 rounded-full object-cover border-2 border-white/40 shadow-lg transition-transform duration-300 hover:scale-110"
                   src="/logo-brewflow.svg"
                 />
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-surface rounded-full" />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-white tracking-tight">
-                  Ziyad Ben Amor
+                  Alaa Ameur
                 </span>
                 <span className="text-[11px] text-white/70">
                   Maître Torréfacteur &amp; Gérant
@@ -131,18 +221,18 @@ export function LoginForm() {
               <button
                 type="button"
                 aria-label="Précédent"
-                className="w-8 h-8 rounded-full border border-white/30 hover:border-white hover:bg-white/10 flex items-center justify-center text-white transition-all active:scale-90"
+                className="w-8 h-8 rounded-full border border-white/30 hover:border-white hover:bg-white/10 flex items-center justify-center text-white transition-all duration-200 active:scale-90 hover:scale-110"
                 onClick={() => showToast("Profil précédent", "arrow_back")}
               >
-                <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                <IconChevronLeft className="w-4 h-4" />
               </button>
               <button
                 type="button"
                 aria-label="Suivant"
-                className="w-8 h-8 rounded-full border border-white/30 hover:border-white hover:bg-white/10 flex items-center justify-center text-white transition-all active:scale-90"
+                className="w-8 h-8 rounded-full border border-white/30 hover:border-white hover:bg-white/10 flex items-center justify-center text-white transition-all duration-200 active:scale-90 hover:scale-110"
                 onClick={() => showToast("Profil suivant", "arrow_forward")}
               >
-                <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+                <IconChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -202,9 +292,7 @@ export function LoginForm() {
                 </label>
                 <div className="relative rounded-xl shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center">
-                    <span className="material-symbols-outlined text-stone-400 text-[18px]">
-                      alternate_email
-                    </span>
+                    <IconMail className="w-[18px] h-[18px] text-stone-400" />
                   </div>
                   <input
                     ref={usernameRef}
@@ -235,9 +323,7 @@ export function LoginForm() {
                 </div>
                 <div className="relative rounded-xl shadow-sm">
                   <div className="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center">
-                    <span className="material-symbols-outlined text-stone-400 text-[18px]">
-                      lock
-                    </span>
+                    <IconLock className="w-[18px] h-[18px] text-stone-400" />
                   </div>
                   <input
                     ref={passwordRef}
@@ -255,9 +341,11 @@ export function LoginForm() {
                     onClick={() => setShowPassword((p) => !p)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-stone-600 transition-colors"
                   >
-                    <span className="material-symbols-outlined text-[20px]">
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
+                    {showPassword ? (
+                      <IconEyeClosed className="w-5 h-5" />
+                    ) : (
+                      <IconEyeOpen className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {state?.errors?.password?.map((e) => (
@@ -287,14 +375,13 @@ export function LoginForm() {
                 </button>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={pending}
-                className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 active:from-amber-800 active:to-amber-900 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-amber-600/25 transition-all duration-150 active:scale-[0.985] cursor-pointer"
+                className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 active:from-amber-800 active:to-amber-900 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-amber-600/25 transition-all duration-150 active:scale-[0.985] cursor-pointer hover:shadow-xl hover:shadow-amber-600/30 hover:-translate-y-0.5"
               >
-                <span className="material-symbols-outlined text-[18px]">
-                  login
-                </span>
+                <IconLogin className="w-[18px] h-[18px]" />
                 <span>{pending ? t('submitting') : t('submit')}</span>
               </button>
             </form>
@@ -312,27 +399,25 @@ export function LoginForm() {
             </div>
 
             {/* Quick login */}
-            <div className="max-w-sm mx-auto space-y-2.5">
-              <div className="grid grid-cols-2 gap-2">
+            <div className="max-w-sm mx-auto">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="h-9 px-2.5 rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
+                  className="group/btn relative h-11 px-3 rounded-xl bg-white/60 hover:bg-white border border-stone-200/80 hover:border-amber-300/60 text-stone-600 flex items-center justify-center gap-2 text-[11px] font-medium transition-all duration-300 active:scale-95 hover:shadow-lg hover:shadow-amber-100/50 hover:-translate-y-0.5 overflow-hidden"
                   onClick={() => showToast("Badge #RFID-4091 scanné", "contactless", "text-amber-600")}
                 >
-                  <span className="material-symbols-outlined text-[16px] text-amber-600">
-                    contactless
-                  </span>
-                  <span>Badge RFID / NFC</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-50/0 via-amber-100/40 to-amber-50/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out" />
+                  <IconNfc className="w-4 h-4 text-amber-600 group-hover/btn:scale-110 transition-transform duration-300" />
+                  <span className="relative z-10">Badge RFID / NFC</span>
                 </button>
                 <button
                   type="button"
-                  className="h-9 px-2.5 rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all active:scale-95"
+                  className="group/btn relative h-11 px-3 rounded-xl bg-white/60 hover:bg-white border border-stone-200/80 hover:border-emerald-300/60 text-stone-600 flex items-center justify-center gap-2 text-[11px] font-medium transition-all duration-300 active:scale-95 hover:shadow-lg hover:shadow-emerald-100/50 hover:-translate-y-0.5 overflow-hidden"
                   onClick={() => showToast("Attente Touch ID / FIDO2...", "fingerprint", "text-emerald-600")}
                 >
-                  <span className="material-symbols-outlined text-[16px] text-emerald-600">
-                    fingerprint
-                  </span>
-                  <span>Passkey / PIN</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/0 via-emerald-100/40 to-emerald-50/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out" />
+                  <IconFingerprint className="w-4 h-4 text-emerald-600 group-hover/btn:scale-110 transition-transform duration-300" />
+                  <span className="relative z-10">Passkey / PIN</span>
                 </button>
               </div>
             </div>
