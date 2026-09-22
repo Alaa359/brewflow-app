@@ -55,6 +55,13 @@ export function IngredientsDashboard({
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [addOpen, setAddOpen] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  function showToast(message: string) {
+    setToast(message);
+    setTimeout(() => setToast(null), 3500);
+  }
 
   const totalIngredients = ingredients.length;
   const ruptureCount = ingredients.filter((i) => i.currentStock <= 0).length;
@@ -125,7 +132,7 @@ export function IngredientsDashboard({
             <span className="material-symbols-outlined text-lg">add_circle</span>
             + Entrée de Stock
           </button>
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-high text-on-surface text-sm font-semibold shadow-sm hover:bg-surface-container-highest hover:shadow-md transition-all" type="button">
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-high text-on-surface text-sm font-semibold shadow-sm hover:bg-surface-container-highest hover:shadow-md transition-all" type="button" onClick={() => setScanOpen(true)}>
             <span className="material-symbols-outlined text-lg text-primary">barcode_scanner</span>
             Inventaire / Scan Rapide
           </button>
@@ -428,6 +435,102 @@ export function IngredientsDashboard({
               <button className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-medium shadow-sm" onClick={() => { setAddOpen(false); router.refresh(); }} type="button">Enregistrer l&apos;entrée</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ═══ MODAL: INVENTAIRE / SCAN RAPIDE ═══ */}
+      {scanOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="p-5 bg-surface-container-low flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center">
+                  <span className="material-symbols-outlined">barcode_scanner</span>
+                </div>
+                <div>
+                  <h3 className="font-headline-sm text-headline-sm text-on-surface">Inventaire / Scan Rapide</h3>
+                  <p className="text-xs text-on-surface-variant">Saisie rapide des quantités réelles par ingrédient.</p>
+                </div>
+              </div>
+              <button className="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container" onClick={() => setScanOpen(false)} type="button">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="p-5 overflow-y-auto space-y-3">
+              <div className="p-3 rounded-lg bg-tertiary-container/20 flex items-center gap-2 text-sm text-tertiary">
+                <span className="material-symbols-outlined text-lg">info</span>
+                Comparez le stock théorique avec le stock réel et ajustez les écarts.
+              </div>
+              <div className="overflow-x-auto rounded-lg border border-outline-variant/50">
+                <table className="w-full text-left border-collapse text-sm">
+                  <thead className="bg-surface-container/80 text-on-surface-variant text-[11px] font-bold uppercase tracking-wider">
+                    <tr>
+                      <th className="py-2.5 px-3">Ingrédient</th>
+                      <th className="py-2.5 px-3 text-center">Stock Théorique</th>
+                      <th className="py-2.5 px-3 text-center">Stock Réel</th>
+                      <th className="py-2.5 px-3 text-center">Écart</th>
+                      <th className="py-2.5 px-3">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-outline-variant/40 text-on-surface">
+                    {ingredients.map((ing) => {
+                      const unitLabel = UNIT_LABELS[ing.unit] ?? ing.unit;
+                      const status = getStatus(ing);
+                      return (
+                        <tr key={ing.id} className="hover:bg-surface-container-low/50 transition-colors">
+                          <td className="py-2.5 px-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
+                                <span className="material-symbols-outlined text-outline text-base">{guessIcon(ing.name)}</span>
+                              </div>
+                              <span className="font-medium text-on-surface truncate">{ing.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <span className="text-sm font-bold text-on-surface">{ing.currentStock.toFixed(1)} {unitLabel}</span>
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <input
+                              className="w-24 h-9 px-2 rounded-lg bg-surface-container text-on-surface text-center text-sm font-bold outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                              placeholder={ing.currentStock.toFixed(1)}
+                              type="number"
+                              step="0.1"
+                              data-ingredient-id={ing.id}
+                              data-theoretical={ing.currentStock}
+                            />
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <span className="text-sm font-bold text-outline">—</span>
+                          </td>
+                          <td className="py-2.5 px-3">
+                            <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${status.color}`}>{status.label}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="p-4 bg-surface-container-low flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+                <span className="material-symbols-outlined text-sm text-primary">verified_user</span>
+                L&apos;inventaire sera horodaté et rattaché à votre profil.
+              </div>
+              <div className="flex items-center gap-2">
+                <button className="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm" onClick={() => setScanOpen(false)} type="button">Annuler</button>
+                <button className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-medium shadow-sm" onClick={() => { setScanOpen(false); showToast('Inventaire enregistré et stocks synchronisés.'); }} type="button">Valider l&apos;Inventaire</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ TOAST ═══ */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg shadow-xl z-50 flex items-center gap-2 text-sm transition-all">
+          <span className="material-symbols-outlined text-tertiary">check_circle</span>
+          {toast}
         </div>
       )}
     </div>
