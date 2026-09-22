@@ -30,7 +30,7 @@ export function PlatsDashboard({
   const router = useRouter();
   const [selectedDishId, setSelectedDishId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeCategoryId, setActiveCategoryId] = useState<string>('all');
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<DishRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DishRow | null>(null);
@@ -52,24 +52,11 @@ export function PlatsDashboard({
           d.description?.toLowerCase().includes(q)
       );
     }
-    if (activeFilter === 'cafe') {
-      list = list.filter((d) => {
-        const cat = categories.find((c) => c.id === d.categoryId);
-        return cat?.name.toLowerCase().includes('caf') || cat?.name.toLowerCase().includes('chaud');
-      });
-    } else if (activeFilter === 'frais') {
-      list = list.filter((d) => {
-        const cat = categories.find((c) => c.id === d.categoryId);
-        return cat?.name.toLowerCase().includes('frais') || cat?.name.toLowerCase().includes('signature');
-      });
-    } else if (activeFilter === 'brunch') {
-      list = list.filter((d) => {
-        const cat = categories.find((c) => c.id === d.categoryId);
-        return cat?.name.toLowerCase().includes('pâtisserie') || cat?.name.toLowerCase().includes('brunch') || cat?.name.toLowerCase().includes('viennoiserie');
-      });
+    if (activeCategoryId !== 'all') {
+      list = list.filter((d) => d.categoryId === activeCategoryId);
     }
     return list;
-  }, [dishes, searchQuery, activeFilter, categories]);
+  }, [dishes, searchQuery, activeCategoryId]);
 
   const totalDishes = dishes.length;
   const activeDishes = dishes.filter((d) => d.isActive).length;
@@ -89,18 +76,6 @@ export function PlatsDashboard({
     });
     return counts;
   }, [categories, dishes]);
-
-  function handleFilterClick(filter: string) {
-    setActiveFilter(filter);
-  }
-
-  function getFilterLabel(key: string) {
-    if (key === 'all') return `Tous (${totalDishes})`;
-    if (key === 'cafe') return `Café & Chauds (${categories.filter(c => c.name.toLowerCase().includes('caf') || c.name.toLowerCase().includes('chaud')).reduce((s, c) => s + (categoryCounts[c.id] ?? 0), 0)})`;
-    if (key === 'frais') return `Frais & Signature (${categories.filter(c => c.name.toLowerCase().includes('frais') || c.name.toLowerCase().includes('signature')).reduce((s, c) => s + (categoryCounts[c.id] ?? 0), 0)})`;
-    if (key === 'brunch') return `Pâtisserie & Brunch (${categories.filter(c => c.name.toLowerCase().includes('pâtisserie') || c.name.toLowerCase().includes('brunch') || c.name.toLowerCase().includes('viennoiserie')).reduce((s, c) => s + (categoryCounts[c.id] ?? 0), 0)})`;
-    return key;
-  }
 
   return (
     <div className="flex flex-col w-full gap-6">
@@ -220,101 +195,146 @@ export function PlatsDashboard({
         </div>
       </div>
 
-      {/* ═══ SECTION 2: BCG MATRIX ═══ */}
+      {/* ═══ SECTION 2: STATS AVANCÉES ═══ */}
       <div className="bg-surface-container-lowest p-5 rounded-xl shadow-sm mb-2">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-1 rounded bg-primary/10 text-primary material-symbols-outlined text-base">bubble_chart</span>
-              <h2 className="font-headline-sm text-headline-sm text-on-surface">Matrice de Rentabilité Menu Engineering (BCG)</h2>
+              <span className="p-1 rounded bg-primary/10 text-primary material-symbols-outlined text-base">analytics</span>
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Statistiques Avancées & Répartition</h2>
             </div>
             <p className="text-xs text-on-surface-variant mt-0.5">
-              Cartographie dynamique des {totalDishes} plats selon le volume de vente mensuel (Popularité) et la marge brute (%)
+              Vue d&apos;ensemble des {totalDishes} plats — répartition par catégorie, top marges et performance ventes
             </p>
           </div>
           <div className="flex items-center gap-2 text-xs flex-wrap">
             <span className="px-2.5 py-1 rounded-full bg-tertiary-fixed/30 text-on-tertiary-fixed-variant flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-tertiary"></span> STARS
-            </span>
-            <span className="px-2.5 py-1 rounded-full bg-secondary-fixed/40 text-on-secondary-fixed-variant flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-secondary"></span> PLOWHORSES
+              <span className="w-2 h-2 rounded-full bg-tertiary"></span> Top Marge
             </span>
             <span className="px-2.5 py-1 rounded-full bg-primary-fixed/50 text-on-primary-fixed-variant flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-primary"></span> PUZZLES
+              <span className="w-2 h-2 rounded-full bg-primary"></span> Top Ventes
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-error-container text-on-error-container flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-error"></span> DOGS
+            <span className="px-2.5 py-1 rounded-full bg-secondary-fixed/40 text-on-secondary-fixed-variant flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-secondary"></span> Par Catégorie
             </span>
           </div>
         </div>
 
-        {/* BCG Scatter Chart */}
-        <div className="relative w-full h-80 bg-surface-container-low/60 rounded-xl overflow-hidden p-4">
-          {/* Quadrant backgrounds */}
-          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none">
-            <div className="p-3 bg-primary-fixed/5 flex flex-col justify-start items-start">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70">PUZZLES • DILEMMES</span>
-              <span className="text-[11px] text-outline">Marge &gt; 70% | Vol. &lt; 250</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Col 1: Répartition par catégorie (barres horizontales) */}
+          <div className="bg-surface-container-low/60 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-outline">Répartition par Catégorie</span>
+              <span className="text-[10px] text-on-surface-variant">{categories.length} catégories</span>
             </div>
-            <div className="p-3 bg-tertiary-fixed/10 flex flex-col justify-start items-end">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-tertiary">STARS • VEDETTES</span>
-              <span className="text-[11px] text-tertiary/70">Marge &gt; 70% | Vol. &gt; 250</span>
-            </div>
-            <div className="p-3 bg-error-container/20 flex flex-col justify-end items-start">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-error">DOGS • POIDS MORTS</span>
-              <span className="text-[11px] text-outline">Marge &lt; 70% | Vol. &lt; 250</span>
-            </div>
-            <div className="p-3 bg-secondary-fixed/15 flex flex-col justify-end items-end">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-secondary">PLOWHORSES • RENTIERS</span>
-              <span className="text-[11px] text-outline">Marge &lt; 70% | Vol. &gt; 250</span>
+            <div className="flex flex-col gap-2.5">
+              {categories.map((cat) => {
+                const count = categoryCounts[cat.id] ?? 0;
+                const pct = totalDishes > 0 ? (count / totalDishes) * 100 : 0;
+                const barColors = ['bg-primary', 'bg-tertiary', 'bg-secondary', 'bg-primary-container', 'bg-tertiary-fixed', 'bg-secondary-fixed'];
+                const colorIdx = categories.indexOf(cat) % barColors.length;
+                return (
+                  <div key={cat.id} className="flex items-center gap-2">
+                    <span className="text-[11px] text-on-surface-variant w-24 truncate text-right">{cat.name}</span>
+                    <div className="flex-1 h-5 bg-surface-container rounded-full overflow-hidden relative">
+                      <div
+                        className={`${barColors[colorIdx]} h-full rounded-full transition-all duration-700`}
+                        style={{ width: `${pct}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-[11px] font-extrabold text-on-surface w-8 text-right">{count}</span>
+                    <span className="text-[10px] text-outline w-10 text-right">{pct.toFixed(0)}%</span>
+                  </div>
+                );
+              })}
+              {categories.length === 0 && (
+                <span className="text-xs text-on-surface-variant text-center py-4">Aucune catégorie</span>
+              )}
             </div>
           </div>
 
-          {/* Crosshairs */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-outline-variant/50 pointer-events-none"></div>
-          <div className="absolute top-1/2 left-0 right-0 h-px bg-outline-variant/50 pointer-events-none"></div>
-          <span className="absolute top-1/2 left-2 -translate-y-1/2 text-[10px] text-outline px-1 bg-surface-container-low rounded">Moyenne Marge 70%</span>
-          <span className="absolute left-1/2 bottom-2 -translate-x-1/2 text-[10px] text-outline px-1 bg-surface-container-low rounded">Seuil 250 Ventes</span>
+          {/* Col 2: Top 5 par marge (barres verticales) */}
+          <div className="bg-surface-container-low/60 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-outline">Top 5 Marge Brute</span>
+              <span className="text-[10px] text-on-surface-variant">HT %</span>
+            </div>
+            <div className="flex items-end gap-2 h-40">
+              {[...dishes]
+                .filter((d) => d.marginPercent !== null)
+                .sort((a, b) => (b.marginPercent ?? 0) - (a.marginPercent ?? 0))
+                .slice(0, 5)
+                .map((dish, i) => {
+                  const m = dish.marginPercent ?? 0;
+                  const h = Math.max(8, (m / 100) * 100);
+                  const colors = ['bg-tertiary', 'bg-primary', 'bg-secondary', 'bg-primary-container', 'bg-outline'];
+                  return (
+                    <div key={dish.id} className="flex-1 flex flex-col items-center gap-1">
+                      <span className="text-[10px] font-extrabold text-on-surface">{m.toFixed(0)}%</span>
+                      <div className="w-full relative" style={{ height: `${h}%` }}>
+                        <div className={`${colors[i]} w-full h-full rounded-t-md transition-all duration-700`}></div>
+                      </div>
+                      <span className="text-[9px] text-on-surface-variant text-center leading-tight truncate w-full">{dish.name.length > 10 ? dish.name.slice(0, 10) + '…' : dish.name}</span>
+                    </div>
+                  );
+                })}
+              {dishes.filter((d) => d.marginPercent !== null).length === 0 && (
+                <span className="text-xs text-on-surface-variant text-center py-4 w-full">Pas de données marge</span>
+              )}
+            </div>
+          </div>
 
-          {/* Data points */}
-          {dishes.slice(0, 12).map((dish, i) => {
-            const margin = dish.marginPercent ?? 50;
-            const orders = dish.orderItemCount;
-            const yPos = Math.max(5, Math.min(90, 100 - margin));
-            const xPos = Math.max(5, Math.min(95, (orders / Math.max(...dishes.map((d) => d.orderItemCount), 1)) * 90 + 5));
-            const isStar = margin >= 70 && orders >= 250;
-            const isPuzzle = margin >= 70 && orders < 250;
-            const isPlowhorse = margin < 70 && orders >= 250;
-
-            const sizeClass = i === 0 ? 'w-8 h-8' : i < 3 ? 'w-7 h-7' : 'w-6 h-6';
-            const bgClass = isStar ? 'bg-tertiary text-on-tertiary' : isPuzzle ? 'bg-primary text-on-primary' : isPlowhorse ? 'bg-secondary text-on-secondary' : 'bg-error text-on-error';
-            const icon = i % 3 === 0 ? 'local_cafe' : i % 3 === 1 ? 'bakery_dining' : 'restaurant_menu';
-
-            return (
-              <div
-                key={dish.id}
-                className="group absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10"
-                style={{ top: `${yPos}%`, left: `${xPos}%` }}
-                onClick={() => setSelectedDishId(dish.id)}
-              >
-                <div className={`${sizeClass} rounded-full ${bgClass} flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-125 ${isStar ? 'animate-pulse' : ''}`}>
-                  <span className="material-symbols-outlined text-base">{icon}</span>
-                </div>
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col bg-inverse-surface text-inverse-on-surface p-2.5 rounded-lg shadow-xl whitespace-nowrap z-30 pointer-events-none">
-                  <span className="text-xs font-bold text-inverse-primary">{dish.name}</span>
-                  <span className="text-[11px] text-tertiary-fixed-dim">
-                    Marge: {dish.marginPercent !== null ? `${dish.marginPercent}%` : 'N/A'} • {orders} ventes
-                  </span>
-                  <span className="text-[10px] text-inverse-on-surface/80">
-                    Coût: {formatCost(dish.cost)} | Prix: {formatCost(dish.price)}
-                  </span>
-                </div>
-                <span className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-[10px] text-on-surface font-semibold whitespace-nowrap bg-surface/80 px-1 rounded">
-                  {dish.name.length > 15 ? dish.name.slice(0, 15) + '…' : dish.name}
-                </span>
+          {/* Col 3: Top 5 par ventes + Résumé */}
+          <div className="bg-surface-container-low/60 rounded-xl p-4 flex flex-col gap-4">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-outline">Top 5 Ventes</span>
+                <span className="text-[10px] text-on-surface-variant">commandes</span>
               </div>
-            );
-          })}
+              <div className="flex flex-col gap-2">
+                {[...dishes]
+                  .sort((a, b) => b.orderItemCount - a.orderItemCount)
+                  .slice(0, 5)
+                  .map((dish, i) => {
+                    const maxOrders = Math.max(...dishes.map((d) => d.orderItemCount), 1);
+                    const pct = (dish.orderItemCount / maxOrders) * 100;
+                    const medals = ['bg-tertiary text-on-tertiary', 'bg-primary text-on-primary', 'bg-secondary text-on-secondary', 'bg-surface-container-high text-on-surface', 'bg-surface-container-high text-on-surface'];
+                    return (
+                      <div key={dish.id} className="flex items-center gap-2">
+                        <span className={`w-5 h-5 rounded-full ${medals[i]} flex items-center justify-center text-[10px] font-extrabold flex-shrink-0`}>{i + 1}</span>
+                        <div className="flex-1 h-4 bg-surface-container rounded-full overflow-hidden">
+                          <div className="bg-tertiary h-full rounded-full transition-all duration-700" style={{ width: `${pct}%` }}></div>
+                        </div>
+                        <span className="text-[11px] font-bold text-on-surface w-8 text-right">{dish.orderItemCount}</span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Mini résumé */}
+            <div className="border-t border-outline-variant/20 pt-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-outline block mb-2">Résumé Performance</span>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="p-2 rounded-lg bg-surface-container text-center">
+                  <span className="text-lg font-extrabold text-tertiary block">{avgMargin.toFixed(1)}%</span>
+                  <span className="text-[9px] text-outline uppercase">Marge Moy.</span>
+                </div>
+                <div className="p-2 rounded-lg bg-surface-container text-center">
+                  <span className="text-lg font-extrabold text-primary block">{formatCost(dishes.reduce((s, d) => s + d.cost, 0))}</span>
+                  <span className="text-[9px] text-outline uppercase">Coût/Jour</span>
+                </div>
+                <div className="p-2 rounded-lg bg-surface-container text-center">
+                  <span className="text-lg font-extrabold text-on-surface block">{dishes.reduce((s, d) => s + d.orderItemCount, 0)}</span>
+                  <span className="text-[9px] text-outline uppercase">Total Cmd</span>
+                </div>
+                <div className="p-2 rounded-lg bg-surface-container text-center">
+                  <span className="text-lg font-extrabold text-secondary block">{formatCost(dishes.reduce((s, d) => s + d.price * d.orderItemCount, 0))}</span>
+                  <span className="text-[9px] text-outline uppercase">CA Total</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -332,33 +352,22 @@ export function PlatsDashboard({
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button
-            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeFilter === 'all' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
+            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeCategoryId === 'all' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
             type="button"
-            onClick={() => handleFilterClick('all')}
+            onClick={() => setActiveCategoryId('all')}
           >
-            {getFilterLabel('all')}
+            Tous ({totalDishes})
           </button>
-          <button
-            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeFilter === 'cafe' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
-            type="button"
-            onClick={() => handleFilterClick('cafe')}
-          >
-            {getFilterLabel('cafe')}
-          </button>
-          <button
-            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeFilter === 'frais' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
-            type="button"
-            onClick={() => handleFilterClick('frais')}
-          >
-            {getFilterLabel('frais')}
-          </button>
-          <button
-            className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeFilter === 'brunch' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
-            type="button"
-            onClick={() => handleFilterClick('brunch')}
-          >
-            {getFilterLabel('brunch')}
-          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              className={`px-3.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${activeCategoryId === cat.id ? 'bg-primary-container text-on-primary-container shadow-sm' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant'}`}
+              type="button"
+              onClick={() => setActiveCategoryId(cat.id)}
+            >
+              {cat.name} ({categoryCounts[cat.id] ?? 0})
+            </button>
+          ))}
         </div>
         <div className="flex items-center gap-2">
           <button className="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-[11px] font-bold flex items-center gap-1" type="button">
