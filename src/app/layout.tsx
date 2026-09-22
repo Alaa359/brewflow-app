@@ -44,6 +44,9 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
       dir={dir}
       className={`${sora.variable} ${spaceGrotesk.variable} ${notoArabic.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+      </head>
       <body className="grain flex min-h-full flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <DirectionProvider dir={dir}>
