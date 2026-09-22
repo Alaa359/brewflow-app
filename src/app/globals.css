@@ -55,6 +55,7 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-DEFAULT: var(--radius);
   /* MD3 Design Tokens */
   --color-surface: var(--surface);
   --color-surface-dim: var(--surface-dim);
@@ -83,8 +84,20 @@
   --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
   --color-inverse-surface: var(--inverse-surface);
   --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+  --color-inverse-primary: var(--inverse-primary);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
+  /* Spacing tokens */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
   /* MD3 Typography — font-family */
   --font-headline-lg: var(--font-sora);
   --font-headline-sm: var(--font-sora);
@@ -657,6 +670,13 @@ button:active, a:active {
   --inverse-on-surface: #fdefe5;
   --outline: #8C7A6B;
   --outline-variant: #ecdccb;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error-container: #410002;
+  --secondary-fixed: #f5e3d2;
+  --on-secondary-fixed-variant: #2c1700;
+  --inverse-primary: #e8c9a0;
+  --on-tertiary-fixed-variant: #0a3d1a;
 }
 .dark {
   --surface: #1a120b;
@@ -687,6 +707,13 @@ button:active, a:active {
   --inverse-on-surface: #37302a;
   --outline: #a8916f;
   --outline-variant: rgba(220, 185, 130, 0.14);
+  --error: #ffb4ab;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --secondary-fixed: #3a2a18;
+  --on-secondary-fixed-variant: #fde6c8;
+  --inverse-primary: #5a3520;
+  --on-tertiary-fixed-variant: #c4e8c4;
 }
 
 /* ===== AUTH TOAST ===== */

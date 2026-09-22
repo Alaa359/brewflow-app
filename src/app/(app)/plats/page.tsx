@@ -2,15 +2,11 @@ import { Role } from '@/generated/client';
 import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
 import { computeMargins } from '@/lib/margins';
-import { DishesTable, type DishRow } from '@/components/dishes/dishes-table';
+import { PlatsDashboard, type DishRow } from '@/components/dishes/plats-dashboard';
 import type { CategoryRow } from '@/components/categories/categories-manager';
 import type { RecipeIngredientOption } from '@/components/dishes/recipe-editor';
 
-export default async function PlatsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ erreur?: string }>;
-}) {
+export default async function PlatsPage() {
   const user = await requireRole(Role.ADMIN);
 
   const categories = await prisma.category.findMany({
@@ -95,12 +91,11 @@ export default async function PlatsPage({
   });
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6">
-      <DishesTable
+    <main className="flex flex-1 flex-col p-6">
+      <PlatsDashboard
         categories={categoryRows}
         dishes={dishRows}
         ingredients={ingredientOptions}
-        error={(await searchParams).erreur}
       />
     </main>
   );
