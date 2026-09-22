@@ -1,10 +1,8 @@
 import { Role } from '@/generated/client';
 import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
-import {
-  EmployeesTable,
-  type EmployeeRow,
-} from '@/components/employees/employees-table';
+import { EmployeesDashboard } from '@/components/employees/employes-dashboard';
+import type { EmployeeRow } from '@/components/employees/employees-table';
 import type { ManagedEstablishment } from '@/components/employees/employee-form';
 
 export default async function EmployeesPage() {
@@ -61,7 +59,7 @@ export default async function EmployeesPage() {
 
   return (
     <main className="flex flex-1 flex-col p-6">
-      <EmployeesTable
+      <EmployeesDashboard
         employees={rows}
         establishments={managedEstablishments}
         currentEstablishmentId={user.establishmentId}
