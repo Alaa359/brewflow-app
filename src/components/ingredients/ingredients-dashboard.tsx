@@ -108,34 +108,26 @@ export function IngredientsDashboard({
   return (
     <div className="flex flex-col w-full gap-5">
       {/* ═══ HEADER ═══ */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-low p-4 rounded-xl shadow-sm border-b border-outline-variant/40">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Gestion des Stocks &amp; Inventaire Réel</h1>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-low p-5 rounded-xl shadow-sm">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Gestion des Stocks &amp; Inventaire</h1>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-container/30 text-on-tertiary-container text-[10px] font-bold uppercase">
               <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
               SYNCHRO DIRECTE
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-bold">{totalIngredients} Réf. Actives</span>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-bold">{totalIngredients} Réf.</span>
           </div>
-          <p className="text-sm text-on-surface-variant">Saisie des mouvements de stock, pesée au gramme, conformité sanitaire et commandes fournisseurs.</p>
+          <p className="text-sm text-on-surface-variant max-w-xl">Saisie des mouvements de stock, pesée au gramme, conformité sanitaire et commandes fournisseurs.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-on-primary text-sm font-medium shadow-sm hover:bg-primary-container transition-all" type="button" onClick={() => setAddOpen(true)}>
-            <span className="material-symbols-outlined text-[18px]">add_circle</span>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md hover:bg-primary-container hover:shadow-lg transition-all" type="button" onClick={() => setAddOpen(true)}>
+            <span className="material-symbols-outlined text-lg">add_circle</span>
             + Entrée de Stock
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-highest text-on-surface text-sm font-medium shadow-sm hover:bg-surface-dim transition-all" type="button">
-            <span className="material-symbols-outlined text-[18px] text-primary">barcode_scanner</span>
-            Inventaire / Scan
-          </button>
-          <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary-container text-on-secondary-container text-sm font-medium shadow-sm hover:opacity-90 transition-all" type="button">
-            <span className="material-symbols-outlined text-[18px] text-error">remove_circle_outline</span>
-            Perte / Casse
-          </button>
-          <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-highest text-on-surface text-sm font-medium shadow-sm hover:bg-surface-dim transition-all" type="button">
-            <span className="material-symbols-outlined text-[18px] text-outline">swap_horiz</span>
-            Transfert
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-high text-on-surface text-sm font-semibold shadow-sm hover:bg-surface-container-highest hover:shadow-md transition-all" type="button">
+            <span className="material-symbols-outlined text-lg text-primary">barcode_scanner</span>
+            Inventaire / Scan Rapide
           </button>
         </div>
       </div>
