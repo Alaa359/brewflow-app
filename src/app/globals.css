@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -55,6 +56,36 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* MD3 Design Tokens */
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary-fixed: var(--on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary: var(--on-secondary);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
 }
 
 :root {
@@ -599,6 +630,11 @@ button:active, a:active {
   --on-primary-fixed: #2c1700;
   --on-primary-fixed-variant: #5a3e20;
   --secondary-container: #f5e3d2;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #2c1700;
+  --tertiary-container: #d4e8d4;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #0a3d1a;
   --tertiary-fixed: #c4e8c4;
   --tertiary-fixed-dim: #a3cfa3;
   --on-tertiary-fixed: #0a3d1a;
@@ -624,6 +660,11 @@ button:active, a:active {
   --on-primary-fixed: #fde6c8;
   --on-primary-fixed-variant: #e8c9a0;
   --secondary-container: #3a2a18;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #fde6c8;
+  --tertiary-container: #1a4a1a;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #c4e8c4;
   --tertiary-fixed: #2a5a2a;
   --tertiary-fixed-dim: #3a7a3a;
   --on-tertiary-fixed: #c4e8c4;
