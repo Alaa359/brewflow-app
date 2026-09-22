@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { deleteEmployee } from '@/actions/employees';
 import type { EmployeeRow } from '@/components/employees/employees-table';
 import type { ManagedEstablishment } from '@/components/employees/employee-form';
 
@@ -32,11 +34,13 @@ export function EmployeesDashboard({
   establishments: ManagedEstablishment[];
   currentEstablishmentId: string;
 }) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [permissionsOpen, setPermissionsOpen] = useState(false);
   const [newEmployeeOpen, setNewEmployeeOpen] = useState(false);
-  const [auditOpen, setAuditOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<EmployeeRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<EmployeeRow | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const totalEmployees = employees.length;
@@ -98,15 +102,6 @@ export function EmployeesDashboard({
           </p>
         </div>
         <div className="flex items-center gap-2.5 flex-wrap">
-          <button
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface transition-all duration-200 shadow-sm"
-            type="button"
-            onClick={() => setAuditOpen(!auditOpen)}
-          >
-            <span className="material-symbols-outlined text-lg text-primary">security</span>
-            <span className="text-sm font-medium">Journal d&apos;audit POS</span>
-            <span className="w-2 h-2 rounded-full bg-tertiary"></span>
-          </button>
           <button
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary-container hover:bg-surface-variant text-on-secondary-container transition-all duration-200 shadow-sm"
             type="button"
@@ -434,9 +429,9 @@ export function EmployeesDashboard({
                       <div className="flex items-center justify-end gap-1">
                         <button
                           className="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
-                          title="Modifier permissions"
+                          title="Modifier le compte"
                           type="button"
-                          onClick={() => setPermissionsOpen(true)}
+                          onClick={() => setEditTarget(employee)}
                         >
                           <span className="material-symbols-outlined text-base">key</span>
                         </button>
@@ -447,13 +442,14 @@ export function EmployeesDashboard({
                         >
                           <span className="material-symbols-outlined text-base">history</span>
                         </button>
-                        {employee.role !== 'ADMIN' && (
+                        {!employee.isSelf && (
                           <button
                             className="p-1.5 rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/30 transition-colors"
-                            title="Révoquer badge"
+                            title="Supprimer le compte"
                             type="button"
+                            onClick={() => setDeleteTarget(employee)}
                           >
-                            <span className="material-symbols-outlined text-base text-error">block</span>
+                            <span className="material-symbols-outlined text-base text-error">delete</span>
                           </button>
                         )}
                       </div>
@@ -477,53 +473,7 @@ export function EmployeesDashboard({
         </div>
       </div>
 
-      {/* ═══ AUDIT PANEL ═══ */}
-      {auditOpen && (
-        <div className="bg-surface-container-lowest rounded-xl shadow-md p-5 mb-2">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/20">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-xl">verified_user</span>
-              <div>
-                <h3 className="font-headline-sm text-headline-sm text-on-surface">Journal d&apos;Audit Inaltérable</h3>
-                <p className="text-xs text-on-surface-variant">Actions sensibles et dérogations enregistrées.</p>
-              </div>
-            </div>
-            <button className="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container" onClick={() => setAuditOpen(false)} type="button">
-              <span className="material-symbols-outlined text-base">close</span>
-            </button>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="p-3 rounded-lg bg-surface-container-low flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="p-1 rounded bg-secondary-fixed text-on-secondary-fixed material-symbols-outlined text-sm">lock_open</span>
-                <div>
-                  <span className="font-bold text-on-surface">Ouverture tiroir-caisse hors vente</span>
-                  <span className="text-on-surface-variant ml-2">• Autorisé par <strong>Gérant</strong> via FIDO2</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-[10px] font-bold uppercase text-tertiary">Fond de roulement</span>
-                <span className="text-xs text-outline">Aujourd&apos;hui, 13:40</span>
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-surface-container-low flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="p-1 rounded bg-primary-fixed text-on-primary-fixed material-symbols-outlined text-sm">percent</span>
-                <div>
-                  <span className="font-bold text-on-surface">Remise commerciale exceptionnelle (10%)</span>
-                  <span className="text-on-surface-variant ml-2">• Appliquée par <strong>Ziyad Mansour</strong></span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-[10px] font-bold uppercase text-outline">Ticket #TK-9821</span>
-                <span className="text-xs text-outline">Aujourd&apos;hui, 11:22</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ MODAL: PERMISSIONS ═══ */}
+      {/* ═══ MODAL: EDIT EMPLOYEE ═══ */}
       {permissionsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
           <div className="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
@@ -659,6 +609,119 @@ export function EmployeesDashboard({
             <div className="p-4 bg-surface-container-low flex items-center justify-end gap-2">
               <button className="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm" onClick={() => setNewEmployeeOpen(false)} type="button">Annuler</button>
               <button className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-medium shadow-sm" onClick={() => { setNewEmployeeOpen(false); showToast('Profil créé et badge NFC imprimé.'); }} type="button">Créer &amp; Imprimer badge</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ MODAL: EDIT EMPLOYEE ═══ */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="p-5 bg-surface-container-low flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center">
+                  <span className="material-symbols-outlined">edit</span>
+                </div>
+                <div>
+                  <h3 className="font-headline-sm text-headline-sm text-on-surface">Modifier : {editTarget.name}</h3>
+                  <p className="text-xs text-on-surface-variant">Modification du profil collaborateur.</p>
+                </div>
+              </div>
+              <button className="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container" onClick={() => setEditTarget(null)} type="button">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="p-5 overflow-y-auto space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Nom complet</label>
+                  <input className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm" defaultValue={editTarget.name} type="text" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Email</label>
+                  <input className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm" defaultValue={editTarget.email} type="email" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Rôle</label>
+                  <select className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm" defaultValue={editTarget.role}>
+                    <option value="ADMIN">Gérant / Super-Admin</option>
+                    <option value="SERVER">Barista &amp; Service</option>
+                    <option value="KITCHEN">Chef Pâtissier</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Établissement</label>
+                  <select className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm" defaultValue={editTarget.memberships[0]?.id ?? ''}>
+                    {establishments.map((est) => (
+                      <option key={est.id} value={est.id}>{est.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Taux Horaire (TND)</label>
+                  <input className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm" placeholder="6.500 DT" step="0.100" type="number" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase text-outline">Nouveau Code PIN</label>
+                  <input className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface outline-none focus:ring-2 focus:ring-primary/40 text-sm tracking-widest text-center" maxLength={4} placeholder="••••" type="password" />
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-surface-container-low flex items-center justify-between">
+              <button
+                className="px-4 py-2 rounded-lg bg-error/10 hover:bg-error/20 text-error text-sm font-medium flex items-center gap-1.5"
+                type="button"
+                onClick={() => { setEditTarget(null); setDeleteTarget(editTarget); }}
+              >
+                <span className="material-symbols-outlined text-base">delete</span>
+                Supprimer ce compte
+              </button>
+              <div className="flex items-center gap-2">
+                <button className="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm" onClick={() => setEditTarget(null)} type="button">Annuler</button>
+                <button className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-medium shadow-sm" onClick={() => { setEditTarget(null); showToast('Profil mis à jour avec succès.'); }} type="button">Enregistrer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ MODAL: DELETE CONFIRMATION ═══ */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-md p-6 border border-outline-variant/30">
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-full bg-error-container text-error flex-shrink-0">
+                <span className="material-symbols-outlined text-2xl">warning</span>
+              </div>
+              <div>
+                <h3 className="font-headline-sm text-headline-sm text-on-surface">Supprimer ce collaborateur ?</h3>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Êtes-vous sûr de vouloir supprimer définitivement <strong className="text-on-surface">{deleteTarget.name}</strong> ?
+                </p>
+                <div className="mt-3 p-2 rounded bg-surface-container text-[11px] text-outline flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-primary">info</span>
+                  Cette action est irréversible. Le badge RFID sera révoqué automatiquement.
+                </div>
+              </div>
+            </div>
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button className="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-xs" type="button" onClick={() => setDeleteTarget(null)}>Annuler</button>
+              <button
+                className="px-3.5 py-1.5 rounded-lg bg-error text-on-error hover:bg-on-error-container text-xs font-semibold shadow-sm"
+                type="button"
+                onClick={async () => {
+                  await deleteEmployee(deleteTarget.id);
+                  setDeleteTarget(null);
+                  router.refresh();
+                }}
+              >
+                Confirmer la suppression
+              </button>
             </div>
           </div>
         </div>
