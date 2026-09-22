@@ -85,6 +85,22 @@
   --color-inverse-on-surface: var(--inverse-on-surface);
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
+  /* MD3 Typography — font-family */
+  --font-headline-lg: var(--font-sora);
+  --font-headline-sm: var(--font-sora);
+  --font-label-caps: var(--font-space), var(--font-arabic);
+  --font-label-md: var(--font-space), var(--font-arabic);
+  --font-label-numeric: var(--font-space), var(--font-arabic);
+  --font-body-sm: var(--font-space), var(--font-arabic);
+  --font-metric-display: var(--font-sora);
+  /* MD3 Typography — font-size / line-height */
+  --text-headline-lg: 2rem/1.25 var(--font-sora);
+  --text-headline-sm: 1.25rem/1.4 var(--font-sora);
+  --text-label-caps: 0.6875rem/1.45 var(--font-space), var(--font-arabic);
+  --text-label-md: 0.8125rem/1.45 var(--font-space), var(--font-arabic);
+  --text-label-numeric: 0.8125rem/1.4 var(--font-space), var(--font-arabic);
+  --text-body-sm: 0.8125rem/1.55 var(--font-space), var(--font-arabic);
+  --text-metric-display: 2rem/1.15 var(--font-sora);
 }
 
 :root {
