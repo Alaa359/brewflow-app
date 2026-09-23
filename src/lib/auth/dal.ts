@@ -18,6 +18,7 @@ export type CurrentUser = {
   role: Role;
   establishmentId: string;
   establishmentName: string;
+  establishmentTimezone: string;
   establishments: { id: string; name: string }[];
 };
 
@@ -42,7 +43,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
       memberships: {
         select: {
           establishmentId: true,
-          establishment: { select: { name: true } },
+          establishment: { select: { name: true, timezone: true } },
         },
       },
     },
@@ -66,6 +67,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     role: user.role,
     establishmentId: current.establishmentId,
     establishmentName: current.establishment.name,
+    establishmentTimezone: current.establishment.timezone,
     establishments: memberships.map((membership) => ({
       id: membership.establishmentId,
       name: membership.establishment.name,
