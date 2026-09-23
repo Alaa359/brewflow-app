@@ -11,7 +11,7 @@ export default async function TablesPage({
 }: {
   searchParams: Promise<{ erreur?: string }>;
 }) {
-  const user = await requireRole(Role.ADMIN);
+  const user = await requireRole(Role.ADMIN, Role.SERVER);
 
   const tables = await prisma.table.findMany({
     where: { establishmentId: user.establishmentId },
@@ -39,6 +39,7 @@ export default async function TablesPage({
         tables={rows}
         establishmentName={user.establishmentName}
         error={(await searchParams).erreur}
+        readOnly={user.role !== Role.ADMIN}
       />
     </main>
   );

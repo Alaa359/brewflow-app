@@ -51,6 +51,8 @@
   },
   "Common": {
     "appName": "BrewFlow",
+    "brandTagline": "Specialty Coffee ERP",
+    "station": "Station",
     "role": "Rôle",
     "language": "Langue",
     "currency": "DT",
@@ -80,6 +82,31 @@
       "reset": "Réinitialiser",
       "yes": "Oui",
       "no": "Non"
+    }
+  },
+  "Header": {
+    "stationPrefix": "Station",
+    "online": "En ligne",
+    "offline": "Hors ligne"
+  },
+  "Search": {
+    "title": "Rechercher",
+    "placeholder": "Rechercher pages, sections…",
+    "empty": "Aucun résultat.",
+    "hint": "↑↓ pour naviguer · Entrée pour ouvrir · Échap pour fermer"
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification.",
+    "markAllRead": "Tout marquer comme lu",
+    "ariaLabel": "Notifications ({count} non lues)",
+    "kinds": {
+      "order": "Commandes",
+      "stock": "Stock"
+    },
+    "items": {
+      "pendingOrders": "{count, plural, =0 {Aucune commande} one {# commande en attente} other {# commandes actives}}",
+      "lowStock": "{count, plural, one {# ingrédient sous le seuil} other {# ingrédients sous le seuil}}"
     }
   },
   "Dashboard": {
@@ -484,7 +511,35 @@
     "readyWaiting": "Prête — en attente d’encaissement.",
     "awaitingConfirmation": "En attente de confirmation du serveur.",
     "updatedToast": "Commande mise à jour.",
-    "actionImpossibleToast": "Action impossible."
+    "actionImpossibleToast": "Action impossible.",
+    "sound": {
+      "on": "Activer le son des nouvelles commandes",
+      "off": "Couper le son des nouvelles commandes"
+    },
+    "fullscreen": {
+      "enter": "Plein écran",
+      "exit": "Quitter le plein écran"
+    },
+    "filters": {
+      "zone": "Filtrer par zone",
+      "source": "Filtrer par origine",
+      "allZones": "Toutes zones",
+      "allSources": "Toutes",
+      "fromPos": "Caisse",
+      "fromClient": "Client QR"
+    },
+    "history": {
+      "title": "Historique cuisine",
+      "subtitle": "Commandes payées aujourd’hui · {name}",
+      "summary": "{count, plural, =0 {# commande} one {# commande} other {# commandes}} · {revenue}",
+      "empty": "Aucune commande payée aujourd’hui.",
+      "columns": {
+        "time": "Heure",
+        "table": "Table",
+        "detail": "Détail",
+        "total": "Total"
+      }
+    }
   },
   "Landing": {
     "tagline": "Gestion complète de votre café/restaurant : ventes, stock, recettes et marges.",
@@ -493,6 +548,7 @@
   },
   "Menu": {
     "title": "Notre menu",
+    "searchPlaceholder": "Rechercher un plat…",
     "subtitle": "Choisissez vos plats, puis envoyez votre commande : elle part directement en cuisine.",
     "table": "Table n° {number}",
     "unavailable": "Le menu n’est pas encore disponible.",
@@ -534,9 +590,11 @@
     "dishes": "Plats",
     "tables": "Tables",
     "kitchen": "Cuisine",
+    "history": "Historique",
     "planning": "Planning",
     "employees": "Employés",
     "establishments": "Établissements",
+    "menu": "Menu",
     "logout": "Se déconnecter",
     "settings": "Paramètres",
     "language": "Langue",
@@ -582,7 +640,10 @@
       "title": "Ventes du jour",
       "summary": "{count, plural, =0 {# vente} one {# vente} other {# ventes}} · CA {revenue}",
       "empty": "Aucune vente aujourd’hui.",
-      "reprintLabel": "Réimprimer le ticket"
+      "reprintLabel": "Réimprimer le ticket",
+      "filterAll": "Toutes",
+      "filterMine": "Mes ventes",
+      "filterAria": "Filtrer les ventes du jour"
     },
     "updatedToast": "Commande mise à jour.",
     "actionImpossibleToast": "Action impossible.",
@@ -712,8 +773,16 @@
   "Pos": {
     "title": "Caisse (POS)",
     "subtitle": "Sélectionnez un plat pour l’ajouter au panier, puis validez la vente.",
+    "searchPlaceholder": "Rechercher un plat…",
     "noCategories": "Aucune catégorie disponible.",
     "noDishes": "Aucun plat dans cette catégorie.",
+    "kpi": {
+      "ariaLabel": "Indicateurs du jour",
+      "revenue": "CA du jour",
+      "tickets": "Tickets",
+      "cash": "Espèces",
+      "card": "Carte"
+    },
     "cart": {
       "title": "Panier",
       "lineTotal": "{cost} / unité",

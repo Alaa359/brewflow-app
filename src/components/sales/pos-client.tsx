@@ -8,6 +8,7 @@ import {
   MinusIcon,
   PlusIcon,
   ReceiptTextIcon,
+  SearchIcon,
   ShoppingCartIcon,
   Trash2Icon,
 } from 'lucide-react';
@@ -73,6 +74,7 @@ export function PosClient({
   const tCommon = useTranslations('Common');
   const tPayment = useTranslations('PaymentMethod');
   const locale = useLocale();
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     if (state?.success) {
@@ -121,8 +123,11 @@ export function PosClient({
     !viewPending &&
     (method === 'CASH' ? isCashAmountValid : canStripe);
 
+  const normalizedQuery = query.trim().toLowerCase();
   const activeDishes = dishes.filter(
-    (dish) => dish.categoryId === activeCategory
+    (dish) =>
+      dish.categoryId === activeCategory &&
+      (normalizedQuery === '' || dish.name.toLowerCase().includes(normalizedQuery))
   );
 
   function addDish(dish: PosDish) {
@@ -168,6 +173,18 @@ export function PosClient({
           </p>
         ) : (
           <>
+            <div className="relative">
+              <SearchIcon className="text-muted-foreground absolute start-3 top-1/2 size-4 -translate-y-1/2" />
+              <Input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t('searchPlaceholder')}
+                aria-label={t('searchPlaceholder')}
+                className="ps-9"
+              />
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <Button

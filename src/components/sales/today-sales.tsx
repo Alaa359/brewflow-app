@@ -1,6 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import type { OrderStatus, PaymentMethod } from '@/generated/client';
 import { PrinterIcon } from 'lucide-react';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { useLocale, useTranslations } from 'next-intl';
 import { formatTime } from '@/lib/sales';
 import { formatCost } from '@/lib/ingredients';
 import { Button } from '@/components/ui/button';
@@ -21,16 +24,29 @@ export type TodayOrder = {
   totalAmount: number;
   status: OrderStatus;
   paymentMethod: PaymentMethod | null;
+  userId: string | null;
   items: TodayOrderItem[];
 };
 
-export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
-  const revenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
-  const t = await getTranslations('Orders');
-  const tCommon = await getTranslations('Common');
-  const tStatus = await getTranslations('OrderStatus');
-  const tPayment = await getTranslations('PaymentMethod');
-  const locale = await getLocale();
+export function TodaySales({
+  orders,
+  currentUserId,
+}: {
+  orders: TodayOrder[];
+  currentUserId?: string | null;
+}) {
+  const [onlyMine, setOnlyMine] = useState(false);
+  const t = useTranslations('Orders');
+  const tCommon = useTranslations('Common');
+  const tStatus = useTranslations('OrderStatus');
+  const tPayment = useTranslations('PaymentMethod');
+  const locale = useLocale();
+
+  const visible =
+    onlyMine && currentUserId
+      ? orders.filter((order) => order.userId === currentUserId)
+      : orders;
+  const revenue = visible.reduce((acc, order) => acc + order.totalAmount, 0);
 
   return (
     <section className="flex flex-col gap-3">
@@ -38,12 +54,46 @@ export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
         <h2 className="text-lg font-semibold tracking-tight">
           {t('today.title')}
         </h2>
-        <p className="text-muted-foreground text-sm">
-          {t('today.summary', {
-            count: orders.length,
-            revenue: formatCost(revenue, locale, tCommon('currency')),
-          })}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-muted-foreground text-sm">
+            {t('today.summary', {
+              count: visible.length,
+              revenue: formatCost(revenue, locale, tCommon('currency')),
+            })}
+          </p>
+          {currentUserId && (
+            <div
+              role="group"
+              aria-label={t('today.filterAria')}
+              className="bg-muted flex rounded-lg p-0.5"
+            >
+              <button
+                type="button"
+                aria-pressed={!onlyMine}
+                onClick={() => setOnlyMine(false)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  onlyMine
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {t('today.filterAll')}
+              </button>
+              <button
+                type="button"
+                aria-pressed={onlyMine}
+                onClick={() => setOnlyMine(true)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  onlyMine
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {t('today.filterMine')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="rounded-xl border">
@@ -59,7 +109,7 @@ export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.length === 0 ? (
+            {visible.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -69,7 +119,7 @@ export async function TodaySales({ orders }: { orders: TodayOrder[] }) {
                 </TableCell>
               </TableRow>
             ) : (
-              orders.map((order) => (
+              visible.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="tabular-nums">
                     {formatTime(order.createdAt, locale)}

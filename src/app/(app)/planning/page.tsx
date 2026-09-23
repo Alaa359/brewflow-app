@@ -4,6 +4,10 @@ import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
 import { mondayOfWeek, todayInTZ, weekDays } from '@/lib/planning';
 import {
+  PlanningDashboard,
+  type PlanningDashboardProps,
+} from '@/components/planning/planning-dashboard';
+import {
   PlanningWeek,
   type PlanningShiftRow,
 } from '@/components/planning/planning-week';
@@ -13,7 +17,7 @@ export default async function PlanningPage({
 }: {
   searchParams: Promise<{ semaine?: string }>;
 }) {
-  const user = await requireRole(Role.ADMIN);
+  const user = await requireRole(Role.ADMIN, Role.SERVER);
 
   const establishment = await prisma.establishment.findUnique({
     where: { id: user.establishmentId },
@@ -46,7 +50,7 @@ export default async function PlanningPage({
     }),
   ]);
 
-  const shiftRows: PlanningShiftRow[] = shifts.map((shift) => ({
+  const shiftRows: PlanningDashboardProps['shifts'] = shifts.map((shift) => ({
     id: shift.id,
     dayOfWeek: shift.dayOfWeek,
     startTime: shift.startTime,
@@ -55,16 +59,31 @@ export default async function PlanningPage({
     employeeName: shift.user.name,
   }));
 
+  const weekShifts: PlanningShiftRow[] = shiftRows;
+
   return (
     <main className="flex flex-1 flex-col p-6">
-      <PlanningWeek
-        monday={monday}
-        todayIso={today}
-        establishmentName={establishment?.name ?? ''}
-        employees={employees}
-        shifts={shiftRows}
-        days={weekDays(monday)}
-      />
+      {user.role === Role.ADMIN ? (
+        <PlanningDashboard
+          monday={monday}
+          todayIso={today}
+          establishmentName={establishment?.name ?? ''}
+          employees={employees}
+          shifts={shiftRows}
+          days={weekDays(monday)}
+        />
+      ) : (
+        <PlanningWeek
+          monday={monday}
+          todayIso={today}
+          establishmentName={establishment?.name ?? ''}
+          employees={employees}
+          shifts={weekShifts}
+          days={weekDays(monday)}
+          readOnly
+          currentUserId={user.id}
+        />
+      )}
     </main>
   );
 }

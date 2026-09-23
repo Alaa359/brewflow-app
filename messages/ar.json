@@ -51,6 +51,8 @@
   },
   "Common": {
     "appName": "BrewFlow",
+    "brandTagline": "Specialty Coffee ERP",
+    "station": "المحطة",
     "role": "الدور",
     "language": "اللغة",
     "currency": "د.ت",
@@ -80,6 +82,31 @@
       "reset": "إعادة تعيين",
       "yes": "نعم",
       "no": "لا"
+    }
+  },
+  "Header": {
+    "stationPrefix": "المحطة",
+    "online": "متصل",
+    "offline": "غير متصل"
+  },
+  "Search": {
+    "title": "بحث",
+    "placeholder": "ابحث في الصفحات والأقسام…",
+    "empty": "لا توجد نتائج.",
+    "hint": "↑↓ للتنقل · Enter للفتح · Esc للإغلاق"
+  },
+  "Notifications": {
+    "title": "الإشعارات",
+    "empty": "لا توجد إشعارات.",
+    "markAllRead": "تعليم الكل كمقروء",
+    "ariaLabel": "الإشعارات ({count} غير مقروءة)",
+    "kinds": {
+      "order": "الطلبات",
+      "stock": "المخزون"
+    },
+    "items": {
+      "pendingOrders": "{count, plural, =0 {لا طلبات} one {# طلب نشط} other {# طلبات نشطة}}",
+      "lowStock": "{count, plural, one {# مكوّن تحت الحد} other {# مكوّنات تحت الحد}}"
     }
   },
   "Dashboard": {
@@ -484,7 +511,35 @@
     "readyWaiting": "جاهزة — بانتظار التحصيل.",
     "awaitingConfirmation": "في انتظار تأكيد النادل.",
     "updatedToast": "تم تحديث الطلب.",
-    "actionImpossibleToast": "تعذر تنفيذ الإجراء."
+    "actionImpossibleToast": "تعذر تنفيذ الإجراء.",
+    "sound": {
+      "on": "كتم صوت الطلبات الجديدة",
+      "off": "تشغيل صوت الطلبات الجديدة"
+    },
+    "fullscreen": {
+      "enter": "ملء الشاشة",
+      "exit": "الخروج من ملء الشاشة"
+    },
+    "filters": {
+      "zone": "تصفية حسب المنطقة",
+      "source": "تصفية حسب المصدر",
+      "allZones": "كل المناطق",
+      "allSources": "الكل",
+      "fromPos": "الصندوق",
+      "fromClient": "عميل QR"
+    },
+    "history": {
+      "title": "سجل المطبخ",
+      "subtitle": "الطلبات المدفوعة اليوم · {name}",
+      "summary": "{count, plural, one {# طلب} other {# طلبات}} · {revenue}",
+      "empty": "لا توجد طلبات مدفوعة اليوم.",
+      "columns": {
+        "time": "الوقت",
+        "table": "الطاولة",
+        "detail": "التفاصيل",
+        "total": "الإجمالي"
+      }
+    }
   },
   "Landing": {
     "tagline": "إدارة كاملة لمقهاك أو مطعمك: المبيعات، المخزون، الوصفات والهوامش.",
@@ -493,6 +548,7 @@
   },
   "Menu": {
     "title": "قائمتنا",
+    "searchPlaceholder": "ابحث عن طبق…",
     "subtitle": "اختر أطباقك ثم أرسل طلبك: يصل مباشرة إلى المطبخ.",
     "table": "الطاولة رقم {number}",
     "unavailable": "القائمة غير متاحة بعد.",
@@ -534,9 +590,11 @@
     "dishes": "الأطباق",
     "tables": "الطاولات",
     "kitchen": "المطبخ",
+    "history": "السجل",
     "planning": "جدول العمل",
     "employees": "الموظفون",
     "establishments": "الفروع",
+    "menu": "القائمة",
     "logout": "تسجيل الخروج",
     "settings": "الإعدادات",
     "language": "اللغة",
@@ -578,7 +636,10 @@
       "title": "مبيعات اليوم",
       "summary": "{count, plural, one {# عملية بيع} other {# عمليات بيع}} · الإيرادات {revenue}",
       "empty": "لا توجد مبيعات اليوم.",
-      "reprintLabel": "إعادة طباعة الفاتورة"
+      "reprintLabel": "إعادة طباعة الفاتورة",
+      "filterAll": "الكل",
+      "filterMine": "مبيعاتي",
+      "filterAria": "تصفية مبيعات اليوم"
     },
     "updatedToast": "تم تحديث الطلب.",
     "actionImpossibleToast": "تعذر تنفيذ الإجراء.",
@@ -708,8 +769,16 @@
   "Pos": {
     "title": "الصندوق (POS)",
     "subtitle": "اختر طبقًا لإضافته إلى السلة، ثم أكّد عملية البيع.",
+    "searchPlaceholder": "ابحث عن طبق…",
     "noCategories": "لا توجد فئات متاحة.",
     "noDishes": "لا توجد أطباق في هذه الفئة.",
+    "kpi": {
+      "ariaLabel": "مؤشرات اليوم",
+      "revenue": "إيرادات اليوم",
+      "tickets": "التذاكر",
+      "cash": "نقدًا",
+      "card": "بطاقة"
+    },
     "cart": {
       "title": "السلة",
       "lineTotal": "{cost} / الوحدة",

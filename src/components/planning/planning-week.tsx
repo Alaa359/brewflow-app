@@ -48,6 +48,8 @@ export function PlanningWeek({
   employees,
   shifts,
   days,
+  readOnly = false,
+  currentUserId,
 }: {
   monday: string;
   todayIso: string;
@@ -55,6 +57,8 @@ export function PlanningWeek({
   employees: { id: string; name: string; role: EmployeeRole }[];
   shifts: PlanningShiftRow[];
   days: WeekDay[];
+  readOnly?: boolean;
+  currentUserId?: string;
 }) {
   const router = useRouter();
   const t = useTranslations('Planning');
@@ -133,18 +137,20 @@ export function PlanningWeek({
                       {day.dayNumber}
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-7"
-                    disabled={employees.length === 0}
-                    onClick={() => setDialogDay(day.dow)}
-                    aria-label={t('addSlot', {
-                      day: t(`days.${day.dow}`).toLowerCase(),
-                    })}
-                  >
-                    <PlusIcon />
-                  </Button>
+                  {!readOnly && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-7"
+                      disabled={employees.length === 0}
+                      onClick={() => setDialogDay(day.dow)}
+                      aria-label={t('addSlot', {
+                        day: t(`days.${day.dow}`).toLowerCase(),
+                      })}
+                    >
+                      <PlusIcon />
+                    </Button>
+                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col gap-1.5">
@@ -155,6 +161,9 @@ export function PlanningWeek({
                   ) : (
                     dayShifts.map((shift) => {
                       const employee = employeeById.get(shift.employeeId);
+                      const isMine =
+                        currentUserId !== undefined &&
+                        shift.employeeId === currentUserId;
                       return (
                         <div
                           key={shift.id}
@@ -163,7 +172,7 @@ export function PlanningWeek({
                               ? (ROLE_COLOR[employee.role] ??
                                 'bg-muted text-foreground')
                               : 'bg-muted text-muted-foreground'
-                          }`}
+                          } ${isMine ? 'ring-primary/60 ring-1' : ''}`}
                         >
                           <span className="flex min-w-0 flex-col">
                             <span className="truncate font-medium">
@@ -173,18 +182,20 @@ export function PlanningWeek({
                               {shift.startTime}–{shift.endTime}
                             </span>
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6 shrink-0 opacity-0 group-hover:opacity-100"
-                            onClick={() => setDeleteTarget(shift)}
-                            aria-label={t('removeSlot', {
-                              name: shift.employeeName,
-                              times: `${shift.startTime}–${shift.endTime}`,
-                            })}
-                          >
-                            <Trash2Icon />
-                          </Button>
+                          {!readOnly && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-6 shrink-0 opacity-0 group-hover:opacity-100"
+                              onClick={() => setDeleteTarget(shift)}
+                              aria-label={t('removeSlot', {
+                                name: shift.employeeName,
+                                times: `${shift.startTime}–${shift.endTime}`,
+                              })}
+                            >
+                              <Trash2Icon />
+                            </Button>
+                          )}
                         </div>
                       );
                     })
@@ -196,7 +207,7 @@ export function PlanningWeek({
         </div>
       </div>
 
-      {employees.length === 0 && (
+      {employees.length === 0 && !readOnly && (
         <p className="text-muted-foreground text-sm">
           {t('noEmployees')}{' '}
           <Link href="/employes" className="font-medium underline">
@@ -206,7 +217,7 @@ export function PlanningWeek({
         </p>
       )}
 
-      {dialogDay !== null && (
+      {dialogDay !== null && !readOnly && (
         <ShiftDialog
           dayOfWeek={dialogDay}
           employees={employees}
@@ -217,38 +228,40 @@ export function PlanningWeek({
         />
       )}
 
-      <Dialog
-        open={deleteTarget !== null}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-      >
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t('removeSlotTitle')}</DialogTitle>
-            <DialogDescription>
-              {deleteTarget
-                ? t('removeSlotConfirm', {
-                    name: deleteTarget.employeeName,
-                    day: t(`days.${deleteTarget.dayOfWeek}`).toLowerCase(),
-                    times: `${deleteTarget.startTime}–${deleteTarget.endTime}`,
-                  })
-                : ''}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              {tCommon('actions.cancel')}
-            </Button>
-            {deleteTarget && (
-              <form action={deleteShift.bind(null, deleteTarget.id)}>
-                <Button variant="destructive" type="submit">
-                  <Trash2Icon />
-                  {tCommon('actions.remove')}
-                </Button>
-              </form>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {!readOnly && (
+        <Dialog
+          open={deleteTarget !== null}
+          onOpenChange={(open) => !open && setDeleteTarget(null)}
+        >
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>{t('removeSlotTitle')}</DialogTitle>
+              <DialogDescription>
+                {deleteTarget
+                  ? t('removeSlotConfirm', {
+                      name: deleteTarget.employeeName,
+                      day: t(`days.${deleteTarget.dayOfWeek}`).toLowerCase(),
+                      times: `${deleteTarget.startTime}–${deleteTarget.endTime}`,
+                    })
+                  : ''}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+                {tCommon('actions.cancel')}
+              </Button>
+              {deleteTarget && (
+                <form action={deleteShift.bind(null, deleteTarget.id)}>
+                  <Button variant="destructive" type="submit">
+                    <Trash2Icon />
+                    {tCommon('actions.remove')}
+                  </Button>
+                </form>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

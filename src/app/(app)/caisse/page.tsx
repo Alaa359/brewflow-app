@@ -19,6 +19,7 @@ import {
 } from '@/components/sales/pending-orders';
 import { nextStatusFor } from '@/lib/order-flow';
 import { stripeConfigured } from '@/lib/stripe';
+import { SalesTodayHeader } from '@/components/sales/sales-today-header';
 
 export default async function CaissePage() {
   const user = await requireRole(Role.SERVER, Role.ADMIN);
@@ -107,9 +108,21 @@ export default async function CaissePage() {
       totalAmount: order.totalAmount.toNumber(),
       status: order.status,
       paymentMethod: order.paymentMethod,
+      userId: order.userId,
       items,
     };
   });
+
+  const kpis = {
+    revenue: todayRows.reduce((acc, order) => acc + order.totalAmount, 0),
+    tickets: todayRows.length,
+    cash: todayRows
+      .filter((order) => order.paymentMethod === 'CASH')
+      .reduce((acc, order) => acc + order.totalAmount, 0),
+    card: todayRows
+      .filter((order) => order.paymentMethod === 'STRIPE')
+      .reduce((acc, order) => acc + order.totalAmount, 0),
+  };
 
   const pendingRows: PendingOrder[] = activeOrders.map((order) => ({
     id: order.id,
@@ -136,7 +149,8 @@ export default async function CaissePage() {
         canStripe={stripeConfigured()}
       />
       <PendingOrders orders={pendingRows} />
-      <TodaySales orders={todayRows} />
+      <SalesTodayHeader kpis={kpis} />
+      <TodaySales orders={todayRows} currentUserId={user.id} />
     </main>
   );
 }

@@ -50,10 +50,12 @@ export function TablesTable({
   tables,
   establishmentName,
   error,
+  readOnly = false,
 }: {
   tables: TableListRow[];
   establishmentName: string;
   error?: string;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const t = useTranslations('Tables');
@@ -89,26 +91,28 @@ export function TablesTable({
           </p>
         </div>
 
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setCreateOpen(true)}>
-              <PlusIcon />
-              {t('addTable')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>{t('createDialog.title')}</DialogTitle>
-              <DialogDescription>
-                {t('createDialog.description')}
-              </DialogDescription>
-            </DialogHeader>
-            <TableForm
-              action={createTable}
-              onSuccess={() => setCreateOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        {!readOnly && (
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setCreateOpen(true)}>
+                <PlusIcon />
+                {t('addTable')}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t('createDialog.title')}</DialogTitle>
+                <DialogDescription>
+                  {t('createDialog.description')}
+                </DialogDescription>
+              </DialogHeader>
+              <TableForm
+                action={createTable}
+                onSuccess={() => setCreateOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {errorMessage && (
@@ -133,15 +137,17 @@ export function TablesTable({
               <TableHead>{t('columns.table')}</TableHead>
               <TableHead>{t('columns.zone')}</TableHead>
               <TableHead className="text-end">{t('columns.orders')}</TableHead>
-              <TableHead>{t('columns.qrCode')}</TableHead>
-              <TableHead className="text-end">{t('columns.actions')}</TableHead>
+              {!readOnly && <TableHead>{t('columns.qrCode')}</TableHead>}
+              {!readOnly && (
+                <TableHead className="text-end">{t('columns.actions')}</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {tables.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={readOnly ? 3 : 5}
                   className="text-muted-foreground h-24 text-center"
                 >
                   {t('empty')}
@@ -162,55 +168,59 @@ export function TablesTable({
                   <TableCell className="text-end tabular-nums">
                     {table.orderCount}
                   </TableCell>
-                  <TableCell>
-                    {table.qrCode ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setQrTarget(table)}
-                      >
-                        <QrCodeIcon />
-                        {t('viewQr')}
-                      </Button>
-                    ) : (
-                      <form action={regenerateQr.bind(null, table.id)}>
-                        <Button variant="outline" size="sm" type="submit">
+                  {!readOnly && (
+                    <TableCell>
+                      {table.qrCode ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setQrTarget(table)}
+                        >
                           <QrCodeIcon />
-                          {t('generateQr')}
+                          {t('viewQr')}
                         </Button>
-                      </form>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-end">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditTarget(table)}
-                      >
-                        <PencilIcon />
-                        <span className="sr-only">
-                          {t('editAria', { number: table.number })}
-                        </span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={table.orderCount > 0}
-                        onClick={() => setDeleteTarget(table)}
-                      >
-                        <Trash2Icon />
-                        <span className="sr-only">
-                          {t('deleteAria', { number: table.number })}
-                        </span>
-                      </Button>
-                    </div>
-                    {table.orderCount > 0 && (
-                      <p className="text-muted-foreground mt-1 text-xs">
-                        {t('hasOrders')}
-                      </p>
-                    )}
-                  </TableCell>
+                      ) : (
+                        <form action={regenerateQr.bind(null, table.id)}>
+                          <Button variant="outline" size="sm" type="submit">
+                            <QrCodeIcon />
+                            {t('generateQr')}
+                          </Button>
+                        </form>
+                      )}
+                    </TableCell>
+                  )}
+                  {!readOnly && (
+                    <TableCell className="text-end">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditTarget(table)}
+                        >
+                          <PencilIcon />
+                          <span className="sr-only">
+                            {t('editAria', { number: table.number })}
+                          </span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={table.orderCount > 0}
+                          onClick={() => setDeleteTarget(table)}
+                        >
+                          <Trash2Icon />
+                          <span className="sr-only">
+                            {t('deleteAria', { number: table.number })}
+                          </span>
+                        </Button>
+                      </div>
+                      {table.orderCount > 0 && (
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          {t('hasOrders')}
+                        </p>
+                      )}
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

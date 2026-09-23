@@ -51,6 +51,8 @@
   },
   "Common": {
     "appName": "BrewFlow",
+    "brandTagline": "Specialty Coffee ERP",
+    "station": "Station",
     "role": "Role",
     "language": "Language",
     "currency": "TND",
@@ -80,6 +82,31 @@
       "reset": "Reset",
       "yes": "Yes",
       "no": "No"
+    }
+  },
+  "Header": {
+    "stationPrefix": "Station",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "Search": {
+    "title": "Search",
+    "placeholder": "Search pages, sections…",
+    "empty": "No results.",
+    "hint": "↑↓ to navigate · Enter to open · Esc to close"
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "empty": "No notifications.",
+    "markAllRead": "Mark all as read",
+    "ariaLabel": "Notifications ({count} unread)",
+    "kinds": {
+      "order": "Orders",
+      "stock": "Stock"
+    },
+    "items": {
+      "pendingOrders": "{count, plural, =0 {No orders} one {# active order} other {# active orders}}",
+      "lowStock": "{count, plural, one {# ingredient below threshold} other {# ingredients below threshold}}"
     }
   },
   "Dashboard": {
@@ -484,7 +511,35 @@
     "readyWaiting": "Ready — waiting to be collected.",
     "awaitingConfirmation": "Waiting for the server to confirm.",
     "updatedToast": "Order updated.",
-    "actionImpossibleToast": "Action failed."
+    "actionImpossibleToast": "Action failed.",
+    "sound": {
+      "on": "Mute new-order sound",
+      "off": "Unmute new-order sound"
+    },
+    "fullscreen": {
+      "enter": "Fullscreen",
+      "exit": "Exit fullscreen"
+    },
+    "filters": {
+      "zone": "Filter by zone",
+      "source": "Filter by source",
+      "allZones": "All zones",
+      "allSources": "All",
+      "fromPos": "Checkout",
+      "fromClient": "QR customer"
+    },
+    "history": {
+      "title": "Kitchen history",
+      "subtitle": "Orders paid today · {name}",
+      "summary": "{count, plural, one {# order} other {# orders}} · {revenue}",
+      "empty": "No orders paid today.",
+      "columns": {
+        "time": "Time",
+        "table": "Table",
+        "detail": "Details",
+        "total": "Total"
+      }
+    }
   },
   "Landing": {
     "tagline": "Complete management for your café or restaurant: sales, stock, recipes and margins.",
@@ -493,6 +548,7 @@
   },
   "Menu": {
     "title": "Our menu",
+    "searchPlaceholder": "Search for a dish…",
     "subtitle": "Choose your dishes, then send your order: it goes straight to the kitchen.",
     "table": "Table No. {number}",
     "unavailable": "The menu is not available yet.",
@@ -534,9 +590,11 @@
     "dishes": "Dishes",
     "tables": "Tables",
     "kitchen": "Kitchen",
+    "history": "History",
     "planning": "Schedule",
     "employees": "Employees",
     "establishments": "Locations",
+    "menu": "Menu",
     "logout": "Sign out",
     "settings": "Settings",
     "language": "Language",
@@ -582,7 +640,10 @@
       "title": "Today’s sales",
       "summary": "{count, plural, one {# sale} other {# sales}} · Revenue {revenue}",
       "empty": "No sales today.",
-      "reprintLabel": "Reprint receipt"
+      "reprintLabel": "Reprint receipt",
+      "filterAll": "All",
+      "filterMine": "My sales",
+      "filterAria": "Filter today’s sales"
     },
     "updatedToast": "Order updated.",
     "actionImpossibleToast": "Action failed.",
@@ -712,8 +773,16 @@
   "Pos": {
     "title": "Checkout (POS)",
     "subtitle": "Select a dish to add it to the cart, then complete the sale.",
+    "searchPlaceholder": "Search for a dish…",
     "noCategories": "No categories available.",
     "noDishes": "No dishes in this category.",
+    "kpi": {
+      "ariaLabel": "Today’s indicators",
+      "revenue": "Revenue today",
+      "tickets": "Tickets",
+      "cash": "Cash",
+      "card": "Card"
+    },
     "cart": {
       "title": "Cart",
       "lineTotal": "{cost} / unit",

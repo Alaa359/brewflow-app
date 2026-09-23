@@ -8,7 +8,6 @@ import {
   ChevronsUpDownIcon,
   LanguagesIcon,
   LogOutIcon,
-  StoreIcon,
   UserIcon,
 } from 'lucide-react';
 import { logout } from '@/actions/auth';
@@ -86,10 +85,6 @@ export function UserMenu({ user }: { user: CurrentUser }) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <StoreIcon className="h-4 w-4" />
-            {t('siteSettings')}
-          </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <LanguagesIcon className="h-4 w-4" />
