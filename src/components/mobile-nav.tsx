@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { MenuIcon } from 'lucide-react';
 import { logout } from '@/actions/auth';
 import { ROLE_HOME } from '@/lib/auth/roles';
-import { NAV_GROUPS, navForRole } from '@/lib/nav';
+import { navForRole } from '@/lib/nav';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -16,15 +16,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { EstablishmentSwitcher } from '@/components/establishment-switcher';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { SidebarEstablishment } from '@/components/sidebar/sidebar-establishment';
 import type { CurrentUser } from '@/lib/auth/dal';
 
 export function MobileNavTrigger({ user }: { user: CurrentUser }) {
   const pathname = usePathname();
   const t = useTranslations('Nav');
   const tCommon = useTranslations('Common');
-  const tRoles = useTranslations('Roles');
 
   const groups = navForRole(user.role);
 
@@ -42,14 +41,34 @@ export function MobileNavTrigger({ user }: { user: CurrentUser }) {
       <SheetContent side="left" className="w-72 overflow-y-auto">
         <SheetHeader className="text-left">
           <SheetTitle>
-            <Link href={ROLE_HOME[user.role] ?? '/'} className="flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-2xl bg-gradient-to-br from-primary to-[#a3641f] text-sm font-bold text-primary-foreground shadow-sm">
-                &#9749;
+            <Link href={ROLE_HOME[user.role] ?? '/'} className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="BrewFlow"
+                src="/logo-brewflow.svg"
+                className="h-10 w-10 shrink-0 object-contain drop-shadow-sm"
+              />
+              <span className="min-w-0">
+                <span className="block text-lg font-bold uppercase tracking-tight">
+                  {tCommon('appName')}
+                </span>
+                <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/70">
+                  {tCommon('brandTagline')}
+                </span>
               </span>
-              {tCommon('appName')}
             </Link>
           </SheetTitle>
         </SheetHeader>
+
+        <div className="mt-3">
+          <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/60">
+            {tCommon('station')}
+          </p>
+          <SidebarEstablishment
+            currentId={user.establishmentId}
+            establishments={user.establishments}
+          />
+        </div>
 
         <nav className="mt-4 space-y-6 px-2">
           {groups.map((group) => (
@@ -62,12 +81,13 @@ export function MobileNavTrigger({ user }: { user: CurrentUser }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors ${
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all ${
                       isActive(item.href)
                         ? 'bg-primary font-medium text-primary-foreground shadow-sm'
-                        : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                        : 'text-muted-foreground hover:translate-x-0.5 hover:bg-primary/10 hover:text-primary'
                     }`}
                   >
+                    <item.icon className="h-[18px] w-[18px] shrink-0" />
                     {t(item.key)}
                   </Link>
                 ))}
@@ -77,12 +97,6 @@ export function MobileNavTrigger({ user }: { user: CurrentUser }) {
         </nav>
 
         <div className="mt-4 flex items-center gap-2 border-t border-border/40 px-2 pt-3">
-          {user.establishments.length > 1 && (
-            <EstablishmentSwitcher
-              currentId={user.establishmentId}
-              establishments={user.establishments}
-            />
-          )}
           <LanguageSwitcher />
         </div>
 
