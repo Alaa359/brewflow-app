@@ -36,6 +36,7 @@ export function PlatsDashboard({
   const [deleteTarget, setDeleteTarget] = useState<DishRow | null>(null);
   const [recipeTarget, setRecipeTarget] = useState<DishRow | null>(null);
   const [catOpen, setCatOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const selectedDish = useMemo(
     () => dishes.find((d) => d.id === selectedDishId) ?? dishes[0] ?? null,
@@ -81,8 +82,8 @@ export function PlatsDashboard({
     <div className="flex flex-col w-full gap-6">
 
       {/* ═══ SECTION 1: HEADER & KPI CARDS ═══ */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-2">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4 bg-surface-container-low p-5 rounded-xl shadow-sm">
+        <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-primary">Menu Engineering & Profitabilité</span>
             <span className="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
@@ -95,23 +96,23 @@ export function PlatsDashboard({
             Arbitrage dynamique des marges atomiques, coûts matières par grammage et positionnement BCG de la carte.
           </p>
         </div>
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface transition-all duration-200 shadow-sm" type="button">
-            <span className="material-symbols-outlined text-lg text-secondary">file_download</span>
-            <span className="text-sm font-medium">Export PDF Fiches</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface transition-all duration-200 shadow-sm" type="button">
-            <span className="material-symbols-outlined text-lg text-secondary">insights</span>
-            <span className="text-sm font-medium">Simulateur Inflation</span>
-          </button>
+        <div className="flex flex-wrap items-center justify-end gap-3 2xl:flex-nowrap 2xl:shrink-0">
           <button
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container transition-all duration-200 shadow-md font-semibold"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md hover:bg-primary-container hover:shadow-lg transition-all"
             type="button"
             onClick={() => setCreateOpen(true)}
           >
             <span className="material-symbols-outlined text-lg">add_circle</span>
-            <span className="text-sm">+ Ajouter un Plat / Recette</span>
+            <span>+ Ajouter un Plat / Recette</span>
             <span className="px-1.5 py-0.5 rounded bg-primary-fixed/30 text-on-primary text-[10px] uppercase font-bold tracking-wide">Nouveau</span>
+          </button>
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-high text-on-surface text-sm font-semibold shadow-sm hover:bg-surface-container-highest hover:shadow-md transition-all" type="button">
+            <span className="material-symbols-outlined text-lg text-primary">file_download</span>
+            Export PDF Fiches
+          </button>
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-high text-on-surface text-sm font-semibold shadow-sm hover:bg-surface-container-highest hover:shadow-md transition-all" type="button">
+            <span className="material-symbols-outlined text-lg text-primary">insights</span>
+            Simulateur Inflation
           </button>
         </div>
       </div>
@@ -376,6 +377,30 @@ export function PlatsDashboard({
           <button className="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-[11px] font-bold flex items-center gap-1" type="button">
             <span className="w-2 h-2 rounded-full bg-primary-container"></span> Marge &lt; 60% ({lowMarginCount})
           </button>
+          <div className="flex items-center gap-1 rounded-lg bg-surface-container p-1">
+            <button
+              className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+              onClick={() => setViewMode('grid')}
+              type="button"
+            >
+              Grille
+            </button>
+            <button
+              className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+              onClick={() => setViewMode('list')}
+              type="button"
+            >
+              Liste
+            </button>
+          </div>
         </div>
       </div>
 
@@ -389,6 +414,110 @@ export function PlatsDashboard({
               Aucun plat trouvé pour ce filtre.
             </div>
           )}
+
+          {viewMode === 'list' && filteredDishes.length > 0 && (
+            <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-outline-variant/30 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    <th className="px-4 py-3">Plat</th>
+                    <th className="px-4 py-3">Catégorie</th>
+                    <th className="px-4 py-3 text-right">Prix</th>
+                    <th className="px-4 py-3 text-right">Coût</th>
+                    <th className="px-4 py-3 text-right">Marge</th>
+                    <th className="px-4 py-3 text-right">Ventes</th>
+                    <th className="px-4 py-3">Statut</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/20">
+                  {filteredDishes.map((dish) => {
+                    const cat = categories.find((c) => c.id === dish.categoryId);
+                    return (
+                      <tr
+                        key={dish.id}
+                        className="transition-colors hover:bg-surface-container-low/50 cursor-pointer"
+                        onClick={() => setSelectedDishId(dish.id)}
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            {dish.imageUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img className="h-9 w-9 shrink-0 rounded-lg object-cover" src={dish.imageUrl} alt={dish.name} />
+                            ) : (
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-container text-primary">
+                                <span className="material-symbols-outlined text-lg">restaurant</span>
+                              </div>
+                            )}
+                            <div className="text-sm font-bold text-on-surface">{dish.name}</div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-on-surface-variant">{cat?.name ?? '—'}</td>
+                        <td className="px-4 py-3 text-right font-bold text-on-surface">{formatCost(dish.price)}</td>
+                        <td className="px-4 py-3 text-right text-on-surface-variant">
+                          {dish.recipeCount > 0 ? formatCost(dish.cost) : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {dish.marginPercent !== null ? (
+                            <span className={dish.marginPercent >= 70 ? 'font-bold text-tertiary' : dish.marginPercent >= 50 ? 'font-bold text-primary' : 'font-bold text-error'}>
+                              {formatCost(dish.margin)} · {dish.marginPercent}%
+                            </span>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold text-on-surface">{dish.orderItemCount}</td>
+                        <td className="px-4 py-3">
+                          {dish.isActive ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-tertiary-fixed/30 px-2.5 py-1 text-[11px] font-bold text-on-tertiary-fixed-variant">
+                              <span className="h-2 w-2 rounded-full bg-tertiary"></span>
+                              Actif
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-error-container/40 px-2.5 py-1 text-[11px] font-bold text-on-error-container">
+                              <span className="h-2 w-2 rounded-full bg-error"></span>
+                              Rupture 86
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              className="rounded p-1.5 text-outline transition-colors hover:bg-surface-container hover:text-primary cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); setEditTarget(dish); }}
+                              title="Modifier"
+                              type="button"
+                            >
+                              <span className="material-symbols-outlined text-lg">edit</span>
+                            </button>
+                            <button
+                              className="rounded p-1.5 text-outline transition-colors hover:bg-surface-container hover:text-primary cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); setRecipeTarget(dish); }}
+                              title="Recette"
+                              type="button"
+                            >
+                              <span className="material-symbols-outlined text-lg">menu_book</span>
+                            </button>
+                            <button
+                              className="rounded p-1.5 text-outline transition-colors hover:bg-error-container hover:text-error cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); setDeleteTarget(dish); }}
+                              title="Supprimer"
+                              type="button"
+                            >
+                              <span className="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {viewMode === 'grid' && (
+            <div className="grid grid-cols-1 gap-4 2xl:grid-cols-2">
           {filteredDishes.map((dish) => {
             const cat = categories.find((c) => c.id === dish.categoryId);
             const marginLabel = dish.marginPercent !== null
@@ -508,6 +637,8 @@ export function PlatsDashboard({
               </div>
             );
           })}
+            </div>
+          )}
         </div>
 
         {/* Right column: Technical Sheet Drawer */}

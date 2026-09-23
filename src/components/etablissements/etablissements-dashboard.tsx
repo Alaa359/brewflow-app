@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import type { EstablishmentData } from '@/app/(app)/etablissements/page';
 
 export function EtablissementsDashboard({ establishments }: { establishments: EstablishmentData[] }) {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const pingIconRef = useRef<HTMLSpanElement>(null);
   const diagnosticToastRef = useRef<HTMLDivElement>(null);
   const diagnosticToastTextRef = useRef<HTMLSpanElement>(null);
@@ -40,7 +41,7 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
     <div className="w-full space-y-6">
 
       {/* ─── Sub-header ─── */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-outline">
             <span>Réseau Multi-Boutiques</span>
@@ -61,13 +62,13 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="flex items-center gap-1.5 rounded-lg bg-tertiary-fixed/30 px-3 py-2 text-sm font-medium text-on-tertiary-fixed-variant shadow-sm">
+        <div className="flex flex-wrap items-center gap-2.5 md:flex-nowrap">
+          <div className="inline-flex h-[38px] items-center gap-1.5 rounded-xl bg-tertiary-fixed/30 px-3 text-sm font-medium text-on-tertiary-fixed-variant shadow-sm">
             <span className="material-symbols-outlined text-base text-tertiary">cloud_done</span>
             Auto-Sync (0 ms)
           </div>
           <button
-            className="flex items-center gap-2 rounded-lg border border-outline-variant/50 bg-surface-container-lowest px-4 py-2 text-sm font-medium text-on-surface shadow-sm transition-all hover:bg-surface-container-high hover:shadow-md active:scale-[0.98] cursor-pointer"
+            className="inline-flex h-[38px] items-center gap-2 rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-4 text-sm font-medium text-on-surface shadow-sm transition-all hover:bg-surface-container-high hover:shadow-md active:scale-[0.98] cursor-pointer"
             onClick={runNetworkDiagnostics}
             type="button"
           >
@@ -75,7 +76,7 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
             Tester Ping Global
           </button>
           <button
-            className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-on-primary shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] cursor-pointer"
+            className="inline-flex h-[38px] items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-on-primary shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] cursor-pointer"
             type="button"
           >
             <span className="material-symbols-outlined text-lg">add_location_alt</span>
@@ -210,29 +211,96 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
             </p>
           </div>
           <div className="flex items-center gap-1 rounded-lg bg-surface-container p-1">
-            <button className="rounded-md bg-surface-container-lowest px-3 py-1.5 text-xs font-bold text-on-surface shadow-sm cursor-pointer" type="button">
+            <button
+              className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+              onClick={() => setViewMode('grid')}
+              type="button"
+            >
               Grille
             </button>
-            <button className="rounded-md px-3 py-1.5 text-xs text-on-surface-variant hover:text-on-surface cursor-pointer" type="button">
+            <button
+              className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+              onClick={() => setViewMode('list')}
+              type="button"
+            >
               Liste
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {establishments.map((est, idx) => (
-            <EstablishmentCard
-              key={est.id}
-              est={est}
-              index={idx}
-              imageUrl={[
-                'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&h=400&fit=crop',
-                'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop',
-                'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop',
-              ][idx % 3]}
-            />
-          ))}
-        </div>
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {establishments.map((est, idx) => (
+              <EstablishmentCard
+                key={est.id}
+                est={est}
+                index={idx}
+                imageUrl={[
+                  'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&h=400&fit=crop',
+                  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop',
+                  'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop',
+                ][idx % 3]}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-2xl bg-surface-container-lowest shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-outline-variant/30 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                  <th className="px-4 py-3">Établissement</th>
+                  <th className="px-4 py-3">Adresse</th>
+                  <th className="px-4 py-3">Tables</th>
+                  <th className="px-4 py-3">Membres</th>
+                  <th className="px-4 py-3">Timezone</th>
+                  <th className="px-4 py-3">Statut</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {establishments.map((est) => (
+                  <tr key={est.id} className="transition-colors hover:bg-surface-container-low/50">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-container/20 text-primary">
+                          <span className="material-symbols-outlined text-lg">storefront</span>
+                        </div>
+                        <div className="text-sm font-bold text-on-surface">{est.name}</div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-on-surface-variant">{est.address || '—'}</td>
+                    <td className="px-4 py-3 font-bold text-on-surface">{est.tableCount}</td>
+                    <td className="px-4 py-3 font-bold text-on-surface">{est.memberCount}</td>
+                    <td className="px-4 py-3 text-on-surface-variant">{est.timezone || 'Africa/Tunis'}</td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-tertiary-fixed/30 px-2.5 py-1 text-[11px] font-bold text-on-tertiary-fixed-variant">
+                        <span className="h-2 w-2 rounded-full bg-tertiary"></span>
+                        {est.isCurrent ? 'Actif' : 'Secondaire'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        className="rounded-lg bg-surface-container-high p-2 text-on-surface transition-colors hover:bg-primary hover:text-on-primary cursor-pointer"
+                        title="Gérer"
+                        type="button"
+                      >
+                        <span className="material-symbols-outlined text-lg">tune</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* ─── Table Stations ─── */}
