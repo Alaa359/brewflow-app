@@ -6,10 +6,9 @@ import { startOfMonthTunisia, toDateInputTunisia } from '@/lib/sales';
 import { createReportRangeSchema } from '@/lib/validations/report';
 import { buildReport } from '@/lib/reports';
 import {
-  ReportRangePicker,
   type ReportPreset,
 } from '@/components/reports/report-range-picker';
-import { ReportsView } from '@/components/reports/reports-view';
+import { RapportsDashboard } from '@/components/reports/rapports-dashboard';
 
 export default async function RapportsPage({
   searchParams,
@@ -39,7 +38,6 @@ export default async function RapportsPage({
   const range = parsed.success
     ? parsed.data
     : { debut: monthStart, fin: today };
-  const error = parsed.success ? undefined : parsed.error.issues[0]?.message;
 
   const report = await buildReport(
     user.establishmentId,
@@ -50,9 +48,9 @@ export default async function RapportsPage({
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
-      <section className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="font-headline-md text-headline-md text-on-surface tracking-tight">
             {t('title')}
           </h1>
           <p className="text-muted-foreground text-sm">
@@ -60,15 +58,15 @@ export default async function RapportsPage({
             {formatDateLabel(range.fin, locale)} · {user.establishmentName}
           </p>
         </div>
-        <ReportRangePicker
-          debut={range.debut}
-          fin={range.fin}
-          presets={presets}
-          error={error}
-        />
-      </section>
+      </div>
 
-      <ReportsView report={report} downloadHref={downloadHref} />
+      <RapportsDashboard
+        report={report}
+        presets={presets}
+        range={range}
+        downloadHref={downloadHref}
+        establishmentName={user.establishmentName}
+      />
     </main>
   );
 }
