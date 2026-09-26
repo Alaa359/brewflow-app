@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { QRCodeSVG } from 'qrcode.react';
-import { CopyIcon, ExternalLinkIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export function TableQr({
   token,
-  size = 168,
+  size = 200,
+  onToast,
 }: {
   token: string;
   size?: number;
+  onToast?: (message: string) => void;
 }) {
   const [origin, setOrigin] = useState('');
   const [copied, setCopied] = useState(false);
@@ -29,6 +29,7 @@ export function TableQr({
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      onToast?.(t('linkCopied'));
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
@@ -37,33 +38,44 @@ export function TableQr({
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="rounded-lg border bg-white p-3">
-        {url ? (
-          <QRCodeSVG value={url} size={size} level="M" />
-        ) : (
-          <div style={{ width: size, height: size }} />
-        )}
+      <div className="flex flex-col items-center justify-center p-4 bg-surface-container-low rounded-xl w-full">
+        <div className="relative bg-white rounded-xl shadow-sm flex items-center justify-center p-3 overflow-hidden">
+          {url ? (
+            <QRCodeSVG value={url} size={size} level="M" />
+          ) : (
+            <div style={{ width: size, height: size }} />
+          )}
+        </div>
+        <div className="mt-3 text-center w-full">
+          <span className="font-label-caps text-label-caps text-on-surface-variant/80 select-all block truncate max-w-[280px] mx-auto">
+            {url || t('generatingLink')}
+          </span>
+        </div>
       </div>
-      <p className="text-muted-foreground max-w-72 truncate text-center text-xs">
-        {url || t('generatingLink')}
-      </p>
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <Button type="button" variant="outline" size="sm" asChild>
-          <a href={url || '#'} target="_blank" rel="noopener noreferrer">
-            <ExternalLinkIcon />
-            {t('openMenu')}
-          </a>
-        </Button>
-        <Button
+
+      <div className="grid grid-cols-2 gap-2 w-full pt-1">
+        <a
+          href={url || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-colors shadow-xs"
+        >
+          <span className="material-symbols-outlined text-body-md text-primary">
+            open_in_new
+          </span>
+          <span>{t('openMenu')}</span>
+        </a>
+        <button
           type="button"
-          variant="outline"
-          size="sm"
           onClick={copyLink}
           disabled={!url}
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-colors shadow-xs disabled:opacity-60"
         >
-          <CopyIcon />
-          {copied ? t('linkCopied') : t('copyLink')}
-        </Button>
+          <span className="material-symbols-outlined text-body-md text-secondary">
+            content_copy
+          </span>
+          <span>{copied ? t('linkCopied') : t('copyLink')}</span>
+        </button>
       </div>
     </div>
   );

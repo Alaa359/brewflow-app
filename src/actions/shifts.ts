@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 import { Role } from '@/generated/client';
 import { prisma } from '@/lib/prisma';
-import { requireRole } from '@/lib/auth/dal';
+import { requireUser } from '@/lib/auth/dal';
 import { rangesOverlap, createShiftSchema } from '@/lib/validations/shift';
 
 export type ShiftErrors = {
@@ -32,12 +32,13 @@ export async function createShift(
   _prev: ShiftState,
   formData: FormData
 ): Promise<ShiftState> {
-  const user = await requireRole(Role.ADMIN);
+  const user = await requireUser();
   const t = await getTranslations('Feedback.shifts');
   const tValidation = await getTranslations('Validation');
+  const isAdmin = user.role === Role.ADMIN;
 
   const validated = createShiftSchema(tValidation).safeParse({
-    employeeId: formData.get('employeeId'),
+    employeeId: formData.get('employeeId') || user.id,
     dayOfWeek: formData.get('dayOfWeek'),
     startTime: formData.get('startTime'),
     endTime: formData.get('endTime'),
@@ -51,6 +52,15 @@ export async function createShift(
   }
 
   const { employeeId, dayOfWeek, startTime, endTime } = validated.data;
+
+  if (!isAdmin && employeeId !== user.id) {
+    return {
+      errors: {
+        employeeId: [t('employeeNotInActiveEstablishment')],
+      },
+      message: t('assignmentFailed'),
+    } satisfies ShiftState;
+  }
 
   const member = await prisma.membership.findUnique({
     where: {
@@ -109,12 +119,22 @@ export async function createShift(
   } satisfies ShiftState;
 }
 
-export async function deleteShift(id: string) {
-  const user = await requireRole(Role.ADMIN);
+export async function deleteShift(id: string): Promise<{ success: boolean }> {
+  const user = await requireUser();
+  const isAdmin = user.role === Role.ADMIN;
 
-  await prisma.shift.deleteMany({
-    where: { id, establishmentId: user.establishmentId },
+  const result = await prisma.shift.deleteMany({
+    where: {
+      id,
+      establishmentId: user.establishmentId,
+      ...(isAdmin ? {} : { userId: user.id }),
+    },
   });
 
+  if (result.count === 0) {
+    return { success: false };
+  }
+
   revalidatePath('/planning');
+  return { success: true };
 }

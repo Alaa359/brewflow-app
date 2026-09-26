@@ -27,8 +27,16 @@ export function MobileNavTrigger({ user }: { user: CurrentUser }) {
 
   const groups = navForRole(user.role);
 
+  const activeHref = groups
+    .flatMap((group) => group.items)
+    .filter(
+      (item) =>
+        pathname === item.href || pathname.startsWith(`${item.href}/`),
+    )
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+
   function isActive(href: string) {
-    return pathname === href || pathname.startsWith(`${href}/`);
+    return activeHref === href;
   }
 
   return (

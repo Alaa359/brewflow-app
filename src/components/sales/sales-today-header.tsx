@@ -24,14 +24,17 @@ export async function SalesTodayHeader({ kpis }: { kpis: SalesKpis }) {
   return (
     <section
       aria-label={t('kpi.ariaLabel')}
-      className="bg-surface-container-low grid grid-cols-2 gap-3 rounded-xl border p-4 shadow-sm sm:grid-cols-4"
+      className="bg-surface-container-low grid grid-cols-2 gap-3 rounded-xl border border-outline-variant/30 p-4 shadow-sm sm:grid-cols-4"
     >
       {items.map((item) => (
-        <div key={item.label} className="flex flex-col gap-0.5">
-          <span className="text-muted-foreground text-xs font-medium">
+        <div
+          key={item.label}
+          className="bg-surface-container-lowest flex flex-col gap-0.5 rounded-lg p-3"
+        >
+          <span className="font-label-caps text-label-caps text-on-surface-variant tracking-wide uppercase">
             {item.label}
           </span>
-          <span className="text-lg font-semibold tabular-nums">
+          <span className="font-headline-sm text-headline-sm text-on-surface tabular-nums font-bold">
             {item.value}
           </span>
         </div>

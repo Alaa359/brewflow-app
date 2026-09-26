@@ -52,7 +52,7 @@ export const getHeaderNotifications = cache(
         kind: 'order',
         titleKey: 'pendingOrders',
         params: { count: pendingOrders },
-        href: role === Role.KITCHEN ? '/cuisine' : '/caisse',
+        href: role === Role.KITCHEN ? '/cuisine/kds' : '/caisse/pos',
         createdAt: nowIso,
       });
     }

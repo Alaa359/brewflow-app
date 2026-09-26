@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { addDays, formatWeekRange, mondayOfWeek } from '@/lib/planning';
 import type { EmployeeRole } from '@/lib/validations/employee';
 import type { PlanningShiftRow } from './planning-week';
@@ -37,14 +38,19 @@ export type PlanningDashboardProps = {
   employees: { id: string; name: string; role: EmployeeRole }[];
   shifts: PlanningShiftRow[];
   days: { iso: string; dow: number; dayNumber: number }[];
+  readOnly?: boolean;
+  currentUserId?: string;
 };
 
 export function PlanningDashboard({
   monday,
   todayIso,
+  establishmentName,
   employees,
   shifts,
   days,
+  readOnly = false,
+  currentUserId,
 }: PlanningDashboardProps) {
   const router = useRouter();
   const locale = useLocale();
@@ -54,6 +60,7 @@ export function PlanningDashboard({
   const [dialogDay, setDialogDay] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<PlanningShiftRow | null>(null);
   const [deptFilter, setDeptFilter] = useState('all');
+  const [employeeFilter, setEmployeeFilter] = useState('all');
 
   const shiftsByDay = new Map<number, PlanningShiftRow[]>();
   for (const shift of shifts) {
@@ -61,17 +68,26 @@ export function PlanningDashboard({
     list.push(shift);
     shiftsByDay.set(shift.dayOfWeek, list);
   }
-  const filteredEmployees = deptFilter === 'all'
-    ? employees
-    : employees.filter((e) => e.role === deptFilter);
+  const byDept =
+    deptFilter === 'all'
+      ? employees
+      : employees.filter((e) => e.role === deptFilter);
+  const filteredEmployees =
+    employeeFilter === 'all'
+      ? byDept
+      : byDept.filter((e) => e.id === employeeFilter);
+  const scopeShifts =
+    employeeFilter === 'all'
+      ? shifts.filter((s) => filteredEmployees.some((e) => e.id === s.employeeId))
+      : shifts.filter((s) => s.employeeId === employeeFilter);
 
   const prevMonday = addDays(monday, -7);
   const nextMonday = addDays(monday, 7);
 
   const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-  const totalShifts = shifts.length;
-  const totalHours = shifts.reduce((acc, s) => {
+  const totalShifts = scopeShifts.length;
+  const totalHours = scopeShifts.reduce((acc, s) => {
     const [sh, sm] = s.startTime.split(':').map(Number);
     const [eh, em] = s.endTime.split(':').map(Number);
     return acc + (eh * 60 + em - sh * 60 - sm) / 60;
@@ -101,19 +117,27 @@ export function PlanningDashboard({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 self-start lg:self-center">
-          <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface text-sm hover:bg-surface-variant transition-colors shadow-sm">
-            <span className="material-symbols-outlined text-[18px]">auto_fix_high</span>
-            <span className="hidden sm:inline">Modèle Récurrent</span>
-          </button>
-          <button
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-all shadow-md"
-            onClick={() => setDialogDay(days[0]?.dow ?? 0)}
-          >
-            <span className="material-symbols-outlined text-[20px]">add_circle</span>
-            + Nouveau Quart
-          </button>
-        </div>
+        {!readOnly && (
+          <div className="flex flex-wrap items-center gap-2 self-start lg:self-center">
+            <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface text-sm hover:bg-surface-variant transition-colors shadow-sm">
+              <span className="material-symbols-outlined text-[18px]">auto_fix_high</span>
+              <span className="hidden sm:inline">Modèle Récurrent</span>
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-all shadow-md"
+              onClick={() => setDialogDay(days[0]?.dow ?? 0)}
+            >
+              <span className="material-symbols-outlined text-[20px]">add_circle</span>
+              + Nouveau Quart
+            </button>
+          </div>
+        )}
+        {readOnly && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps self-start lg:self-center uppercase tracking-wider">
+            <span className="material-symbols-outlined text-[14px]">visibility</span>
+            Consultation
+          </span>
+        )}
       </div>
 
       {/* ═══ KPI CARDS ═══ */}
@@ -145,7 +169,10 @@ export function PlanningDashboard({
             <a href={`/planning?semaine=${prevMonday}`} className="p-1 rounded hover:bg-surface-container-high text-on-surface transition-colors">
               <span className="material-symbols-outlined text-[20px]">chevron_left</span>
             </a>
-            <span className="font-bold text-sm px-3 text-on-surface">Semaine {days[0]?.dayNumber} ({formatWeekRange(monday, locale)})</span>
+            <span className="font-bold text-sm px-3 text-on-surface">
+              {establishmentName ? `${establishmentName} · ` : ''}
+              Semaine {days[0]?.dayNumber} ({formatWeekRange(monday, locale)})
+            </span>
             <a href={`/planning?semaine=${nextMonday}`} className="p-1 rounded hover:bg-surface-container-high text-on-surface transition-colors">
               <span className="material-symbols-outlined text-[20px]">chevron_right</span>
             </a>
@@ -169,13 +196,35 @@ export function PlanningDashboard({
                       ? 'bg-primary text-on-primary shadow-sm'
                       : 'bg-surface text-on-surface-variant hover:text-on-surface'
                   }`}
-                  onClick={() => setDeptFilter(dept.id)}
+                  onClick={() => {
+                    setDeptFilter(dept.id);
+                    setEmployeeFilter('all');
+                  }}
                 >
                   {dept.label} ({count})
                 </button>
               );
             })}
           </div>
+
+          {/* Employee filter */}
+          <label className="flex items-center gap-2 bg-surface px-3 py-1.5 rounded-lg shadow-sm text-sm">
+            <span className="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider">
+              {t('allEmployees')}
+            </span>
+            <select
+              className="bg-transparent text-on-surface text-sm outline-none min-w-[140px]"
+              value={employeeFilter}
+              onChange={(event) => setEmployeeFilter(event.target.value)}
+            >
+              <option value="all">{t('allEmployeesOption')}</option>
+              {byDept.map((employee) => (
+                <option key={employee.id} value={employee.id}>
+                  {employee.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         {/* Compliance Status */}
@@ -237,7 +286,7 @@ export function PlanningDashboard({
                       {day.dayNumber}
                     </span>
                     <span className={`text-[11px] font-bold ${isWeekend ? (i === 5 ? 'text-primary' : 'text-tertiary') : 'text-on-surface-variant'}`}>
-                      {(shifts.filter((s) => s.dayOfWeek === day.dow).length * 8.5).toFixed(1)} h tot.
+                      {(scopeShifts.filter((s) => s.dayOfWeek === day.dow).length * 8.5).toFixed(1)} h tot.
                     </span>
                   </div>
                 );
@@ -289,25 +338,54 @@ export function PlanningDashboard({
                         : 'bg-primary-container/20';
 
                       return (
-                        <div key={day.iso} className={`h-full ${shiftBg} rounded-lg p-2 flex flex-col justify-between relative shadow-sm`}>
-                          <div className="flex items-center justify-between">
+                        <div key={day.iso} className={`h-full ${shiftBg} rounded-lg p-2 flex flex-col justify-between relative shadow-sm group`}>
+                          <div className="flex items-start justify-between gap-1">
                             <span className="text-[10px] font-bold text-on-primary-container">
                               {shift.startTime} - {shift.endTime}
                             </span>
-                            {isWeekend && (
+                            {!readOnly && (
+                              <button
+                                type="button"
+                                className="shrink-0 opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-error-container text-on-surface-variant hover:text-error transition-opacity"
+                                title={t('removeSlot', {
+                                  name: shift.employeeName,
+                                  times: `${shift.startTime}–${shift.endTime}`,
+                                })}
+                                onClick={() => setDeleteTarget(shift)}
+                              >
+                                <span className="material-symbols-outlined text-[14px]">delete</span>
+                              </button>
+                            )}
+                            {!readOnly && isWeekend && (
                               <span className="px-1 rounded bg-primary text-on-primary text-[9px] font-bold">
                                 {i === 5 ? 'RUSH' : 'BRUNCH'}
                               </span>
                             )}
-                            {!isWeekend && <span className="w-2 h-2 rounded-full bg-tertiary" title="Pointage RFID Validé"></span>}
+                            {!isWeekend && (
+                              <span
+                                className={`w-2 h-2 rounded-full ${readOnly ? 'bg-surface-variant' : 'bg-tertiary'}`}
+                                title={readOnly ? 'Prévu' : 'Pointage RFID Validé'}
+                              ></span>
+                            )}
+                            {readOnly && isWeekend && (
+                              <span className="px-1 rounded bg-primary text-on-primary text-[9px] font-bold">
+                                {i === 5 ? 'RUSH' : 'BRUNCH'}
+                              </span>
+                            )}
                           </div>
                           <span className="text-[11px] text-on-surface-variant">{roleMeta.station}</span>
                           <div className="flex items-center justify-between text-[11px] text-on-surface font-semibold">
-                            <span>{shift.startTime && shift.endTime ? `${((parseInt(shift.endTime) * 60 + parseInt(shift.endTime.split(':')[1]) - parseInt(shift.startTime) * 60 - parseInt(shift.startTime.split(':')[1])) / 60).toFixed(1)}h` : '8.5h'}</span>
-                            {!isWeekend ? (
+                            <span>
+                              {shift.startTime && shift.endTime
+                                ? `${((parseInt(shift.endTime) * 60 + parseInt(shift.endTime.split(':')[1]) - parseInt(shift.startTime) * 60 - parseInt(shift.startTime.split(':')[1])) / 60).toFixed(1)}h`
+                                : '8.5h'}
+                            </span>
+                            {!isWeekend && !readOnly ? (
                               <span className="text-tertiary font-bold">Badge OK</span>
-                            ) : (
+                            ) : isWeekend ? (
                               <span className="text-on-surface-variant">Prévu</span>
+                            ) : (
+                              <span className="text-on-surface-variant">Planifié</span>
                             )}
                           </div>
                         </div>
@@ -446,10 +524,11 @@ export function PlanningDashboard({
       </div>
 
       {/* ═══ DIALOGS ═══ */}
-      {dialogDay !== null && (
+      {!readOnly && dialogDay !== null && (
         <ShiftDialog
           dayOfWeek={dialogDay}
           employees={employees}
+          currentUserId={currentUserId}
           onClose={() => {
             setDialogDay(null);
             router.refresh();
@@ -457,34 +536,45 @@ export function PlanningDashboard({
         />
       )}
 
-      <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t('removeSlotTitle')}</DialogTitle>
-            <DialogDescription>
-              {deleteTarget
-                ? t('removeSlotConfirm', {
-                    name: deleteTarget.employeeName,
-                    day: t(`days.${deleteTarget.dayOfWeek}`).toLowerCase(),
-                    times: `${deleteTarget.startTime}–${deleteTarget.endTime}`,
-                  })
-                : ''}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <button className="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm" onClick={() => setDeleteTarget(null)} type="button">
-              {tCommon('actions.cancel')}
-            </button>
-            {deleteTarget && (
-              <form action={deleteShift.bind(null, deleteTarget.id)}>
-                <button className="px-4 py-2 rounded-lg bg-error text-on-error text-sm font-medium hover:opacity-90 transition-opacity" type="submit">
-                  {tCommon('actions.remove')}
-                </button>
-              </form>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {!readOnly && (
+        <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>{t('removeSlotTitle')}</DialogTitle>
+              <DialogDescription>
+                {deleteTarget
+                  ? t('removeSlotConfirm', {
+                      name: deleteTarget.employeeName,
+                      day: t(`days.${deleteTarget.dayOfWeek}`).toLowerCase(),
+                      times: `${deleteTarget.startTime}–${deleteTarget.endTime}`,
+                    })
+                  : ''}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <button className="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm" onClick={() => setDeleteTarget(null)} type="button">
+                {tCommon('actions.cancel')}
+              </button>
+              {deleteTarget && (
+                <form
+                  action={async () => {
+                    const result = await deleteShift(deleteTarget.id);
+                    setDeleteTarget(null);
+                    if (!result.success) {
+                      toast.error(t('removeSlotFailed'));
+                    }
+                    router.refresh();
+                  }}
+                >
+                  <button className="px-4 py-2 rounded-lg bg-error text-on-error text-sm font-medium hover:opacity-90 transition-opacity" type="submit">
+                    {tCommon('actions.remove')}
+                  </button>
+                </form>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* ═══ TOAST ═══ */}
     </div>

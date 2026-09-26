@@ -128,7 +128,7 @@ export async function submitTableOrder(
     select: { id: true },
   });
 
-  revalidatePath('/caisse');
+  revalidatePath('/caisse/pos');
   return {
     success: true,
     message: t('sent'),

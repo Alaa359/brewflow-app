@@ -76,7 +76,15 @@ export function UserMenu({ user }: { user: CurrentUser }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href={ROLE_HOME[user.role] ?? '/'}>
+          <Link
+            href={
+              user.role === 'KITCHEN' ||
+              user.role === 'ADMIN' ||
+              user.role === 'SERVER'
+                ? '/profil'
+                : (ROLE_HOME[user.role] ?? '/')
+            }
+          >
             <DropdownMenuItem>
               <UserIcon className="h-4 w-4" />
               {t('profile')}

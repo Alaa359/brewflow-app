@@ -7,17 +7,15 @@ import {
   PlanningDashboard,
   type PlanningDashboardProps,
 } from '@/components/planning/planning-dashboard';
-import {
-  PlanningWeek,
-  type PlanningShiftRow,
-} from '@/components/planning/planning-week';
+import { PlanningWeek } from '@/components/planning/planning-week';
 
 export default async function PlanningPage({
   searchParams,
 }: {
   searchParams: Promise<{ semaine?: string }>;
 }) {
-  const user = await requireRole(Role.ADMIN, Role.SERVER);
+  const user = await requireRole(Role.ADMIN, Role.SERVER, Role.KITCHEN);
+  const isAdmin = user.role === Role.ADMIN;
 
   const establishment = await prisma.establishment.findUnique({
     where: { id: user.establishmentId },
@@ -33,12 +31,16 @@ export default async function PlanningPage({
     prisma.user.findMany({
       where: {
         memberships: { some: { establishmentId: user.establishmentId } },
+        ...(isAdmin ? {} : { id: user.id }),
       },
       select: { id: true, name: true, role: true },
       orderBy: { name: 'asc' },
     }),
     prisma.shift.findMany({
-      where: { establishmentId: user.establishmentId },
+      where: {
+        establishmentId: user.establishmentId,
+        ...(isAdmin ? {} : { userId: user.id }),
+      },
       select: {
         id: true,
         dayOfWeek: true,
@@ -59,30 +61,21 @@ export default async function PlanningPage({
     employeeName: shift.user.name,
   }));
 
-  const weekShifts: PlanningShiftRow[] = shiftRows;
+  const shared = {
+    monday,
+    todayIso: today,
+    establishmentName: establishment?.name ?? '',
+    employees,
+    shifts: shiftRows,
+    days: weekDays(monday),
+  };
 
   return (
-    <main className="flex flex-1 flex-col p-6">
-      {user.role === Role.ADMIN ? (
-        <PlanningDashboard
-          monday={monday}
-          todayIso={today}
-          establishmentName={establishment?.name ?? ''}
-          employees={employees}
-          shifts={shiftRows}
-          days={weekDays(monday)}
-        />
+    <main className="flex flex-1 flex-col p-6 min-h-0">
+      {isAdmin ? (
+        <PlanningDashboard {...shared} readOnly={false} currentUserId={user.id} />
       ) : (
-        <PlanningWeek
-          monday={monday}
-          todayIso={today}
-          establishmentName={establishment?.name ?? ''}
-          employees={employees}
-          shifts={weekShifts}
-          days={weekDays(monday)}
-          readOnly
-          currentUserId={user.id}
-        />
+        <PlanningWeek {...shared} readOnly={false} currentUserId={user.id} />
       )}
     </main>
   );

@@ -99,6 +99,7 @@
   --space-md: 1rem;
   --space-lg: 1.5rem;
   /* MD3 Typography — font-family */
+  --font-headline-xl: var(--font-sora);
   --font-headline-lg: var(--font-sora);
   --font-headline-md: var(--font-sora);
   --font-headline-sm: var(--font-sora);
@@ -114,6 +115,8 @@
    Size and line-height are separate keys — same as the default theme's
    --text-sm / --text-sm--line-height convention. */
 @theme {
+  --text-headline-xl: 2.5rem;
+  --text-headline-xl--line-height: 3rem;
   --text-headline-lg: 2rem;
   --text-headline-lg--line-height: 1.25;
   --text-headline-md: 1.5rem;
@@ -730,6 +733,13 @@ button:active, a:active {
   --on-secondary-fixed-variant: #fde6c8;
   --inverse-primary: #5a3520;
   --on-tertiary-fixed-variant: #c4e8c4;
+}
+
+/* ===== AUTH PHOTO WAVE (login split) ===== */
+@media (min-width: 768px) {
+  .auth-photo-wave {
+    clip-path: url(#auth-photo-wave);
+  }
 }
 
 /* ===== AUTH TOAST ===== */

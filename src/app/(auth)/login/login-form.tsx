@@ -214,10 +214,19 @@ export function LoginForm() {
 
   return (
     <>
+      {/* Wavy clip for photo right edge (md+) */}
+      <svg aria-hidden="true" className="absolute w-0 h-0" focusable="false">
+        <defs>
+          <clipPath id="auth-photo-wave" clipPathUnits="objectBoundingBox">
+            <path d="M0,0 H0.92 C0.87,0.05 0.96,0.1 0.9,0.15 C0.84,0.2 0.97,0.26 0.91,0.32 C0.85,0.38 0.96,0.44 0.9,0.5 C0.84,0.56 0.97,0.62 0.91,0.68 C0.85,0.74 0.96,0.8 0.9,0.85 C0.86,0.9 0.94,0.95 0.92,1 H0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       <div className="w-full max-w-[1080px] rounded-3xl overflow-hidden my-auto shadow-2xl shadow-black/20 grid grid-cols-1 md:grid-cols-2">
 
         {/* LEFT PANEL — Image */}
-        <div className="relative min-h-[420px] md:min-h-[680px] flex flex-col justify-between p-6 sm:p-8 text-white select-none overflow-hidden group">
+        <div className="auth-photo-wave relative min-h-[420px] md:min-h-[680px] flex flex-col justify-between p-6 sm:p-8 text-white select-none overflow-hidden group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="BrewFlow Atelier"
@@ -227,7 +236,7 @@ export function LoginForm() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/50 z-10 transition-opacity duration-700 group-hover:opacity-70" />
 
           {/* Top badges */}
-          <div className="relative z-20 flex items-center justify-between">
+          <div className="relative z-20 flex items-center justify-between md:pr-16">
             <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-wider text-white font-semibold">
               Selected Roasts
             </span>
@@ -265,7 +274,7 @@ export function LoginForm() {
           </div>
 
           {/* Bottom profile */}
-          <div className="relative z-20 flex items-center justify-between pt-4 border-t border-white/20">
+          <div className="relative z-20 flex items-center justify-between pt-4 border-t border-white/20 md:pr-16">
             <div className="flex items-center gap-3">
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -306,8 +315,8 @@ export function LoginForm() {
           </div>
         </div>
 
-        {/* RIGHT PANEL — Form */}
-        <div className="relative flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-100">
+        {/* RIGHT PANEL — Form (near-transparent, page bg shows through) */}
+        <div className="relative flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-white/25 backdrop-blur-[6px]">
           <div className="absolute top-0 right-0 w-40 h-40 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-300/10 rounded-full blur-2xl pointer-events-none" />
 

@@ -262,7 +262,7 @@ export async function validateSale(
     return mapSaleError(error, t);
   }
 
-  revalidatePath('/caisse');
+  revalidatePath('/caisse/pos');
   return {
     success: true,
     message:
@@ -355,7 +355,7 @@ export async function createCheckoutSession(
       ],
       metadata: { orderId },
       success_url: `${baseUrl}/api/stripe/return?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/caisse`,
+      cancel_url: `${baseUrl}/caisse/pos`,
     });
     sessionUrl = session.url!;
   } catch (error) {
@@ -367,6 +367,6 @@ export async function createCheckoutSession(
     } satisfies SaleState;
   }
 
-  revalidatePath('/caisse');
+  revalidatePath('/caisse/pos');
   redirect(sessionUrl);
 }

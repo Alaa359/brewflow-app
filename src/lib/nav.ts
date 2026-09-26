@@ -3,8 +3,10 @@ import {
   BarChart3Icon,
   CalendarClockIcon,
   ChefHatIcon,
+  CookingPotIcon,
   Grid3x3Icon,
   HistoryIcon,
+  HomeIcon,
   LayoutDashboardIcon,
   PackageIcon,
   ShoppingCartIcon,
@@ -24,18 +26,21 @@ export type NavItem = {
 export type NavSection = { sectionKey: string; items: NavItem[] };
 
 const OPERATIONS: NavItem[] = [
-  { href: '/caisse', key: 'pos', roles: ['ADMIN', 'SERVER'] as Role[], icon: ShoppingCartIcon },
-  { href: '/cuisine', key: 'kitchen', roles: ['KITCHEN', 'ADMIN'] as Role[], icon: ChefHatIcon },
+  { href: '/caisse', key: 'salleHome', roles: ['SERVER'] as Role[], icon: HomeIcon },
+  { href: '/caisse/pos', key: 'pos', roles: ['ADMIN', 'SERVER'] as Role[], icon: ShoppingCartIcon },
+  { href: '/cuisine', key: 'kitchenHome', roles: ['KITCHEN'] as Role[], icon: ChefHatIcon },
+  { href: '/cuisine/kds', key: 'kds', roles: ['KITCHEN', 'ADMIN'] as Role[], icon: CookingPotIcon },
   { href: '/cuisine/historique', key: 'history', roles: ['KITCHEN'] as Role[], icon: HistoryIcon },
   { href: '/tables', key: 'tables', roles: ['ADMIN', 'SERVER'] as Role[], icon: Grid3x3Icon },
 ];
 
 const MANAGEMENT: NavItem[] = [
+  { href: '/accueil', key: 'accueil', roles: ['ADMIN'] as Role[], icon: HomeIcon },
   { href: '/dashboard', key: 'dashboard', roles: ['ADMIN'] as Role[], icon: LayoutDashboardIcon },
   { href: '/rapports', key: 'reports', roles: ['ADMIN'] as Role[], icon: BarChart3Icon },
   { href: '/ingredients', key: 'ingredients', roles: ['ADMIN'] as Role[], icon: PackageIcon },
   { href: '/plats', key: 'dishes', roles: ['ADMIN'] as Role[], icon: UtensilsCrossedIcon },
-  { href: '/planning', key: 'planning', roles: ['ADMIN', 'SERVER'] as Role[], icon: CalendarClockIcon },
+  { href: '/planning', key: 'planning', roles: ['ADMIN', 'SERVER', 'KITCHEN'] as Role[], icon: CalendarClockIcon },
   { href: '/employes', key: 'employees', roles: ['ADMIN'] as Role[], icon: UsersIcon },
   { href: '/etablissements', key: 'establishments', roles: ['ADMIN'] as Role[], icon: StoreIcon },
 ];

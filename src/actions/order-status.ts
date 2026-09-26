@@ -117,8 +117,8 @@ export async function advanceOrderStatus(
     } satisfies OrderActionState;
   }
 
-  revalidatePath('/caisse');
-  revalidatePath('/cuisine');
+  revalidatePath('/caisse/pos');
+  revalidatePath('/cuisine/kds');
   return {
     success: true,
     status: targetParsed.data,
@@ -176,8 +176,8 @@ export async function settlePendingOrder(
     return mapOrderError(error, t);
   }
 
-  revalidatePath('/caisse');
-  revalidatePath('/cuisine');
+  revalidatePath('/caisse/pos');
+  revalidatePath('/cuisine/kds');
   return {
     success: true,
     orderId,

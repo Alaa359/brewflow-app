@@ -26,16 +26,22 @@ import type { EmployeeRole } from '@/lib/validations/employee';
 export function ShiftDialog({
   dayOfWeek,
   employees,
+  currentUserId,
+  hideEmployeeSelect = false,
   onClose,
 }: {
   dayOfWeek: number;
   employees: { id: string; name: string; role: EmployeeRole }[];
+  currentUserId?: string;
+  hideEmployeeSelect?: boolean;
   onClose: () => void;
 }) {
   const [state, formAction, pending] = useActionState(createShift, undefined);
   const t = useTranslations('Planning');
   const tCommon = useTranslations('Common');
-  const [employeeId, setEmployeeId] = useState(employees[0]?.id ?? '');
+  const [employeeId, setEmployeeId] = useState(
+    currentUserId || employees[0]?.id || ''
+  );
   const [day, setDay] = useState(dayOfWeek);
   const [startTime, setStartTime] = useState('08:00');
   const [endTime, setEndTime] = useState('14:00');
@@ -53,29 +59,34 @@ export function ShiftDialog({
         </DialogHeader>
 
         <form action={formAction} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="employeeId">{t('shiftDialog.employee')}</Label>
+          {!hideEmployeeSelect && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="employeeId">{t('shiftDialog.employee')}</Label>
+              <input type="hidden" name="employeeId" value={employeeId} />
+              <Select value={employeeId} onValueChange={setEmployeeId}>
+                <SelectTrigger id="employeeId" className="w-full">
+                  <SelectValue
+                    placeholder={t('shiftDialog.employeePlaceholder')}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee.id} value={employee.id}>
+                      {employee.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {state?.errors?.employeeId?.map((error) => (
+                <p key={error} className="text-destructive text-xs">
+                  {error}
+                </p>
+              ))}
+            </div>
+          )}
+          {hideEmployeeSelect && (
             <input type="hidden" name="employeeId" value={employeeId} />
-            <Select value={employeeId} onValueChange={setEmployeeId}>
-              <SelectTrigger id="employeeId" className="w-full">
-                <SelectValue
-                  placeholder={t('shiftDialog.employeePlaceholder')}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {employees.map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id}>
-                    {employee.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {state?.errors?.employeeId?.map((error) => (
-              <p key={error} className="text-destructive text-xs">
-                {error}
-              </p>
-            ))}
-          </div>
+          )}
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="dayOfWeek">{t('shiftDialog.day')}</Label>

@@ -4,7 +4,7 @@ import { getStripe, stripeConfigured } from '@/lib/stripe';
 import { getSaleContext } from '@/lib/i18n/sale-context';
 import { completePendingOrder } from '@/lib/sales-core';
 
-const CAISSE_URL = '/caisse';
+const CAISSE_URL = '/caisse/pos';
 
 export async function GET(request: NextRequest) {
   if (!stripeConfigured()) {
