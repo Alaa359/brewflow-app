@@ -402,6 +402,7 @@
       "saleFailed": "Sale failed.",
       "saleRetry": "A sale is in progress on the same stock, please try again.",
       "amountInsufficient": "Amount received is insufficient.",
+      "checkoutFailed": "Checkout failed.",
       "saleRecorded": "Sale recorded.",
       "paymentStarted": "Payment started.",
       "cardUnavailable": "Card payment is unavailable.",
@@ -521,6 +522,8 @@
       "exit": "Exit fullscreen"
     },
     "filters": {
+      "zoneLabel": "Zone",
+      "sourceLabel": "Source",
       "zone": "Filter by zone",
       "source": "Filter by source",
       "allZones": "All zones",
@@ -553,6 +556,8 @@
     "table": "Table No. {number}",
     "unavailable": "The menu is not available yet.",
     "noDishes": "No dishes in this category.",
+    "searchResults": "Results",
+    "noResults": "No results",
     "confirmed": {
       "title": "Order sent!",
       "description": "Your order has been submitted. A server will bring you the total to settle."
@@ -570,7 +575,8 @@
       "add": "Add to cart",
       "customize": "Available",
       "addToOrder": "Add to order",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "instant": "Sent straight to the barista"
     },
     "notFound": {
       "title": "Invalid QR code",
@@ -583,13 +589,17 @@
     "description": "Management app for cafés and restaurants: sales, stock, recipes and margins."
   },
   "Nav": {
+    "accueil": "Home",
     "dashboard": "Dashboard",
     "reports": "Reports",
     "pos": "Checkout",
+    "salleHome": "Home",
     "ingredients": "Ingredients",
     "dishes": "Dishes",
     "tables": "Tables",
     "kitchen": "Kitchen",
+    "kitchenHome": "Home",
+    "kds": "Kitchen Tickets",
     "history": "History",
     "planning": "Schedule",
     "employees": "Employees",
@@ -602,11 +612,6 @@
     "sections": {
       "operations": "Operations",
       "management": "Management"
-    },
-    "siteSettings": "Site settings",
-    "profileMenu": {
-      "siteSettings": "Site settings",
-      "logout": "Sign out"
     }
   },
   "Orders": {
@@ -723,6 +728,27 @@
   },
   "Planning": {
     "title": "Schedule",
+    "myTitle": "My schedule",
+    "mySubtitle": "My shifts for the week",
+    "badgePersonal": "personal",
+    "thisWeek": "this week",
+    "newShift": "New shift",
+    "weekGridTitle": "Weekly grid",
+    "weekGridHint": "Click + to schedule a day",
+    "shiftLabel": "Station",
+    "kpis": {
+      "shifts": "Shifts",
+      "shiftsSub": "{count} scheduled",
+      "hours": "Hours",
+      "hoursSub": "week total",
+      "free": "Free days",
+      "freeSub": "no shift",
+      "status": "Status",
+      "statusValue": "Active",
+      "statusSub": "schedule up to date"
+    },
+    "allEmployees": "Employee",
+    "allEmployeesOption": "All employees",
     "currentWeek": "Current week",
     "prevWeek": "Previous week",
     "nextWeek": "Next week",
@@ -731,6 +757,7 @@
     "removeSlot": "Remove {name} ({times})",
     "removeSlotTitle": "Remove this slot?",
     "removeSlotConfirm": "{name}, {day} {times} will no longer be scheduled.",
+    "removeSlotFailed": "Could not remove this shift, it may have already been deleted.",
     "noEmployees": "No employees in this store:",
     "noEmployeesLink": "create an employee",
     "noEmployeesHint": "to schedule shifts.",
@@ -776,6 +803,17 @@
     "searchPlaceholder": "Search for a dish…",
     "noCategories": "No categories available.",
     "noDishes": "No dishes in this category.",
+    "header": {
+      "ticket": "Ticket · {count} it.",
+      "server": "Server",
+      "cancel": "Cancel"
+    },
+    "categories": {
+      "all": "All"
+    },
+    "grid": {
+      "caption": "{count, plural, =0 {0 dish} =1 {1 dish} other {# dishes}}"
+    },
     "kpi": {
       "ariaLabel": "Today’s indicators",
       "revenue": "Revenue today",
@@ -785,13 +823,17 @@
     },
     "cart": {
       "title": "Cart",
+      "running": "Current order",
+      "articles": "{count, plural, =0 {0 item} =1 {1 item} other {# items}}",
+      "lineQty": "{quantity}× {name}",
       "lineTotal": "{cost} / unit",
       "empty": "Your cart is empty.",
       "removeOne": "Remove one",
       "addOne": "Add one",
       "deleteLine": "Delete line",
-      "downloadTicket": "Download receipt",
-      "total": "Total"
+      "downloadTicket": "Print ticket",
+      "total": "Total TTC net",
+      "currencyNote": "Tunisian dinar (TND)"
     },
     "table": {
       "label": "Table",
@@ -800,14 +842,18 @@
     "payment": {
       "label": "Payment",
       "amountReceived": "Amount received (TND)",
+      "bulletReceived": "Amount received",
       "amountInvalid": "Invalid amount.",
       "change": "Change to return: {amount}",
+      "changeShort": "Change: {amount}",
+      "exact": "Exact",
       "amountInsufficient": "Insufficient amount.",
       "stripeNotice": "You will be redirected to Stripe to pay in euros."
     },
     "submit": {
       "recording": "Recording…",
       "cash": "Charge cash",
+      "cashPrint": "Charge & print ticket",
       "card": "Pay by card"
     },
     "saleRecordedToast": "Sale recorded."
@@ -913,7 +959,37 @@
     "deleteAria": "Delete table {number}",
     "numberLabel": "No. {number}",
     "empty": "No tables yet. Add one to get started.",
+    "emptyZone": "No tables in this zone.",
     "hasOrders": "Orders are linked to this table",
+    "noZone": "No zone",
+    "print": "Print",
+    "views": {
+      "tables": "Tables & QR Codes",
+      "menu": "Client Menu Preview"
+    },
+    "preview": {
+      "title": "Live order — Table {number} · {zone}",
+      "description": "Interactive preview as seen by the guest after scanning the QR code",
+      "sessionActive": "Active Client Session",
+      "back": "Back to Tables",
+      "table": "Table",
+      "allCategories": "Full menu",
+      "dishCount": "{count, plural, =0 {0 items} =1 {1 item} other {# items}}",
+      "empty": "No dishes available right now.",
+      "available": "Available",
+      "add": "Open menu"
+    },
+    "zones": {
+      "all": "All zones ({count})"
+    },
+    "stats": {
+      "activeOrders": "Active orders",
+      "occupied": "Occupied tables"
+    },
+    "status": {
+      "occupied": "Occupied",
+      "free": "Free"
+    },
     "columns": {
       "table": "Table",
       "zone": "Zone",

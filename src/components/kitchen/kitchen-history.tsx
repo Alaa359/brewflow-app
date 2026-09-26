@@ -22,9 +22,11 @@ export type HistoryOrder = {
 export async function KitchenHistory({
   orders,
   establishmentName,
+  timezone,
 }: {
   orders: HistoryOrder[];
   establishmentName: string;
+  timezone?: string;
 }) {
   const t = await getTranslations('Kitchen');
   const tCommon = await getTranslations('Common');
@@ -77,7 +79,7 @@ export async function KitchenHistory({
               orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="tabular-nums">
-                    {formatTime(order.createdAt, locale)}
+                    {formatTime(order.createdAt, locale, timezone)}
                   </TableCell>
                   <TableCell>
                     {t('tableNumber', { number: order.tableNumber })}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   Coffee,
   CakeSlice,
@@ -35,6 +37,7 @@ type DishThumbProps = {
   size?: keyof typeof SIZE_CLASSES;
   categoryName?: string | null;
   variant?: 'default' | 'poster';
+  className?: string;
 };
 
 function CategoryIcon({
@@ -79,9 +82,12 @@ function CategoryIcon({
   }
 }
 
-export function DishThumb({ src, alt, size = 'md', categoryName, variant = 'default' }: DishThumbProps) {
+export function DishThumb({ src, alt, size = 'md', categoryName, variant = 'default', className }: DishThumbProps) {
+  const [failed, setFailed] = useState(false);
+  const broken = !src || failed;
+
   if (variant === 'poster') {
-    if (!src) {
+    if (broken) {
       return (
         <div className="bg-muted flex h-44 w-full shrink-0 items-center justify-center rounded-t-2xl">
           <CategoryIcon categoryName={categoryName} className="size-10 text-muted-foreground" />
@@ -94,15 +100,16 @@ export function DishThumb({ src, alt, size = 'md', categoryName, variant = 'defa
         src={src}
         alt={alt}
         loading="lazy"
+        onError={() => setFailed(true)}
         className="menu-poster-img h-44 w-full shrink-0 rounded-t-2xl object-cover"
       />
     );
   }
 
-  if (!src) {
+  if (broken) {
     return (
       <div
-        className={`bg-muted flex shrink-0 items-center justify-center ${SIZE_CLASSES[size]}`}
+        className={`bg-muted flex shrink-0 items-center justify-center ${SIZE_CLASSES[size]} ${className ?? ''}`}
       >
         <CategoryIcon
           categoryName={categoryName}
@@ -118,7 +125,8 @@ export function DishThumb({ src, alt, size = 'md', categoryName, variant = 'defa
       src={src}
       alt={alt}
       loading="lazy"
-      className={`bg-muted shrink-0 object-cover ${SIZE_CLASSES[size]}`}
+      onError={() => setFailed(true)}
+      className={`bg-muted shrink-0 object-cover ${SIZE_CLASSES[size]} ${className ?? ''}`}
     />
   );
 }

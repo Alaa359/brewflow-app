@@ -3,20 +3,26 @@ import { Role } from '@/generated/client';
 import { getTranslations } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { prisma } from '@/lib/prisma';
-import { periodStart, type Period } from '@/lib/sales';
+import { normalizeTimezone, periodStart, type Period } from '@/lib/sales';
 import { TableauDeBordDashboard } from '@/components/dashboard/tableau-de-bord-dashboard';
 import { roundMoney } from '@/lib/margins';
 
 const periodSchema = z.enum(['jour', 'semaine', 'mois']).catch('jour');
 
-const TUNIS_HOUR = new Intl.DateTimeFormat('fr-TN', {
-  timeZone: 'Africa/Tunis',
-  hour: 'numeric',
-  hour12: false,
-});
+const hourFormatters = new Map<string, Intl.DateTimeFormat>();
 
-function tunisiaHour(date: Date): number {
-  return Number(TUNIS_HOUR.format(date));
+function hourOfDay(date: Date, timezone: string): number {
+  const tz = normalizeTimezone(timezone);
+  let formatter = hourFormatters.get(tz);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('fr-TN', {
+      timeZone: tz,
+      hour: 'numeric',
+      hour12: false,
+    });
+    hourFormatters.set(tz, formatter);
+  }
+  return Number(formatter.format(date));
 }
 
 export default async function DashboardPage({
@@ -27,7 +33,7 @@ export default async function DashboardPage({
   const user = await requireRole(Role.ADMIN);
   const { periode } = await searchParams;
   const period: Period = periodSchema.parse(periode);
-  const start = periodStart(period);
+  const start = periodStart(period, new Date(), user.establishmentTimezone);
 
   const t = await getTranslations('Dashboard');
 
@@ -114,7 +120,7 @@ export default async function DashboardPage({
     if (order.paymentMethod === 'CASH') cashRevenue += amount;
     if (order.paymentMethod === 'STRIPE') cardRevenue += amount;
 
-    const hour = tunisiaHour(order.createdAt);
+    const hour = hourOfDay(order.createdAt, user.establishmentTimezone);
     const bucket = hourlyMap.get(hour) ?? { revenue: 0, tickets: 0 };
     bucket.revenue += amount;
     bucket.tickets += 1;

@@ -1,5 +1,10 @@
 ﻿import { z } from 'zod';
-import { startOfDayTunisia, todayTunisia } from '@/lib/sales';
+import {
+  DEFAULT_TIMEZONE,
+  isoDayStartInTz,
+  toDateInputTunisia,
+  todayTunisia,
+} from '@/lib/sales';
 import type { MessageTranslator } from '@/lib/i18n/translator';
 
 function parseQuantity(value: unknown): number | null {
@@ -18,38 +23,54 @@ function quantityField(t: MessageTranslator) {
     .transform((v) => parseQuantity(v) as number);
 }
 
-function toLocalDate(value: unknown): Date | null {
+function toIsoDate(value: unknown, timezone: string): string | null {
   if (value === '' || value === null || value === undefined) {
-    return todayTunisia();
+    return toDateInputTunisia(new Date(), timezone);
   }
   if (typeof value !== 'string') return null;
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
-  const [, y, m, d] = match;
-  const date = new Date(Number(y), Number(m) - 1, Number(d));
-  return Number.isNaN(date.getTime()) ? null : date;
+  const [year, month, day] = match.slice(1).map(Number);
+  const probe = new Date(Date.UTC(year, month - 1, day));
+  if (
+    probe.getUTCFullYear() !== year ||
+    probe.getUTCMonth() !== month - 1 ||
+    probe.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  return value;
 }
 
-function isFuture(date: Date): boolean {
-  return startOfDayTunisia(date).getTime() > todayTunisia().getTime();
+function isFuture(iso: string, timezone: string): boolean {
+  return (
+    isoDayStartInTz(iso, timezone).getTime() >
+    todayTunisia(new Date(), timezone).getTime()
+  );
 }
 
-function dateField(t: MessageTranslator) {
+function dateField(t: MessageTranslator, timezone: string) {
   return z
     .any()
-    .refine((v) => toLocalDate(v) !== null, {
+    .refine((v) => toIsoDate(v, timezone) !== null, {
       message: t('stockEntry.invalidDate'),
     })
     .refine(
-      (v) => !(toLocalDate(v) !== null && isFuture(toLocalDate(v) as Date)),
+      (v) => {
+        const iso = toIsoDate(v, timezone);
+        return iso === null || !isFuture(iso, timezone);
+      },
       {
         message: t('stockEntry.dateNotFuture'),
       }
     )
-    .transform((v) => toLocalDate(v) as Date);
+    .transform((v) => isoDayStartInTz(toIsoDate(v, timezone)!, timezone));
 }
 
-export function createStockEntrySchema(t: MessageTranslator) {
+export function createStockEntrySchema(
+  t: MessageTranslator,
+  timezone: string = DEFAULT_TIMEZONE
+) {
   return z.object({
     quantityAdded: quantityField(t),
     supplierName: z
@@ -58,7 +79,7 @@ export function createStockEntrySchema(t: MessageTranslator) {
       .max(80, t('stockEntry.supplierInvalid'))
       .transform((v) => (v === '' ? null : v))
       .optional(),
-    date: dateField(t),
+    date: dateField(t, timezone),
   });
 }
 

@@ -311,7 +311,7 @@ export function MenuClient({
                 <div className="flex items-center gap-1.5">
                   <SearchIcon className="text-caramel size-3.5" />
                   <span className="font-mono text-xs font-bold uppercase tracking-widest text-espresso">
-                    {t('searchResults', { defaultValue: 'Résultats' })}
+                    {t('searchResults')}
                   </span>
                 </div>
                 <span className="font-mono text-[11px] text-espresso/60">{activeDishes.length}</span>
@@ -334,7 +334,7 @@ export function MenuClient({
 
             {activeDishes.length === 0 && (
               <p className="rounded-xl border border-[#ecdccb] px-3 py-8 text-center text-sm text-[#8C7A6B]">
-                {searchQuery ? t('noResults', { defaultValue: 'Aucun résultat' }) : t('noDishes')}
+                {searchQuery ? t('noResults') : t('noDishes')}
               </p>
             )}
 
@@ -642,7 +642,7 @@ export function MenuClient({
                 </button>
                 <div className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-espresso/50">
                   <CheckCircleIcon className="size-3.5 text-tertiary" />
-                  <span>{t('cart.instant', { defaultValue: 'Transmis instantanément au barista' })}</span>
+                  <span>{t('cart.instant')}</span>
                 </div>
               </form>
 

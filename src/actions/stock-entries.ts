@@ -35,7 +35,10 @@ export async function createStockEntry(
   const t = await getTranslations('Feedback.stock');
   const tValidation = await getTranslations('Validation');
 
-  const validated = createStockEntrySchema(tValidation).safeParse({
+  const validated = createStockEntrySchema(
+    tValidation,
+    user.establishmentTimezone
+  ).safeParse({
     quantityAdded: formData.get('quantityAdded'),
     supplierName: formData.get('supplierName'),
     date: formData.get('date'),

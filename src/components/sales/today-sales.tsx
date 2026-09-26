@@ -31,9 +31,11 @@ export type TodayOrder = {
 export function TodaySales({
   orders,
   currentUserId,
+  timezone,
 }: {
   orders: TodayOrder[];
   currentUserId?: string | null;
+  timezone?: string;
 }) {
   const [onlyMine, setOnlyMine] = useState(false);
   const t = useTranslations('Orders');
@@ -51,11 +53,11 @@ export function TodaySales({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-semibold tracking-tight">
+        <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">
           {t('today.title')}
         </h2>
         <div className="flex flex-wrap items-center gap-3">
-          <p className="text-muted-foreground text-sm">
+          <p className="font-body-md text-body-md text-on-surface-variant">
             {t('today.summary', {
               count: visible.length,
               revenue: formatCost(revenue, locale, tCommon('currency')),
@@ -65,16 +67,16 @@ export function TodaySales({
             <div
               role="group"
               aria-label={t('today.filterAria')}
-              className="bg-muted flex rounded-lg p-0.5"
+              className="bg-surface-container flex rounded-lg p-0.5"
             >
               <button
                 type="button"
                 aria-pressed={!onlyMine}
                 onClick={() => setOnlyMine(false)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                className={`font-label-md text-label-md rounded-md px-2.5 py-1 font-medium transition-colors ${
                   onlyMine
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground'
+                    ? 'text-on-surface-variant'
+                    : 'bg-surface-container-lowest text-on-surface shadow-sm'
                 }`}
               >
                 {t('today.filterAll')}
@@ -83,10 +85,10 @@ export function TodaySales({
                 type="button"
                 aria-pressed={onlyMine}
                 onClick={() => setOnlyMine(true)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                className={`font-label-md text-label-md rounded-md px-2.5 py-1 font-medium transition-colors ${
                   onlyMine
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground'
+                    ? 'bg-surface-container-lowest text-on-surface shadow-sm'
+                    : 'text-on-surface-variant'
                 }`}
               >
                 {t('today.filterMine')}
@@ -96,16 +98,28 @@ export function TodaySales({
         </div>
       </div>
 
-      <div className="rounded-xl border">
+      <div className="bg-surface-container-lowest overflow-hidden rounded-xl border border-outline-variant/30 shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>{t('columns.time')}</TableHead>
-              <TableHead>{t('columns.detail')}</TableHead>
-              <TableHead className="text-end">{t('columns.total')}</TableHead>
-              <TableHead>{t('columns.status')}</TableHead>
-              <TableHead>{t('columns.method')}</TableHead>
-              <TableHead className="w-16">{t('columns.ticket')}</TableHead>
+            <TableRow className="bg-surface-container-low/60 hover:bg-surface-container-low/60">
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.time')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.detail')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-end text-on-surface-variant">
+                {t('columns.total')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.status')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.method')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md w-16 text-on-surface-variant">
+                {t('columns.ticket')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,7 +136,7 @@ export function TodaySales({
               visible.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="tabular-nums">
-                    {formatTime(order.createdAt, locale)}
+                    {formatTime(order.createdAt, locale, timezone)}
                   </TableCell>
                   <TableCell className="max-w-72">
                     {order.items

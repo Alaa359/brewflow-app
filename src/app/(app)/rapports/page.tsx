@@ -2,7 +2,10 @@ import { Role } from '@/generated/client';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { requireRole } from '@/lib/auth/dal';
 import { addDays, formatDateLabel } from '@/lib/planning';
-import { startOfMonthTunisia, toDateInputTunisia } from '@/lib/sales';
+import {
+  startOfMonthTunisia,
+  toDateInputTunisia,
+} from '@/lib/sales';
 import { createReportRangeSchema } from '@/lib/validations/report';
 import { buildReport } from '@/lib/reports';
 import {
@@ -20,8 +23,12 @@ export default async function RapportsPage({
   const locale = await getLocale();
   const t = await getTranslations('Reports');
 
-  const today = toDateInputTunisia();
-  const monthStart = startOfMonthTunisia(new Date()).toISOString().slice(0, 10);
+  const timezone = user.establishmentTimezone;
+  const today = toDateInputTunisia(new Date(), timezone);
+  const monthStart = toDateInputTunisia(
+    startOfMonthTunisia(new Date(), timezone),
+    timezone
+  );
 
   const presets: ReportPreset[] = [
     { label: t('presets.today'), debut: today, fin: today },
@@ -42,7 +49,8 @@ export default async function RapportsPage({
   const report = await buildReport(
     user.establishmentId,
     range.debut,
-    range.fin
+    range.fin,
+    timezone
   );
   const downloadHref = `/api/reports/rapport?debut=${range.debut}&fin=${range.fin}`;
 

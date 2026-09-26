@@ -402,6 +402,7 @@
       "saleFailed": "تعذر إتمام البيع.",
       "saleRetry": "هناك عملية بيع جارية على نفس المخزون، يرجى إعادة المحاولة.",
       "amountInsufficient": "المبلغ المستلم غير كافٍ.",
+      "checkoutFailed": "تعذر إتمام الدفع.",
       "saleRecorded": "تم تسجيل البيع.",
       "paymentStarted": "تم بدء الدفع.",
       "cardUnavailable": "الدفع بالبطاقة غير متاح.",
@@ -521,6 +522,8 @@
       "exit": "الخروج من ملء الشاشة"
     },
     "filters": {
+      "zoneLabel": "المنطقة",
+      "sourceLabel": "المصدر",
       "zone": "تصفية حسب المنطقة",
       "source": "تصفية حسب المصدر",
       "allZones": "كل المناطق",
@@ -553,6 +556,8 @@
     "table": "الطاولة رقم {number}",
     "unavailable": "القائمة غير متاحة بعد.",
     "noDishes": "لا توجد أطباق في هذه الفئة.",
+    "searchResults": "النتائج",
+    "noResults": "لا توجد نتائج",
     "confirmed": {
       "title": "تم إرسال الطلب!",
       "description": "تم تسليم طلبك بنجاح. سيحضر النادل إليك الإجمالي لتسديده."
@@ -570,7 +575,8 @@
       "add": "أضف إلى السلة",
       "customize": "متاح",
       "addToOrder": "أضف إلى الطلب",
-      "quantity": "الكمية"
+      "quantity": "الكمية",
+      "instant": "يُرسل مباشرة إلى الباريستا"
     },
     "notFound": {
       "title": "رمز QR غير صالح",
@@ -583,13 +589,17 @@
     "description": "تطبيق إدارة للمقاهي والمطاعم: المبيعات، المخزون، الوصفات والهوامش."
   },
   "Nav": {
+    "accueil": "الرئيسية",
     "dashboard": "لوحة القيادة",
     "reports": "التقارير",
     "pos": "الصندوق",
+    "salleHome": "الرئيسية",
     "ingredients": "المكوّنات",
     "dishes": "الأطباق",
     "tables": "الطاولات",
     "kitchen": "المطبخ",
+    "kitchenHome": "الرئيسية",
+    "kds": "تذاكر المطبخ",
     "history": "السجل",
     "planning": "جدول العمل",
     "employees": "الموظفون",
@@ -602,8 +612,7 @@
     "sections": {
       "operations": "العمليات",
       "management": "الإدارة"
-    },
-    "siteSettings": "إعدادات الموقع"
+    }
   },
   "Orders": {
     "columns": {
@@ -719,6 +728,27 @@
   },
   "Planning": {
     "title": "جدول العمل",
+    "myTitle": "جدولي",
+    "mySubtitle": "وردياتي خلال الأسبوع",
+    "badgePersonal": "شخصي",
+    "thisWeek": "هذا الأسبوع",
+    "newShift": "فترة جديدة",
+    "weekGridTitle": "شبكة أسبوعية",
+    "weekGridHint": "اضغط + لجدولة يوم",
+    "shiftLabel": "المنصب",
+    "kpis": {
+      "shifts": "الفترات",
+      "shiftsSub": "{count} مجدولة",
+      "hours": "ساعات",
+      "hoursSub": "مجموع الأسبوع",
+      "free": "أيام راحة",
+      "freeSub": "بدون فترة",
+      "status": "الحالة",
+      "statusValue": "نشط",
+      "statusSub": "الجدول محدّث"
+    },
+    "allEmployees": "الموظف",
+    "allEmployeesOption": "جميع الموظفين",
     "currentWeek": "الأسبوع الحالي",
     "prevWeek": "الأسبوع السابق",
     "nextWeek": "الأسبوع القادم",
@@ -727,6 +757,7 @@
     "removeSlot": "أزل {name} ({times})",
     "removeSlotTitle": "إزالة هذه الفترة؟",
     "removeSlotConfirm": "لن يتم جدولة {name}، {day} {times} بعد الآن.",
+    "removeSlotFailed": "تعذّر حذف هذا الميعاد، ربما تم حذفه بالفعل.",
     "noEmployees": "لا يوجد موظفون في هذا الفرع:",
     "noEmployeesLink": "أنشئ موظفا",
     "noEmployeesHint": "لجدولة الورديات.",
@@ -772,6 +803,17 @@
     "searchPlaceholder": "ابحث عن طبق…",
     "noCategories": "لا توجد فئات متاحة.",
     "noDishes": "لا توجد أطباق في هذه الفئة.",
+    "header": {
+      "ticket": "تذكرة · {count} صنف",
+      "server": "النادل",
+      "cancel": "إلغاء"
+    },
+    "categories": {
+      "all": "الكل"
+    },
+    "grid": {
+      "caption": "{count, plural, =0 {0 طبق} =1 {1 طبق} other {# أطباق}}"
+    },
     "kpi": {
       "ariaLabel": "مؤشرات اليوم",
       "revenue": "إيرادات اليوم",
@@ -781,13 +823,17 @@
     },
     "cart": {
       "title": "السلة",
+      "running": "الطلب الجاري",
+      "articles": "{count, plural, =0 {0 صنف} =1 {1 صنف} other {# أصناف}}",
+      "lineQty": "{quantity}× {name}",
       "lineTotal": "{cost} / الوحدة",
       "empty": "السلة فارغة.",
       "removeOne": "إزالة واحد",
       "addOne": "إضافة واحد",
       "deleteLine": "حذف السطر",
-      "downloadTicket": "تنزيل الفاتورة",
-      "total": "الإجمالي"
+      "downloadTicket": "طباعة التذكرة",
+      "total": "الإجمالي الصافي",
+      "currencyNote": "دينار تونسي (TND)"
     },
     "table": {
       "label": "الطاولة",
@@ -796,14 +842,18 @@
     "payment": {
       "label": "الدفع",
       "amountReceived": "المبلغ المستلم (د.ت)",
+      "bulletReceived": "المبلغ المستلم",
       "amountInvalid": "مبلغ غير صالح.",
       "change": "المبلغ الواجب إرجاعه: {amount}",
+      "changeShort": "الباقي: {amount}",
+      "exact": "بالضبط",
       "amountInsufficient": "المبلغ غير كافٍ.",
       "stripeNotice": "سيتم تحويلك إلى Stripe للدفع باليورو."
     },
     "submit": {
       "recording": "جارٍ التسجيل…",
       "cash": "تحصيل نقدًا",
+      "cashPrint": "تحصيل وطباعة التذكرة",
       "card": "الدفع بالبطاقة"
     },
     "saleRecordedToast": "تم تسجيل البيع."
@@ -909,7 +959,37 @@
     "deleteAria": "حذف الطاولة {number}",
     "numberLabel": "رقم {number}",
     "empty": "لا توجد طاولات بعد. ابدأ بإضافة واحدة.",
+    "emptyZone": "لا توجد طاولات في هذه المنطقة.",
     "hasOrders": "توجد طلبات مرتبطة بهذه الطاولة",
+    "noZone": "بدون منطقة",
+    "print": "طباعة",
+    "views": {
+      "tables": "الطاولات ورموز QR",
+      "menu": "معاينة قائمة العميل"
+    },
+    "preview": {
+      "title": "طلب مباشر — الطاولة {number} · {zone}",
+      "description": "معاينة تفاعلية كما يراها الضيف بعد مسح رمز QR",
+      "sessionActive": "جلسة عميل نشطة",
+      "back": "عودة إلى الطاولات",
+      "table": "الطاولة",
+      "allCategories": "القائمة كاملة",
+      "dishCount": "{count, plural, =0 {0 صنف} =1 {1 صنف} =2 {صنفان} few {# أصناف} many {# صنفا} other {# صنف}}",
+      "empty": "لا توجد أطباق متاحة حالياً.",
+      "available": "متاح",
+      "add": "فتح القائمة"
+    },
+    "zones": {
+      "all": "كل المناطق ({count})"
+    },
+    "stats": {
+      "activeOrders": "الطلبات النشطة",
+      "occupied": "الطاولات المشغولة"
+    },
+    "status": {
+      "occupied": "مشغولة",
+      "free": "شاغرة"
+    },
     "columns": {
       "table": "الطاولة",
       "zone": "المنطقة",

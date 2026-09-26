@@ -107,6 +107,7 @@ export async function GET(
       statusLabel={tStatus(order.status)}
       methodLabel={order.paymentMethod ? tPayment(order.paymentMethod) : '—'}
       labels={labels}
+      timezone={user.establishmentTimezone}
     />
   );
 

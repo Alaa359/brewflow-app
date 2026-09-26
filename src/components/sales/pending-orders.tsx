@@ -56,7 +56,13 @@ const STATUS_VARIANT: Record<
   PAYEE: 'outline',
 };
 
-export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
+export function PendingOrders({
+  orders,
+  timezone,
+}: {
+  orders: PendingOrder[];
+  timezone?: string;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [reflect, setReflect] = useState<PendingOrder | null>(null);
@@ -133,28 +139,42 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <HourglassIcon className="size-4" />
+        <h2 className="text-on-surface flex items-center gap-2 font-headline-sm text-headline-sm font-bold tracking-tight">
+          <HourglassIcon className="text-primary size-4" />
           {t('pending.title')}
           {orders.length > 0 && (
-            <span className="bg-destructive rounded-full px-2 py-0.5 text-xs text-white">
+            <span className="bg-destructive rounded-full px-2 py-0.5 font-label-numeric text-label-numeric text-white">
               {orders.length}
             </span>
           )}
         </h2>
-        <p className="text-muted-foreground text-sm">{t('pending.subtitle')}</p>
+        <p className="font-body-md text-body-md text-on-surface-variant">
+          {t('pending.subtitle')}
+        </p>
       </div>
 
-      <div className="rounded-xl border">
+      <div className="bg-surface-container-lowest overflow-hidden rounded-xl border border-outline-variant/30 shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>{t('columns.time')}</TableHead>
-              <TableHead>{t('columns.table')}</TableHead>
-              <TableHead>{t('columns.detail')}</TableHead>
-              <TableHead className="text-end">{t('columns.total')}</TableHead>
-              <TableHead>{t('columns.status')}</TableHead>
-              <TableHead className="w-40">{t('columns.action')}</TableHead>
+            <TableRow className="bg-surface-container-low/60 hover:bg-surface-container-low/60">
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.time')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.table')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.detail')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-end text-on-surface-variant">
+                {t('columns.total')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md text-on-surface-variant">
+                {t('columns.status')}
+              </TableHead>
+              <TableHead className="font-label-md text-label-md w-40 text-on-surface-variant">
+                {t('columns.action')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -174,7 +194,7 @@ export function PendingOrders({ orders }: { orders: PendingOrder[] }) {
                 return (
                   <TableRow key={order.id}>
                     <TableCell className="tabular-nums">
-                      {formatTime(order.createdAt, locale)}
+                      {formatTime(order.createdAt, locale, timezone)}
                     </TableCell>
                     <TableCell>
                       {t('pending.tableNumber', {

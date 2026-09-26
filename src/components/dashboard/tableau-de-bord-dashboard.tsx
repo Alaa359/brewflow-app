@@ -643,9 +643,7 @@ export function TableauDeBordDashboard({
                     opacity={isPeak ? 1 : 0.9}
                   >
                     {isPeak && (
-                      <title>
-                        {h.hour}h · {fmtDT(h.revenue)} DT · {h.tickets} tickets
-                      </title>
+                      <title>{`${h.hour}h · ${fmtDT(h.revenue)} DT · ${h.tickets} tickets`}</title>
                     )}
                   </rect>
                 );

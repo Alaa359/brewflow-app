@@ -152,6 +152,7 @@ export function TicketDocument({
   statusLabel,
   methodLabel,
   labels,
+  timezone,
 }: {
   order: TicketOrder;
   establishment: TicketEstablishment;
@@ -159,6 +160,7 @@ export function TicketDocument({
   statusLabel: string;
   methodLabel: string;
   labels: TicketLabels;
+  timezone?: string;
 }) {
   const lines = order.items.map((item) => ({
     ...item,
@@ -194,7 +196,7 @@ export function TicketDocument({
           <View style={styles.metaRow}>
             <Text style={styles.metaLabel}>{labels.date}</Text>
             <Text style={styles.metaValue}>
-              {formatDateTime(order.createdAt, locale)}
+              {formatDateTime(order.createdAt, locale, timezone)}
             </Text>
           </View>
           <View style={styles.metaRow}>

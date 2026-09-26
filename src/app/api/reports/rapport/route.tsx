@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
   const report = await buildReport(
     user.establishmentId,
     parsed.data.debut,
-    parsed.data.fin
+    parsed.data.fin,
+    user.establishmentTimezone
   );
 
   const locale = await getLocale();
@@ -95,6 +96,7 @@ export async function GET(request: NextRequest) {
       locale={pdfLocale}
       labels={labels}
       unitLabels={unitLabels}
+      timezone={user.establishmentTimezone}
     />
   );
 

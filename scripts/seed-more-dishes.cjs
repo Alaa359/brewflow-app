@@ -269,18 +269,20 @@ async function main() {
 
     // Download image
     const imgPath = path.join(UPLOAD_DIR, d.file);
+    let imageUrl = null;
     try {
       await downloadFile(d.image, imgPath);
+      imageUrl = `/uploads/dishes/${d.file}`;
       console.log(`  ✓ Downloaded: ${d.file}`);
     } catch (e) {
-      console.log(`  ✗ Failed: ${d.file} (${e.message})`);
+      console.log(`  ✗ Failed: ${d.file} (${e.message}) — dish saved without image`);
     }
 
     // Insert dish
     await client.query(
       `INSERT INTO "Dish" (id, name, description, price, "categoryId", "imageUrl", "isActive", "establishmentId", "createdAt", "updatedAt")
        VALUES (gen_random_uuid()::text, $1, $2, $3, $4, $5, true, $6, now(), now())`,
-      [d.name, d.description, d.price, catId, `/uploads/dishes/${d.file}`, estId]
+      [d.name, d.description, d.price, catId, imageUrl, estId]
     );
     added++;
     console.log(`  + ${d.name} (${d.price} DT) → ${d.category}`);

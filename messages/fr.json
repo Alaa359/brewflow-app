@@ -402,6 +402,7 @@
       "saleFailed": "Vente impossible.",
       "saleRetry": "Vente en cours sur le même stock, réessayez.",
       "amountInsufficient": "Montant reçu insuffisant.",
+      "checkoutFailed": "Encaissement impossible.",
       "saleRecorded": "Vente enregistrée.",
       "paymentStarted": "Paiement lancé.",
       "cardUnavailable": "Paiement par carte indisponible.",
@@ -521,6 +522,8 @@
       "exit": "Quitter le plein écran"
     },
     "filters": {
+      "zoneLabel": "Zone",
+      "sourceLabel": "Origine",
       "zone": "Filtrer par zone",
       "source": "Filtrer par origine",
       "allZones": "Toutes zones",
@@ -553,6 +556,8 @@
     "table": "Table n° {number}",
     "unavailable": "Le menu n’est pas encore disponible.",
     "noDishes": "Aucun plat dans cette catégorie.",
+    "searchResults": "Résultats",
+    "noResults": "Aucun résultat",
     "confirmed": {
       "title": "Commande envoyée !",
       "description": "Votre commande a bien été transmise. Un serveur vous apportera le total à régler."
@@ -570,7 +575,8 @@
       "add": "Ajouter au panier",
       "customize": "Disponible",
       "addToOrder": "Ajouter à la commande",
-      "quantity": "Quantité"
+      "quantity": "Quantité",
+      "instant": "Transmis instantanément au barista"
     },
     "notFound": {
       "title": "QR code invalide",
@@ -583,13 +589,17 @@
     "description": "Application de gestion pour café/restaurant : ventes, stock, recettes et marges."
   },
   "Nav": {
+    "accueil": "Accueil",
     "dashboard": "Tableau de bord",
     "reports": "Rapports",
     "pos": "Caisse",
+    "salleHome": "Accueil",
     "ingredients": "Ingrédients",
     "dishes": "Plats",
     "tables": "Tables",
     "kitchen": "Cuisine",
+    "kitchenHome": "Accueil",
+    "kds": "Tickets cuisine",
     "history": "Historique",
     "planning": "Planning",
     "employees": "Employés",
@@ -602,11 +612,6 @@
     "sections": {
       "operations": "Opérations",
       "management": "Gestion"
-    },
-    "siteSettings": "Paramètres du site",
-    "profileMenu": {
-      "siteSettings": "Paramètres du site",
-      "logout": "Se déconnecter"
     }
   },
   "Orders": {
@@ -723,6 +728,27 @@
   },
   "Planning": {
     "title": "Planning",
+    "myTitle": "Mon planning",
+    "mySubtitle": "Mes quarts de travail sur la semaine",
+    "badgePersonal": " personnel",
+    "thisWeek": "cette semaine",
+    "newShift": "Nouveau créneau",
+    "weekGridTitle": "Grille hebdomadaire",
+    "weekGridHint": "Cliquez + pour planifier un jour",
+    "shiftLabel": "Poste",
+    "kpis": {
+      "shifts": "Créneaux",
+      "shiftsSub": "{count} planifié(s)",
+      "hours": "Heures",
+      "hoursSub": "total semaine",
+      "free": "Jours libres",
+      "freeSub": "sans créneau",
+      "status": "Statut",
+      "statusValue": "Actif",
+      "statusSub": "planning à jour"
+    },
+    "allEmployees": "Employé",
+    "allEmployeesOption": "Tous les employés",
     "currentWeek": "Semaine actuelle",
     "prevWeek": "Semaine précédente",
     "nextWeek": "Semaine suivante",
@@ -731,6 +757,7 @@
     "removeSlot": "Retirer {name} ({times})",
     "removeSlotTitle": "Retirer ce créneau ?",
     "removeSlotConfirm": "{name}, {day} {times} ne sera plus planifié.",
+    "removeSlotFailed": "Impossible de supprimer ce créneau, il a peut-être déjà été retiré.",
     "noEmployees": "Aucun employé dans cet établissement :",
     "noEmployeesLink": "créer un employé",
     "noEmployeesHint": "pour pouvoir planifier des créneaux.",
@@ -776,6 +803,17 @@
     "searchPlaceholder": "Rechercher un plat…",
     "noCategories": "Aucune catégorie disponible.",
     "noDishes": "Aucun plat dans cette catégorie.",
+    "header": {
+      "ticket": "Ticket · {count} art.",
+      "server": "Barista",
+      "cancel": "Annuler"
+    },
+    "categories": {
+      "all": "Tous"
+    },
+    "grid": {
+      "caption": "{count, plural, =0 {0 plat} =1 {1 plat} other {# plats}}"
+    },
     "kpi": {
       "ariaLabel": "Indicateurs du jour",
       "revenue": "CA du jour",
@@ -785,13 +823,17 @@
     },
     "cart": {
       "title": "Panier",
+      "running": "Commande en cours",
+      "articles": "{count, plural, =0 {0 article} =1 {1 article} other {# articles}}",
+      "lineQty": "{quantity}× {name}",
       "lineTotal": "{cost} / unité",
       "empty": "Panier vide.",
       "removeOne": "Retirer un",
       "addOne": "Ajouter un",
       "deleteLine": "Supprimer la ligne",
-      "downloadTicket": "Télécharger le ticket",
-      "total": "Total"
+      "downloadTicket": "Imprimer le ticket",
+      "total": "Total TTC net",
+      "currencyNote": "Dinars tunisiens (TND)"
     },
     "table": {
       "label": "Table",
@@ -799,15 +841,19 @@
     },
     "payment": {
       "label": "Paiement",
-      "amountReceived": "Montant reçu (TND)",
+      "amountReceived": "Bullet reçu (TND)",
+      "bulletReceived": "Bullet reçu",
       "amountInvalid": "Montant invalide.",
       "change": "Monnaie à rendre : {amount}",
+      "changeShort": "Rendu : {amount}",
+      "exact": "Exact",
       "amountInsufficient": "Montant insuffisant.",
       "stripeNotice": "Vous serez redirigé vers Stripe pour régler en euros."
     },
     "submit": {
       "recording": "Enregistrement…",
       "cash": "Encaisser",
+      "cashPrint": "Encaisser & imprimer ticket",
       "card": "Payer par carte"
     },
     "saleRecordedToast": "Vente enregistrée."
@@ -913,7 +959,37 @@
     "deleteAria": "Supprimer la table {number}",
     "numberLabel": "n° {number}",
     "empty": "Aucune table. Commencez par en ajouter une.",
+    "emptyZone": "Aucune table dans cette zone.",
     "hasOrders": "Des commandes sont rattachées à cette table",
+    "noZone": "Sans zone",
+    "print": "Imprimer",
+    "views": {
+      "tables": "Tables & QR Codes",
+      "menu": "Aperçu Menu Client"
+    },
+    "preview": {
+      "title": "Commande en direct — Table {number} · {zone}",
+      "description": "Aperçu interactif tel que visualisé par le convive après avoir scanné le QR code",
+      "sessionActive": "Session Client Active",
+      "back": "Retour aux Tables",
+      "table": "Table",
+      "allCategories": "Tout le menu",
+      "dishCount": "{count, plural, =0 {0 création} =1 {1 création} other {# créations}}",
+      "empty": "Aucun plat disponible pour le moment.",
+      "available": "Disponible",
+      "add": "Ouvrir le menu"
+    },
+    "zones": {
+      "all": "Toutes les zones ({count})"
+    },
+    "stats": {
+      "activeOrders": "Commandes actives",
+      "occupied": "Tables occupées"
+    },
+    "status": {
+      "occupied": "Occupée",
+      "free": "Libre"
+    },
     "columns": {
       "table": "Table",
       "zone": "Zone",

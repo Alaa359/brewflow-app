@@ -223,12 +223,14 @@ export function ReportDocument({
   locale,
   labels,
   unitLabels,
+  timezone,
 }: {
   report: ReportData;
   establishment: ReportEstablishment;
   locale: string;
   labels: ReportLabels;
   unitLabels: Record<string, string>;
+  timezone?: string;
 }) {
   const { totals } = report;
   const periodLabel = `${formatDateLabel(report.range.from, locale)} – ${formatDateLabel(
@@ -272,7 +274,7 @@ export function ReportDocument({
         <View fixed style={styles.pageFooter}>
           <Text>
             {fill(labels.generatedAt, {
-              date: formatDateTime(report.generatedAt, locale),
+              date: formatDateTime(report.generatedAt, locale, timezone),
             })}
           </Text>
           <Text

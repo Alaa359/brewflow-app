@@ -1,7 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { computeMargins, roundMoney } from '@/lib/margins';
-import { startOfDayTunisia, toDateInputTunisia } from '@/lib/sales';
+import { DEFAULT_TIMEZONE, isoDayStartInTz, toDateInputTunisia } from '@/lib/sales';
 import { addDays, formatDateLabel, parseISODate } from '@/lib/planning';
 
 export type ReportCategoryLine = {
@@ -63,7 +63,8 @@ const RESTOCK_DETAIL_LIMIT = 50;
 export async function buildReport(
   establishmentId: string,
   fromIso: string,
-  toIso: string
+  toIso: string,
+  timezone: string = DEFAULT_TIMEZONE
 ): Promise<ReportData> {
   const fromDate = parseISODate(fromIso);
   const toDate = parseISODate(toIso);
@@ -71,8 +72,8 @@ export async function buildReport(
     throw new Error('Période invalide.');
   }
 
-  const start = startOfDayTunisia(fromDate);
-  const endExclusive = startOfDayTunisia(parseISODate(addDays(toIso, 1))!);
+  const start = isoDayStartInTz(fromIso, timezone);
+  const endExclusive = isoDayStartInTz(addDays(toIso, 1), timezone);
 
   const [orders, stockEntries] = await Promise.all([
     prisma.order.findMany({
@@ -254,7 +255,7 @@ export async function buildReport(
   const restockEntries: ReportRestockEntry[] = stockEntries
     .slice(0, RESTOCK_DETAIL_LIMIT)
     .map((entry) => ({
-      dateLabel: formatDateLabel(toDateInputTunisia(entry.date)),
+      dateLabel: formatDateLabel(toDateInputTunisia(entry.date, timezone)),
       ingredientName: entry.ingredient.name,
       unit: entry.ingredient.unit,
       quantityAdded: entry.quantityAdded.toNumber(),

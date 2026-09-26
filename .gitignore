@@ -42,6 +42,8 @@ yarn-error.log*
 
 # local dev server logs
 dev-server*.log
+/dev.log
+/dev-err.log
 
 # uploaded images (local storage)
 /public/uploads/
