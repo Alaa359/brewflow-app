@@ -1,10 +1,25 @@
 'use client';
 
 import { useRef, useCallback, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { EstablishmentData } from '@/app/(app)/etablissements/page';
+import { createEstablishment } from '@/actions/establishments';
+import {
+  EstablishmentForm,
+  TIMEZONE_LABEL,
+} from '@/components/establishments/establishment-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 export function EtablissementsDashboard({ establishments }: { establishments: EstablishmentData[] }) {
+  const t = useTranslations('Establishments');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [createOpen, setCreateOpen] = useState(false);
   const pingIconRef = useRef<HTMLSpanElement>(null);
   const diagnosticToastRef = useRef<HTMLDivElement>(null);
   const diagnosticToastTextRef = useRef<HTMLSpanElement>(null);
@@ -78,12 +93,27 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
           <button
             className="inline-flex h-[38px] items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-on-primary shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] cursor-pointer"
             type="button"
+            onClick={() => setCreateOpen(true)}
           >
             <span className="material-symbols-outlined text-lg">add_location_alt</span>
             Nouvel Établissement
           </button>
         </div>
       </div>
+
+      {/* Dialogue de création */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('createDialogTitle')}</DialogTitle>
+            <DialogDescription>{t('createDialogDescription')}</DialogDescription>
+          </DialogHeader>
+          <EstablishmentForm
+            action={createEstablishment}
+            onSuccess={() => setCreateOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* ─── KPI Grid ─── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -279,7 +309,7 @@ export function EtablissementsDashboard({ establishments }: { establishments: Es
                     <td className="px-4 py-3 text-on-surface-variant">{est.address || '—'}</td>
                     <td className="px-4 py-3 font-bold text-on-surface">{est.tableCount}</td>
                     <td className="px-4 py-3 font-bold text-on-surface">{est.memberCount}</td>
-                    <td className="px-4 py-3 text-on-surface-variant">{est.timezone || 'Africa/Tunis'}</td>
+                    <td className="px-4 py-3 text-on-surface-variant">{TIMEZONE_LABEL(est.timezone || 'Africa/Tunis')}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-tertiary-fixed/30 px-2.5 py-1 text-[11px] font-bold text-on-tertiary-fixed-variant">
                         <span className="h-2 w-2 rounded-full bg-tertiary"></span>
@@ -620,7 +650,7 @@ function EstablishmentCard({ est, index, imageUrl }: {
         <div className="space-y-1.5 rounded-xl bg-surface-container-low p-3 text-xs text-on-surface-variant">
           <InfoRow label="Adresse" value={est.address || '—'} />
           <InfoRow label="Téléphone" value={est.phone || '—'} />
-          <InfoRow label="Timezone" value={est.timezone || 'Africa/Tunis'} />
+          <InfoRow label="Timezone" value={TIMEZONE_LABEL(est.timezone || 'Africa/Tunis')} />
         </div>
 
         {/* Manager */}

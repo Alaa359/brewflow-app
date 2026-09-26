@@ -5,13 +5,13 @@ import { startOfDayTunisia } from '@/lib/sales';
 import { KitchenHistory } from '@/components/kitchen/kitchen-history';
 
 export default async function CuisineHistoriquePage() {
-  const user = await requireRole(Role.KITCHEN, Role.ADMIN);
+  const user = await requireRole(Role.KITCHEN);
 
   const orders = await prisma.order.findMany({
     where: {
       table: { establishmentId: user.establishmentId },
       status: 'PAYEE',
-      createdAt: { gte: startOfDayTunisia(new Date()) },
+      createdAt: { gte: startOfDayTunisia(new Date(), user.establishmentTimezone) },
     },
     orderBy: { createdAt: 'desc' },
     take: 200,
@@ -37,7 +37,11 @@ export default async function CuisineHistoriquePage() {
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-6">
-      <KitchenHistory orders={rows} establishmentName={user.establishmentName} />
+      <KitchenHistory
+        orders={rows}
+        establishmentName={user.establishmentName}
+        timezone={user.establishmentTimezone}
+      />
     </main>
   );
 }
